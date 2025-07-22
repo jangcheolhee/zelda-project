@@ -1,19 +1,31 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
+
 class TileMap : public GameObject
 {
 protected:
-	std::string tileMap = "data/filed_20250722.tmj";
+    std::string tileMap;
+    sf::Texture texture;
+    sf::VertexArray va;
 
-	json j;
-	j["layers"]["chunks"]["data"] = ;
+    sf::Vector2f cellSize;
+    sf::Vector2f cellCount;
+
+    int firstgid = 1;
+
+    json j;
+
 public:
+    TileMap(const std::string& name = "", const std::string& tileMapFile = "data/testMap.tmj");
+    virtual ~TileMap() = default;
 
-	// GameObject을(를) 통해 상속됨
-	void Init() override;
-	void Release() override;
-	void Reset() override;
-	void Update(float dt) override;
-	void Draw(sf::RenderWindow& window) override;
+    void Init() override;
+    void Release() override;
+    void Reset() override;
+    void Update(float dt) override;
+    void Draw(sf::RenderWindow& window) override;
+
+private:
+    bool loadTileMap();
 };
