@@ -1,11 +1,73 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SceneGame.h"
 #include "Player.h"
+#include "BasicEnemy.h"
 
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
 {
+}
+
+Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
+{
+    auto& pool = enemyPools[type];
+    if (!pool.empty())
+    {
+        Enemy* reused = pool.front().release();
+        pool.pop_front();
+        return reused;
+    }
+
+    Enemy* newEnemy = nullptr;
+    switch (type)
+    {
+    case Enemy::Types::Basic:
+        newEnemy = new BasicEnemy();
+        break;
+   
+    default:
+        break;
+    }
+
+    if (newEnemy != nullptr)
+        newEnemy->Init();
+
+    return newEnemy;
+}
+
+
+void SceneGame::RecycleEnemy(Enemy* enemy)
+{
+    if (enemy)
+    {
+        enemy->SetActive(false);
+        enemyPools[enemy->GetType()].push_back(std::unique_ptr<Enemy>(enemy));
+    }
+}
+
+
+void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
+{
+    Enemy* enemy = CreateOrReuseEnemy(type);
+    enemy->SetInitPosition(pos);
+    
+    enemy->Reset();
+    enemy->SetActive(false);
+
+    AddGameObject(enemy);
+    enemyList.push_back(enemy);
+}
+
+// 🔸 Enemy 삭제 (→ 풀에 리사이클)
+void SceneGame::DeleteEnemy()
+{
+    for (Enemy* e : enemyList)
+    {
+        RemoveGameObject(e);
+        RecycleEnemy(e);
+    }
+    enemyList.clear();
 }
 
 void SceneGame::Init()
@@ -22,7 +84,7 @@ void SceneGame::Init()
 
 	AddGameObject(player);
 
-	
+
 
 	Scene::Init();
 }
@@ -35,9 +97,9 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
 	worldView.setSize(size);
 	worldView.setCenter({ 0.f, -200.f });
+	Scene::Enter();
 
 
-	
 }
 
 
@@ -45,4 +107,4 @@ void SceneGame::Enter()
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
-} 
+}

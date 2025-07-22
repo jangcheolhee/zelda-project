@@ -51,6 +51,8 @@ void Player::Release()
 void Player::Reset()
 {
 
+	body.setFillColor(sf::Color::Red);
+	body.setSize({ 50,50 });
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
 

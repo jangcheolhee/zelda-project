@@ -3,7 +3,8 @@
 class Player :  public GameObject
 {
 protected:
-	sf::Sprite body;
+	//sf::Sprite body;
+	sf::RectangleShape body;
 	int hp = 0;
 	int maxHp = 0;
 
