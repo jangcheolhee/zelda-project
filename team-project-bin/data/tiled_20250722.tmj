@@ -2075,27 +2075,27 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"maps/filed.tsx"
-        },
+         "source":"..\/..\/..\/KMJ\/zelda-link-to-the-past_TeamProject\/zelda-project\/MapTool\/img\/filed.tsx"
+        }, 
         {
-          "firstgid": 393,
-          "source": "maps/overworld_sheet.tsx"
-        },
+         "firstgid":393,
+         "source":"..\/..\/..\/KMJ\/zelda-link-to-the-past_TeamProject\/zelda-project\/MapTool\/img\/overworld_sheet.tsx"
+        }, 
         {
-          "firstgid": 20272,
-          "source": "maps/zelda_house.tsx"
-        },
+         "firstgid":20272,
+         "source":"..\/..\/..\/KMJ\/zelda-link-to-the-past_TeamProject\/zelda-project\/MapTool\/img\/zelda_house.tsx"
+        }, 
         {
-          "firstgid": 20392,
-          "source": "maps/zelda_house-removebg-preview.tsx"
-        },
+         "firstgid":20392,
+         "source":"..\/..\/..\/KMJ\/zelda-link-to-the-past_TeamProject\/zelda-project\/MapTool\/img\/zelda_house-removebg-preview.tsx"
+        }, 
         {
-          "firstgid": 20512,
-          "source": "maps/filed.tsx"
-        },
+         "firstgid":20512,
+         "source":"..\/..\/..\/KMJ\/zelda-link-to-the-past_TeamProject\/zelda-project\/MapTool\/img\/filed.tsx"
+        }, 
         {
-          "firstgid": 20904,
-          "source": "maps/7651.tsx"
+         "firstgid":20904,
+         "source":"..\/..\/..\/KMJ\/zelda-link-to-the-past_TeamProject\/zelda-project\/MapTool\/img\/7651.tsx"
         }],
  "tilewidth":8,
  "type":"map",

@@ -1,9 +1,7 @@
 #pragma once
 #include "Singleton.h"
-
 #include "Inventory.h"
 #include "QuestMgr.h"
-
 
 struct PlayerData
 {
@@ -11,8 +9,8 @@ struct PlayerData
 	int hp;
 	sf::Vector2f position;
 };
-class GameMgr : public Singleton<GameMgr>
 
+class GameMgr : public Singleton<GameMgr>
 {
 	friend Singleton<GameMgr>;
 private:
@@ -22,8 +20,6 @@ private:
 	QuestMgr* questMgr;
 
 public:
-	
-
 	void Init();
 	void Update(float dt);
 	void Draw(sf::RenderWindow& window);
@@ -37,4 +33,3 @@ public:
 };
 
 #define GAME_MGR (GameMgr::Instance())
-
