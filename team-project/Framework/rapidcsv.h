@@ -31,6 +31,8 @@
 #include <typeinfo>
 #include <vector>
 
+
+
 namespace rapidcsv
 {
 #if defined(_MSC_VER)
@@ -566,6 +568,9 @@ namespace rapidcsv
          *                                (if not specified, the original path provided when creating or
          *                                loading the Document data will be used).
          */
+        
+
+
         void Save(const std::string& pPath = std::string())
         {
             if (!pPath.empty())

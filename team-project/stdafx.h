@@ -25,5 +25,7 @@
 #include "Scene.h"
 #include "SceneMgr.h"
 #include "SoundMgr.h"
+#include "GameMgr.h"
+
 #include "Framework.h"
 

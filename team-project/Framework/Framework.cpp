@@ -9,10 +9,13 @@ void Framework::Init(int w, int h, const std::string& t)
 	FONT_MGR.Load(fontIds);
 	SOUNDBUFFER_MGR.Load(soundIds);
 
+ 
     Utils::Init();
 	InputMgr::Init();
+    GAME_MGR.Init();
     SOUND_MGR.Init();
 	SCENE_MGR.Init();
+   
 }
 
 void Framework::Do()
@@ -51,6 +54,7 @@ void Framework::Do()
 
         // Draw
         window.clear();
+
         SCENE_MGR.Draw(window);
         window.display();
     }
