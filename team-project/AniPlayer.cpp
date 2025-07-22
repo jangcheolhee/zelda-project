@@ -67,7 +67,7 @@ void AniPlayer::Reset()
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
 
-	animator.Play("animations/idle.csv");
+	//animator.Play("animations/idle.csv");
 	SetOrigin(Origins::BC);
 }
 
