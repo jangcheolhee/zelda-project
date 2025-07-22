@@ -9,7 +9,11 @@
 #include <unordered_map>
 #include <algorithm>
 #include <functional>
+#include <fstream>
+#include <direct.h>
 
+#include "json.hpp"
+using json = nlohmann::json;
 // SFML
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

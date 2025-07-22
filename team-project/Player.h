@@ -4,11 +4,15 @@ class Player :  public GameObject
 {
 protected:
 	sf::Sprite body;
-	sf::RectangleShape* rect1;
+	int hp = 0;
+	int maxHp = 0;
 
 public:
 	Player(const std::string& name = "");
 	virtual ~Player() = default;
+
+	int GetHp() { return hp; }
+	void SetHp(int hp) { this->hp = hp; }
 
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;

@@ -45,19 +45,22 @@ void Player::Init()
 
 void Player::Release()
 {
+	GAME_MGR.SetPlayerData(hp, position);
 }
 
 void Player::Reset()
 {
-	body.setPosition({ 50,50 });
-}
 
+	hp = GAME_MGR.GetPlayerData().hp;
+	SetPosition(GAME_MGR.GetPlayerData().position);
+
+}
 void Player::Update(float dt)
 {
 }
 
 void Player::Draw(sf::RenderWindow& window)
 {
-	std::cout << 13425;
 	window.draw(body);
+	
 }

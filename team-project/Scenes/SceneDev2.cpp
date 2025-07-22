@@ -16,6 +16,7 @@ void SceneDev2::Init()
 	//ANI_CLIP_MGR.Load("animations/run.csv");
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
+
 	TextGo* go = new TextGo("fonts/DS-DIGIT.ttf");
 	go->SetString("Dev 2");
 	go->SetCharacterSize(30);
@@ -24,8 +25,9 @@ void SceneDev2::Init()
 	go->sortingOrder = 0;
 
 	AddGameObject(go);
+	
 
-	AddGameObject(new AniPlayer());
+	//AddGameObject(new AniPlayer());
 
 	Scene::Init();
 }
@@ -38,6 +40,7 @@ void SceneDev2::Enter()
 	uiView.setCenter(center);
 	worldView.setSize(size);
 	worldView.setCenter({ 0.f, -200.f });
+	
 
 	Scene::Enter();
 }

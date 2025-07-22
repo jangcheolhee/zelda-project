@@ -1,16 +1,17 @@
 #pragma once
 #include "Scene.h"
-#include "Player.h"
-class SceneDev2 : public Scene
+class Player;
+class SceneGame : public Scene
 {
 protected:
 	Player* player;
+
 public:
-	SceneDev2();
+	SceneGame();
 
 	void Init() override;
 	void Enter() override;
+	
 	void Update(float dt) override;
-
 };
 
