@@ -1,9 +1,23 @@
 #pragma once
 #include "GameObject.h"
+#include "HitBox.h"
+
 class Player :  public GameObject
 {
+enum class Direction { Down, Left, Right, Up };
+
 protected:
+	Direction currentDirection = Direction::Down;
+	size_t currentFrame = 0;
+	float frameTime = 0.2f;    // 프레임 전환 시간
+	float elapsedTime = 0.f;
+	float speed = 200.f;        // 이동 속도
+	std::map<Direction, std::vector<sf::IntRect>> animations;
+
 	sf::Sprite body;
+	sf::Texture* texture = nullptr;
+	
+	HitBox hitBox;
 	int hp = 0;
 	int maxHp = 0;
 
@@ -19,11 +33,14 @@ public:
 	void SetScale(const sf::Vector2f& s) override;
 	void SetOrigin(const sf::Vector2f& o) override;
 	void SetOrigin(Origins preset) override;
+	
 
 	void Init() override;
 	void Release() override;
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+	bool checkCollision(const HitBox& other);
+	sf::Sprite& GetBody() { return body; } // getter
 };
 

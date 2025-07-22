@@ -10,18 +10,9 @@ SceneGame::SceneGame()
 
 void SceneGame::Init()
 {
-	//texIds.push_back("graphics/sprite_sheet.png");
-	//fontIds.push_back("fonts/DS-DIGIT.ttf");
-
-	//ANI_CLIP_MGR.Load("animations/idle.csv");
-	//ANI_CLIP_MGR.Load("animations/run.csv");
-	//ANI_CLIP_MGR.Load("animations/jump.csv");
-
-
+	
 	player = new Player();
-
 	AddGameObject(player);
-
 	
 
 	Scene::Init();
@@ -34,10 +25,9 @@ void SceneGame::Enter()
 	uiView.setSize(size);
 	uiView.setCenter(center);
 	worldView.setSize(size);
-	worldView.setCenter({ 0.f, -200.f });
+	worldView.setCenter({ 0.f, 0.f });
+	player->SetPosition({ -500.f, -300.f });
 
-
-	
 }
 
 
