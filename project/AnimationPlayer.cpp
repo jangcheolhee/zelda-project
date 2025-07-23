@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "AnimationClip.h"
 #include "AnimationPlayer.h"
 #include <algorithm>
@@ -6,6 +6,7 @@
 AnimationApp::AnimationApp()
     : window(sf::VideoMode(800, 600), "SFML Animation Tool")
 {
+
     texture.loadFromFile("graphics/Link.png");
     sprite.setTexture(texture);
     sprite.setPosition(200.f, 150.f);
@@ -17,8 +18,9 @@ AnimationApp::AnimationApp()
     player = new AnimationPlayer(&currentClip);
     player->Play();
     player->SetClip(&currentClip);
-
     sprite.setTextureRect(player->GetCurrentFrameRect());
+    sf::RectangleShape backButton;
+    sf::Text backText;
 }
 
 AnimationApp::~AnimationApp()
@@ -66,7 +68,7 @@ void AnimationApp::SaveClipToCSV(const AnimationClip& clip, const std::string& f
     std::ofstream file(filename);
     if (!file.is_open())
     {
-        std::cerr << "ÆÄÀÏ ¿­±â ½ÇÆÐ: " << filename << std::endl;
+        std::cerr << "íŒŒì¼ ì—´ê¸° ì‹¤íŒ¨: " << filename << std::endl;
         return;
     }
 
@@ -83,7 +85,7 @@ void AnimationApp::SaveClipToCSV(const AnimationClip& clip, const std::string& f
     }
 
     file.close();
-    std::cout << "CSV ÀúÀå ¿Ï·á: " << filename << std::endl;
+    std::cout << "CSV ì €ìž¥ ì™„ë£Œ: " << filename << std::endl;
 }
 
 void AnimationApp::Run()
@@ -104,9 +106,29 @@ void AnimationApp::Run()
 
     while (window.isOpen())
     {
+        //AnimationClip clip;
+        float duration = 0.1f;
+        //sf::IntRect inputRect(0, 0, 32, 32);
+
         sf::Event event;
         while (window.pollEvent(event))
         {
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                if (hasPreview)
+                {
+                    ui.HandleClick(mousePos, currentClip, previewRect, frameDuration);
+
+                }
+                else {
+
+                    std::cout << "âš  ì„ íƒëœ ì˜ì—­ì´ ì—†ìŠµë‹ˆë‹¤.\n";
+                }
+                isDragging = true;
+                dragStartPos = mousePos;
+                currentDragPos = mousePos;
+            }
+
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -140,6 +162,8 @@ void AnimationApp::Run()
                 isDragging = true;
                 dragStartPos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
                 currentDragPos = dragStartPos;
+                hasPreview = false;
+                sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
             }
 
             if (event.type == sf::Event::MouseButtonReleased)

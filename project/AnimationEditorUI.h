@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include "stdafx.h"
 #include "AnimationClip.h"
 
@@ -14,8 +14,11 @@ private:
     sf::RectangleShape loadButton;
     sf::Text loadText;
     sf::Sprite framePreview;
+    sf::RectangleShape backButton;
+    sf::Text backText;
 
 public:
+
     void CenterText(sf::Text& text, const sf::RectangleShape& box)
     {
         sf::FloatRect textBounds = text.getLocalBounds();
@@ -36,7 +39,7 @@ public:
         std::ofstream file(filename);
         if (!file.is_open())
         {
-            std::cerr << "CSV ¿˙¿Â Ω«∆–: " << filename << std::endl;
+            std::cerr << "CSV Ï†ÄÏû• Ïã§Ìå®: " << filename << std::endl;
             return;
         }
 
@@ -53,7 +56,7 @@ public:
         }
 
         file.close();
-        std::cout << "CSV ¿˙¿Â øœ∑·: " << filename << std::endl;
+        std::cout << "CSV Ï†ÄÏû• ÏôÑÎ£å: " << filename << std::endl;
     }
 
     AnimationEditorUI() {
@@ -105,6 +108,7 @@ public:
         nextText.setString(">");
         nextText.setCharacterSize(18);
         nextText.setPosition(105, 90);
+   
     }
    
 
@@ -117,11 +121,11 @@ public:
         const float buttonHeight = 30.f;
         const float buttonSpacing = 8.f;
 
-        // ±‚¡ÿ¡° (ø¿∏•¬  æ∆∑°)
+        // Í∏∞Ï§ÄÏ†ê (Ïò§Î•∏Ï™Ω ÏïÑÎûò)
         float baseX = windowSize.x - buttonWidth - padding;
         float baseY = windowSize.y - (buttonHeight + buttonSpacing) * 4 - padding;
 
-        // πˆ∆∞ ¿ßƒ° ¿Áº≥¡§
+        // Î≤ÑÌäº ÏúÑÏπò Ïû¨ÏÑ§Ï†ï
         loadButton.setPosition(baseX, baseY);
         addFrameButton.setSize({ 120, 30 });
         addFrameButton.setPosition(baseX, baseY + (buttonHeight + buttonSpacing) * 1);
@@ -129,15 +133,15 @@ public:
         prevFrameButton.setPosition(baseX, baseY + (buttonHeight + buttonSpacing) * 3);
         nextFrameButton.setPosition(baseX + buttonWidth - 30.f, baseY + (buttonHeight + buttonSpacing) * 3);
 
-        // ≈ÿΩ∫∆Æ ¿ßƒ° ¿Áº≥¡§
+        // ÌÖçÏä§Ìä∏ ÏúÑÏπò Ïû¨ÏÑ§Ï†ï
         loadText.setPosition(loadButton.getPosition().x + 5.f, loadButton.getPosition().y + 5.f);
         addFrameText.setPosition(addFrameButton.getPosition().x + 5.f, addFrameButton.getPosition().y + 5.f);
         saveText.setPosition(saveButton.getPosition().x + 5.f, saveButton.getPosition().y + 5.f);
-        // «¡∑π¿” ¿Œµ¶Ω∫ ≈ÿΩ∫∆Æ
+        // ÌîÑÎ†àÏûÑ Ïù∏Îç±Ïä§ ÌÖçÏä§Ìä∏
         std::stringstream ss;
         ss << manualFrameIndex + 1 << "/" << clip.frames.size();
         frameLabel.setString(ss.str());
-        // 2. ∆˘∆Æ, ≈©±‚, ªˆªÛ º≥¡§ (æ» ∫∏¿Ã∏È π›µÂΩ√ « ø‰)
+        // 2. Ìè∞Ìä∏, ÌÅ¨Í∏∞, ÏÉâÏÉÅ ÏÑ§Ï†ï (Ïïà Î≥¥Ïù¥Î©¥ Î∞òÎìúÏãú ÌïÑÏöî)
         frameLabel.setFont(font);
         frameLabel.setCharacterSize(14);
         frameLabel.setFillColor(sf::Color::White);
@@ -147,12 +151,20 @@ public:
             saveButton.getPosition().x + (saveButton.getSize().x / 2.f) - 10.f,
             saveButton.getPosition().y - 20.f
         );
-        if (!clip.frames.empty()) {
+        if (!clip.frames.empty())
+        {
+            // clip.frames.size() > 0 Ïùº ÎïåÎßå clamp() Ìò∏Ï∂ú ÏïàÏ†Ñ
+            manualFrameIndex = std::clamp(manualFrameIndex, 0, static_cast<int>(clip.frames.size()) - 1);
+
             const FrameData& currentFrame = clip.frames[manualFrameIndex];
             framePreview.setTextureRect(currentFrame.rect);
-            framePreview.setScale(3.f, 3.f); // »Æ¥Î«ÿº≠ ∫∏±‚ Ω±∞‘
+            framePreview.setScale(3.f, 3.f);
             framePreview.setPosition(20.f, window.getView().getSize().y - 150.f);
             window.draw(framePreview);
+        }
+        else
+        {
+            manualFrameIndex = 0;
         }
 
         // Draw
@@ -182,15 +194,19 @@ public:
     bool HandleClick(const sf::Vector2f& mousePos, AnimationClip& clip, const sf::IntRect& inputRect, float duration) {
        
         if (isMouseOver(addFrameButton, mousePos)) {
-            FrameData frame{ inputRect, duration };
-            clip.frames.push_back(frame);
-            std::cout << "«¡∑π¿” √ﬂ∞°µ ! √— ∞≥ºˆ: " << clip.frames.size() << std::endl;
+            if (inputRect.width > 0 && inputRect.height > 0) {
+                FrameData frame{ inputRect, duration };
+                clip.frames.push_back(frame);
+                std::cout << "ÌîÑÎ†àÏûÑ Ï∂îÍ∞ÄÎê®! Ï¥ù Í∞úÏàò: " << clip.frames.size() << std::endl;
+            }
+            else {
+                std::cout << "‚ö† Ïú†Ìö®ÌïòÏßÄ ÏïäÏùÄ ÌîÑÎ†àÏûÑ ÏòÅÏó≠ÏûÖÎãàÎã§.\n";
+            }
             return true;
         }
-        if (isMouseOver(saveButton, mousePos)) 
-        {
+
+        if (isMouseOver(saveButton, mousePos)) {
             std::string jsonPath = "animations/" + clip.name + ".json";
-            std::string csvPath = "animations/" + clip.name + ".csv";
 
             std::ifstream ifs(jsonPath);
             if (ifs.is_open()) {
@@ -208,22 +224,28 @@ public:
                     frame.duration = f["duration"];
                     clip.frames.push_back(frame);
                 }
-                std::cout << "æ÷¥œ∏ﬁ¿Ãº« ∑ŒµÂ øœ∑·: " << jsonPath << std::endl;
+                std::cout << "Ïï†ÎãàÎ©îÏù¥ÏÖò Î°úÎìú ÏôÑÎ£å: " << jsonPath << std::endl;
             }
-            else 
-            {
-                std::cerr << "∑ŒµÂ Ω«∆–: " << jsonPath << std::endl;
+            else {
+                std::cerr << "Î°úÎìú Ïã§Ìå®: " << jsonPath << std::endl;
             }
             return true;
         }
+
         if (isMouseOver(prevFrameButton, mousePos)) {
-            manualFrameIndex = std::max(0, manualFrameIndex - 1);
+            if (!clip.frames.empty()) {
+                manualFrameIndex = std::max(0, manualFrameIndex - 1);
             return true;
+            }
         }
+
         if (isMouseOver(nextFrameButton, mousePos)) {
-            manualFrameIndex = std::min((int)clip.frames.size() - 1, manualFrameIndex + 1);
+            if (!clip.frames.empty()) {
+                manualFrameIndex = std::min(manualFrameIndex + 1, static_cast<int>(clip.frames.size()) - 1);
             return true;
+            }
         }
+
         return false;
     }
     int GetManualFrameIndex() const {

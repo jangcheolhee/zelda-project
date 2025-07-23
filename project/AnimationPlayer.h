@@ -13,6 +13,8 @@ private:
     int currentFrameIndex = 0;
     float elapsed = 0.f;
     float elapsedTime = 0.f;
+   
+
 
 public:
     AnimationPlayer(const AnimationClip* clip) : clip(clip),currentFrameIndex(0) {}
