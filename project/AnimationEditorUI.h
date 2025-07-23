@@ -61,6 +61,7 @@ public:
 
     AnimationEditorUI() {
         font.loadFromFile("fonts/DS-DIGIT.TTF");
+
         addFrameButton.setFillColor(sf::Color::Blue);
         loadText.setFillColor(sf::Color::Black);
         addFrameText.setFillColor(sf::Color::White);
@@ -112,7 +113,7 @@ public:
     }
    
 
-    void Render(sf::RenderWindow& window,const AnimationClip& clip) 
+    void Render(sf::RenderWindow& window,const AnimationClip& clip)
     {
         sf::Vector2f windowSize = window.getView().getSize();
 
@@ -207,7 +208,17 @@ public:
 
         if (isMouseOver(saveButton, mousePos)) {
             std::string jsonPath = "animations/" + clip.name + ".json";
+            std::string csvPath = "animations/" + clip.name + ".csv";
 
+            SaveAnimationClip(clip, jsonPath);
+            SaveClipToCSV(clip, csvPath);
+
+            std::cout << "애니메이션 저장 완료: " << jsonPath << " 와 " << csvPath << std::endl;
+            return true;
+        }
+        
+        if (isMouseOver(loadButton, mousePos)) {
+            std::string jsonPath = "animations/" + clip.name + ".json";
             std::ifstream ifs(jsonPath);
             if (ifs.is_open()) {
                 nlohmann::json j;
@@ -248,7 +259,8 @@ public:
 
         return false;
     }
-    int GetManualFrameIndex() const {
+    int GetManualFrameIndex() const
+    {
         return manualFrameIndex;
     }
     static void SaveAnimationClip(const AnimationClip& clip, const std::string& filename) {
