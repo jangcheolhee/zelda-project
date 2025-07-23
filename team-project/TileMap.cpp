@@ -25,7 +25,6 @@ void TileMap::Reset()
 
 void TileMap::Update(float dt)
 {
-    // 필요 시 Update 로직 추가
 }
 
 void TileMap::Draw(sf::RenderWindow& window)
