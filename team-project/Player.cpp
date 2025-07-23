@@ -41,6 +41,9 @@ void Player::SetOrigin(Origins preset)
 
 void Player::Init()
 {
+	sortingLayer = SortingLayers::Foreground;
+	sortingOrder = 0;
+	
 }
 
 void Player::Release()
@@ -51,18 +54,20 @@ void Player::Release()
 void Player::Reset()
 {
 
-	body.setFillColor(sf::Color::Red);
-	body.setSize({ 50,50 });
+	body.setTexture(TEXTURE_MGR.Get("graphics/sprite_sheet.png"));
+	body.setTextureRect({ 26,0,61,125 });
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
 
 }
 void Player::Update(float dt)
 {
+	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
 void Player::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
+	hitBox.Draw(window);
 	
 }

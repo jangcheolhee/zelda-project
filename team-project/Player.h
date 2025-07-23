@@ -1,12 +1,14 @@
 #pragma once
 #include "GameObject.h"
+#include "Hitbox.h"
 class Player :  public GameObject
 {
 protected:
-	//sf::Sprite body;
-	sf::RectangleShape body;
+	sf::Sprite body;
+	//sf::RectangleShape body;
 	int hp = 0;
 	int maxHp = 0;
+	HitBox hitBox;
 
 public:
 	Player(const std::string& name = "");
@@ -20,6 +22,16 @@ public:
 	void SetScale(const sf::Vector2f& s) override;
 	void SetOrigin(const sf::Vector2f& o) override;
 	void SetOrigin(Origins preset) override;
+
+	sf::FloatRect GetLocalBounds() const override
+	{
+		return body.getLocalBounds();
+	}
+
+	sf::FloatRect GetGlobalBounds() const override
+	{
+		return body.getGlobalBounds();
+	}
 
 	void Init() override;
 	void Release() override;

@@ -72,7 +72,7 @@ void SceneGame::DeleteEnemy()
 
 void SceneGame::Init()
 {
-	//texIds.push_back("graphics/sprite_sheet.png");
+	texIds.push_back("graphics/sprite_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
@@ -80,7 +80,7 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
 
-	player = new Player();
+	player = new Player("Player");
 
 	AddGameObject(player);
 
@@ -97,6 +97,12 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
 	worldView.setSize(size);
 	worldView.setCenter({ 0.f, -200.f });
+    SpawnEnemy({ 20,20 }, Enemy::Types::Basic);
+    // Enmy
+    // pos.x, pos,y
+    // type 
+
+    // I
 	Scene::Enter();
 
 
