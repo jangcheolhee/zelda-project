@@ -64,6 +64,12 @@ public:
 	static bool PolygonsIntersect(const std::vector<sf::Vector2f>& polygonA, const sf::Transform& transformA,
 		const std::vector<sf::Vector2f>& polygonB, const sf::Transform& transformB);
 
+	inline bool EndsWith(const std::string& s, const std::string& ext)
+	{
+		if (s.size() < ext.size()) return false;
+		return std::equal(ext.rbegin(), ext.rend(), s.rbegin(),
+			[](char a, char b) { return std::tolower(a) == std::tolower(b); });
+	}
 };
 
 

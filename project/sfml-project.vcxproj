@@ -144,6 +144,7 @@
     <ClCompile Include="AnimationApp.cpp" />
     <ClCompile Include="AnimationClipManager.cpp" />
     <ClCompile Include="AnimationEditorUI.cpp" />
+    <ClCompile Include="AnimationIO.cpp" />
     <ClCompile Include="AnimationPlayer.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="AnimationApp.h" />
     <ClInclude Include="AnimationClipManager.h" />
     <ClInclude Include="AnimationEditorUI.h" />
+    <ClInclude Include="AnimationIO.h" />
     <ClInclude Include="AnimationPlayer.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Enemy.h" />

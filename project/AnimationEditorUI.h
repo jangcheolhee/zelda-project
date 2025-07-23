@@ -2,6 +2,9 @@
 #include "stdafx.h"
 #include "AnimationClip.h"
 #include "FileDialog.h"
+#include "AnimationIO.h"
+
+
 class AnimationEditorUI
 {
 private:
@@ -192,33 +195,21 @@ public:
 
         if (isMouseOver(loadButton, mousePos))
         {
-            std::string path = OpenAnimationFileDialog();
-            if (path.empty()) return true; // 취소
-            std::string jsonPath = "animations/" + clip.name + ".csv";
-            std::ifstream ifs(jsonPath);
-            if (ifs.is_open())
-            {
-                nlohmann::json j;
-                ifs >> j;
-                clip.frames.clear();
-                clip.name = j["name"];
-                clip.loop = j["loop"];
-                for (const auto& f : j["frames"])
-                {
-                    FrameData frame;
-                    frame.rect.left = f["x"];
-                    frame.rect.top = f["y"];
-                    frame.rect.width = f["w"];
-                    frame.rect.height = f["h"];
-                    frame.duration = f["duration"];
-                    clip.frames.push_back(frame);
-                }
-                std::cout << "애니메이션 로드 완료: " << jsonPath << std::endl;
+            std::string path = OpenAnimationFileDialog();   // 다이얼로그에서 고른 파일
+            if(path.empty()) return true;
+
+            if (AnimationIO::EndsWith(path, ".json")) {
+                if (!AnimationIO::LoadClipFromJson(path, clip))
+                    std::cerr << "JSON 로드 실패: " << path << "\n";
             }
-            else
-            {
-                std::cerr << "로드 실패: " << jsonPath << std::endl;
+            else if (AnimationIO::EndsWith(path, ".csv")) {
+                if (!AnimationIO::LoadClipFromCsv(path, clip, duration))
+                    std::cerr << "CSV 로드 실패: " << path << "\n";
             }
+            else {
+                std::cerr << "지원하지 않는 확장자: " << path << "\n";
+            }
+
             ClampFrameIndex(clip);
             return true;
         }
