@@ -8,9 +8,10 @@ AnimationApp::AnimationApp()
     texture.loadFromFile("graphics/Link.png");
     sprite.setTexture(texture);
     sprite.setPosition(0.f, 0.f);
+    animSprite.setTexture(texture);
     sprite.setScale(2.f, 2.f);
+    ui.SetSpriteSheetTexture(&texture);
     
-
     currentClip.name = "default_clip";
     currentClip.loop = true;
 
@@ -67,7 +68,7 @@ void AnimationApp::Run()
     sprite.setScale(1.f, 1.f);
     sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
 
-   
+
     if (!font.loadFromFile("fonts/DS-DIGIT.TTF"))
     {
         std::cerr << "⚠ 폰트 로딩 실패\n";
@@ -75,9 +76,9 @@ void AnimationApp::Run()
 
     if (player)
     {
-       // sprite.setTextureRect(player->GetCurrentFrameRect());
+        // sprite.setTextureRect(player->GetCurrentFrameRect());
     }
-    
+
     sf::Text frameInfoText;
     frameInfoText.setFont(font);
     frameInfoText.setCharacterSize(16);
@@ -91,19 +92,36 @@ void AnimationApp::Run()
         //sf::IntRect inputRect(0, 0, 32, 32);
 
 
-    
-        
+
+
 
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+            {
+                sf::Vector2f mousePos = window.mapPixelToCoords
+                ({ event.mouseButton.x, event.mouseButton.y });
                 // ✅ 버튼 클릭 처리 먼저
-                
+
+                // 1) UI 먼저
+                if (ui.HandleClick(mousePos,
+                    currentClip,
+                    hasPreview ? previewRect : sf::IntRect(),  // 선택 없으면 빈 rect 전달
+                    frameDuration))
+                {
+                    // UI 버튼이 눌린 경우 후처리
+                    player->SetClip(&currentClip);
+                    player->SetCurrentFrameIndex(ui.GetManualFrameIndex());
+                    if (!currentClip.frames.empty())
+                        sprite.setTextureRect(player->GetCurrentFrameRect());
+                    hasPreview = false;  // 프레임 추가했다면 선택 해제
+                    continue;            // 드래그 시작 X
+                }
+                // 2) 영역 드래그 시작
                 isDragging = true;
-                dragStartPos = mousePos;
-                currentDragPos = mousePos;
+                dragStartPos = currentDragPos = mousePos;
+
                 // 클릭으로 프레임 추가 시도
                 if (hasPreview)
                 {
@@ -116,7 +134,7 @@ void AnimationApp::Run()
                 else
                 {
                     std::cout << "⚠ 선택된 영역이 없습니다.\n";
-                    continue; 
+                    continue;
                 }
 
             }
@@ -165,7 +183,7 @@ void AnimationApp::Run()
                 {
                     previewRect = sf::IntRect(left, top, width, height);
                     hasPreview = true;
-                   
+
                 }
             }
 
@@ -176,23 +194,23 @@ void AnimationApp::Run()
         }
 
         window.clear();
-        window.draw(sprite);
+        //window.draw(sprite);
 
-         //2. 선택된 프레임 미리보기 보여주기
+        //2. 선택된 프레임 미리보기 보여주기
         if (hasPreview)
         {
             sf::Sprite previewSprite;
             previewSprite.setTexture(texture);
             previewSprite.setTextureRect(previewRect);
-            previewSprite.setScale(2.f, 2.f); // 크기 확대
-            previewSprite.setPosition(550.f, 50.f); // 오른쪽 위에 배치
+            previewSprite.setScale(5.f, 5.f); // 크기 확대
+            previewSprite.setPosition(550.f, 450.f); // 오른쪽 위에 배치
             window.draw(previewSprite);
         }
 
         if (!hasPreview)
         {
             player->SetCurrentFrameIndex(ui.GetManualFrameIndex());
-           
+
         }
 
         if (!currentClip.frames.empty())
@@ -212,7 +230,7 @@ void AnimationApp::Run()
         {
             frameInfoText.setString("No frames loaded.");
         }
-      
+
 
         if (isDragging || hasPreview)
         {
@@ -229,7 +247,9 @@ void AnimationApp::Run()
             window.draw(rectShape);
         }
 
-
+        window.draw(sheetSprite);   // 전체 시트 먼저
+        // ... 드래그 박스 등 ...
+        window.draw(animSprite);    // 현재 프레임
         ui.Render(window, currentClip);
         window.draw(frameInfoText);
         window.display();

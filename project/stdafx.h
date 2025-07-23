@@ -37,3 +37,4 @@ using json = nlohmann::json;
 #include "AnimationClipManager.h"
 #include "AnimationPlayer.h"
 #include "AnimationEditorUI.h"
+#include "FrleDialog.h"

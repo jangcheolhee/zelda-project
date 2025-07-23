@@ -12,7 +12,8 @@ private:
     sf::RenderWindow window;
     sf::Texture texture;
     sf::Sprite sprite;
-
+    sf::Sprite sheetSprite;   // 전체 시트 전용
+    sf::Sprite animSprite;    // 플레이어/현재 프레임 표시용
     // ▼ UI 요소
     sf::Font font;
    
