@@ -17,6 +17,7 @@ AnimationApp::AnimationApp()
     player = new AnimationPlayer(&currentClip);
     player->Play();
     player->SetClip(&currentClip);
+    //sprite.setTextureRect(player->GetCurrentFrameRect());
     //sf::RectangleShape backButton;
     //sf::Text backText;
 }
@@ -74,7 +75,7 @@ void AnimationApp::Run()
 
     if (player)
     {
-        sprite.setTextureRect(player->GetCurrentFrameRect());
+       // sprite.setTextureRect(player->GetCurrentFrameRect());
     }
     
     sf::Text frameInfoText;
@@ -164,7 +165,7 @@ void AnimationApp::Run()
                 {
                     previewRect = sf::IntRect(left, top, width, height);
                     hasPreview = true;
-                    sprite.setTextureRect(previewRect);
+                   
                 }
             }
 
@@ -177,24 +178,41 @@ void AnimationApp::Run()
         window.clear();
         window.draw(sprite);
 
-        
+         //2. 선택된 프레임 미리보기 보여주기
+        if (hasPreview)
+        {
+            sf::Sprite previewSprite;
+            previewSprite.setTexture(texture);
+            previewSprite.setTextureRect(previewRect);
+            previewSprite.setScale(2.f, 2.f); // 크기 확대
+            previewSprite.setPosition(550.f, 50.f); // 오른쪽 위에 배치
+            window.draw(previewSprite);
+        }
+
         if (!hasPreview)
         {
             player->SetCurrentFrameIndex(ui.GetManualFrameIndex());
-            sprite.setTextureRect(player->GetCurrentFrameRect());
+           
         }
 
-        const FrameData& currentFrame = player->GetCurrentFrame();
-        sf::IntRect rect = currentFrame.rect;
-        std::stringstream ss;
-        ss << "Frame: " << player->GetCurrentFrameIndex()
-            << "\nX: " << rect.left
-            << " Y: " << rect.top
-            << " W: " << rect.width
-            << " H: " << rect.height;
+        if (!currentClip.frames.empty())
+        {
+            const FrameData& currentFrame = player->GetCurrentFrame();
+            sf::IntRect rect = currentFrame.rect;
+            std::stringstream ss;
+            ss << "Frame: " << player->GetCurrentFrameIndex()
+                << "\nX: " << rect.left
+                << " Y: " << rect.top
+                << " W: " << rect.width
+                << " H: " << rect.height;
 
-        frameInfoText.setString(ss.str());
-        
+            frameInfoText.setString(ss.str());
+        }
+        else
+        {
+            frameInfoText.setString("No frames loaded.");
+        }
+      
 
         if (isDragging || hasPreview)
         {
