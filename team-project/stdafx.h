@@ -14,6 +14,7 @@
 
 #include "json.hpp"
 using json = nlohmann::json;
+
 // SFML
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

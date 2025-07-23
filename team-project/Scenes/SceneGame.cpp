@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SceneGame.h"
 #include "Player.h"
-
+#include "TileMap.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -19,11 +19,13 @@ void SceneGame::Init()
 
 
 	player = new Player();
+	tileMap = new TileMap("TileMap");
+	tileMap->Init();
+	tileMap->Reset();
 
 	AddGameObject(player);
-
+	AddGameObject(tileMap);
 	
-
 	Scene::Init();
 }
 
@@ -35,12 +37,7 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
 	worldView.setSize(size);
 	worldView.setCenter({ 0.f, -200.f });
-
-
-	
 }
-
-
 
 void SceneGame::Update(float dt)
 {

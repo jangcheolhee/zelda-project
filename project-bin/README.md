@@ -1,1 +1,0 @@
-# sfml-project-bin

@@ -1,0 +1,14 @@
+{ "columns":56,
+ "image":"..\/..\/MapTool\/img\/zelda_house_sheet.png",
+ "imageheight":790,
+ "imagewidth":454,
+ "margin":0,
+ "name":"zelda_house_sheet",
+ "spacing":0,
+ "tilecount":5488,
+ "tiledversion":"1.11.2",
+ "tileheight":8,
+ "tilewidth":8,
+ "type":"tileset",
+ "version":"1.10"
+}

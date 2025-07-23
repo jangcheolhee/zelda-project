@@ -1,5 +1,6 @@
 #pragma once
 #include "Singleton.h"
+//ΩÃ±€≈Ê
 class Framework : public Singleton<Framework>
 {
 	friend Singleton<Framework>;
