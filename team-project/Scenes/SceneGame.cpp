@@ -94,7 +94,7 @@ void SceneGame::Init()
 void SceneGame::Enter()
 {
 	auto size = FRAMEWORK.GetWindowSizeF();
-	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
+    sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
 	uiView.setCenter(center);
     worldView.setSize({size.x *.5f, size.y *.5f});

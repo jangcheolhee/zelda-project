@@ -105,6 +105,8 @@ bool TileMap::LoadTileMap()
 
 void TileMap::Init()
 {
+    sortingLayer = SortingLayers::Background;
+    sortingOrder = 0;
     LoadTileMap();
 }
 
