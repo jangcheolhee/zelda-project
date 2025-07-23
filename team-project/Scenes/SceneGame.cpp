@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "SceneGame.h"
 #include "Player.h"
+#include "TileMap.h"
 #include "BasicEnemy.h"
 
 
@@ -80,12 +81,14 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
 
-	player = new Player("Player");
+	player = new Player();
+	tileMap = new TileMap("TileMap");
+	tileMap->Init();
+	tileMap->Reset();
 
 	AddGameObject(player);
-
-
-
+	AddGameObject(tileMap);
+	
 	Scene::Init();
 }
 
@@ -107,8 +110,6 @@ void SceneGame::Enter()
 
 
 }
-
-
 
 void SceneGame::Update(float dt)
 {

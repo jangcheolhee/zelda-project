@@ -168,6 +168,7 @@
     <ClCompile Include="Framework\TextGo.cpp" />
     <ClCompile Include="Framework\Utils.cpp" />
     <ClCompile Include="Framework\Variables.cpp" />
+    <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy\BasicEnemy.h" />
@@ -200,6 +201,18 @@
     <ClInclude Include="Framework\TextGo.h" />
     <ClInclude Include="Framework\Utils.h" />
     <ClInclude Include="Framework\Variables.h" />
+    <ClInclude Include="TileMap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\team-project-bin\data\filed.tsj" />
+    <None Include="..\team-project-bin\data\testMap.tmj" />
+    <None Include="data\data.json" />
+    <None Include="data\filed.tsj" />
+    <None Include="data\testMap.tmj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\team-project-bin\data\filed.png" />
+    <Image Include="data\filed.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

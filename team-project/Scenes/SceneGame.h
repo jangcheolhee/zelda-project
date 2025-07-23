@@ -2,11 +2,12 @@
 #include "Scene.h"
 #include "Enemy.h"
 class Player;
-
+class TileMap;
 class SceneGame : public Scene
 {
 protected:
 	Player* player;
+	TileMap* tileMap;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
@@ -16,7 +17,7 @@ public:
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
 
-	void DeleteEnemy(); // ¸®»çÀÌÅ¬ Æ÷ÇÔ
+	void DeleteEnemy(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¬ ï¿½ï¿½ï¿½ï¿½
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 
 	void Init() override;
