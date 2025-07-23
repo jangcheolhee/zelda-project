@@ -20,7 +20,7 @@ protected:
 	HitBox hitBox;
 	int hp = 0;
 	int maxHp = 0;
-	HitBox hitBox;
+	
 
 public:
 	Player(const std::string& name = "");
