@@ -3,7 +3,7 @@
 
 HitBox::HitBox()
 {
-	rect.setFillColor(sf::Color::Transparent);
+	rect.setFillColor(sf::Color(0, 255, 0, 80));
 	rect.setOutlineColor(sf::Color::Green);
 	rect.setOutlineThickness(1.f);
 }

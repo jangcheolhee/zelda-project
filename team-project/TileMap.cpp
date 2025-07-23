@@ -52,7 +52,7 @@ bool TileMap::LoadTileMap()
         tileset.columns = tsJ["columns"];
         tilesets.push_back(std::move(tileset));
     }
-    //Å¸ÀÏ ±×¸®±â
+    //Å¸ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
     for (const auto& layer : tmJ["layers"])
     {
         if (layer["type"] != "tilelayer") continue;
