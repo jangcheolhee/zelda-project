@@ -19,7 +19,7 @@ public:
         position = startPos;
         sprite.setPosition(GetPosition());
 
-        currentClip.name = "default_clip";
+        currentClip.name = "shield";
         currentClip.loop = true;
         animPlayer = new AnimationPlayer(&currentClip);
     }

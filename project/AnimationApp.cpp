@@ -12,7 +12,7 @@ AnimationApp::AnimationApp()
     sprite.setScale(2.f, 2.f);
     ui.SetSpriteSheetTexture(&texture);
     
-    currentClip.name = "default_clip";
+    currentClip.name = "shield_clip";
     currentClip.loop = true;
 
     player = new AnimationPlayer(&currentClip);
@@ -83,7 +83,7 @@ void AnimationApp::Run()
     frameInfoText.setFont(font);
     frameInfoText.setCharacterSize(16);
     frameInfoText.setFillColor(sf::Color::White);
-    frameInfoText.setPosition(150.f, 10.f);
+    frameInfoText.setPosition(300.f, 550.f);
 
     while (window.isOpen())
     {
