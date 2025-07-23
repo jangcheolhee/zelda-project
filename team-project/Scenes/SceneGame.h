@@ -20,6 +20,7 @@ public:
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void CheckCollison();
 
 	void Init() override;
 	void Enter() override;

@@ -14,6 +14,9 @@ protected:
 	float shootTimer = 0.f;
 	bool isShoot = false;
 
+	sf::Vector2f direction = { 0.f,0.f };
+	float speed = 150.f;
+
 public:
 	Interactable(const std::string& name = "");
 	virtual ~Interactable() = default;

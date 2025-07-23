@@ -63,10 +63,12 @@ public:
 		return body.getGlobalBounds();
 	}
 
-
+	void OnCollide(Player* player);
+	int GetDamage() { return damage; }
 
 	const HitBox& GetHitBox() const { return hitBox; }
 	void OnDamage(int damage);
+	
 	void Init() override;
 	void Release() override;
 	void Reset() override;

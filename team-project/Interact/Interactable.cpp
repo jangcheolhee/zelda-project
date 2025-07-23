@@ -70,29 +70,11 @@ void Interactable::Reset()
 
 void Interactable::Update(float dt)
 {
-	
+
 	if (!GetActive())
 		return;
 
-	
-	sf::FloatRect playerBounds = player->GetGlobalBounds();
-	playerBounds.left -= 8.f;
-	playerBounds.top -= 8.f;
-	playerBounds.width += 16.f;
-	playerBounds.height += 16.f;
-
-
-	if (playerBounds.intersects(GetGlobalBounds() ) && !isShoot)
-	{
-		
-		if (InputMgr::GetKeyDown(sf::Keyboard::X))
-		{
-
-			OnInteract(); // 상태 변경, 파괴, 대화 등
-			return;
-		}
-	}
-	if (player->IsInteract() )
+	if (player->IsInteract())
 	{
 		if (isShoot)
 		{
@@ -114,11 +96,12 @@ void Interactable::Update(float dt)
 			}
 
 		}
-	}
-	
-	hitBox.UpdateTransform(body, GetLocalBounds());
-}
 
+		position += speed * dt * direction;
+		SetPosition(position);
+		hitBox.UpdateTransform(body, GetLocalBounds());
+	}
+}
 void Interactable::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
@@ -130,12 +113,16 @@ void Interactable::Shoot()
 	switch (player->GetDirection())
 	{
 	case Direction::Down:
+		direction = { 0.f,-1.f };
 		break;
 	case Direction::Up:
+		direction = { 0.f, 1.f };
 		break;
 	case Direction::Left:
+		direction = { -1.f,0.f };
 		break;
 	case Direction ::Right:
+		direction = { 1.f, 0.f };
 		break;
 	default:
 		break;

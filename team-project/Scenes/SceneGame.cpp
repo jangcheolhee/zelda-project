@@ -60,6 +60,29 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
     enemyList.push_back(enemy);
 }
 
+void SceneGame::CheckCollison()
+{
+    for (auto& enemy : enemyList)
+    {
+        if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+        {
+            player->OnCollide(enemy);
+            enemy->OnCollide(player);
+        }
+    }
+
+    for (auto& obj : interactables)
+    {
+        if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+        {
+            if (player->WantsToInteract())
+            {
+                obj->OnInteract();
+            }
+        }
+    }
+}
+
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
 {
@@ -118,4 +141,6 @@ void SceneGame::Enter()
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
+    CheckCollison();
+   
 }

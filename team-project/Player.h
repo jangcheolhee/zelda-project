@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "HitBox.h"
+#include "Enemy.h"
 
 class Player :  public GameObject
 {
@@ -21,6 +22,7 @@ protected:
 	int hp = 0;
 	int maxHp = 0;
 	bool isInteract = false;
+	bool wantsToInteract = false;
 	
 
 public:
@@ -32,6 +34,11 @@ public:
 
 	void SetIsInteract(bool b) { isInteract = b; }
 	bool IsInteract() { return isInteract; }
+	
+	// 충돌 체크 함수-----------
+	void OnCollide(Enemy* enemy);
+	bool WantsToInteract(){ return wantsToInteract; }
+	//--------------
 
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;
