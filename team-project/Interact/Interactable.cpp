@@ -42,7 +42,9 @@ void Interactable::SetOrigin(Origins preset)
 
 void Interactable::Init()
 {
-	
+	sortingLayer = SortingLayers::Foreground;
+	sortingOrder = 0;
+	SetOrigin(Origins::BR);
 }
 
 void Interactable::Release()
@@ -62,6 +64,8 @@ void Interactable::Reset()
 
 
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
+	isShoot = false; 
+	shootTimer = 0.f;
 }
 
 void Interactable::Update(float dt)
@@ -70,22 +74,48 @@ void Interactable::Update(float dt)
 	if (!GetActive())
 		return;
 
-	// 플레이어에서 더 크게 비교하는 바운드 리턴 함수 있으면 좋겠음
+	
 	sf::FloatRect playerBounds = player->GetGlobalBounds();
-	playerBounds.left -= 2.f;
-	playerBounds.top -= 2.f;
-	playerBounds.width += 4.f;
-	playerBounds.height += 4.f;
+	playerBounds.left -= 8.f;
+	playerBounds.top -= 8.f;
+	playerBounds.width += 16.f;
+	playerBounds.height += 16.f;
 
 
-	if (playerBounds.intersects(GetGlobalBounds()))
+	if (playerBounds.intersects(GetGlobalBounds() ) && !isShoot)
 	{
+		
 		if (InputMgr::GetKeyDown(sf::Keyboard::X))
 		{
 
 			OnInteract(); // 상태 변경, 파괴, 대화 등
+			return;
 		}
 	}
+	if (player->IsInteract() )
+	{
+		if (isShoot)
+		{
+			sf::Vector2f pos = player->GetGlobalBounds().getPosition();
+			pos.x += player->GetLocalBounds().width * 0.5f;
+			pos.y -= player->GetLocalBounds().height;
+			SetPosition(pos);
+			if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
+			{
+				Shoot(); // 상태 변경, 파괴, 대화 등
+			}
+		}
+		else
+		{
+			shootTimer += dt;
+			if (shootTimer > 1)
+			{
+				SetActive(false);
+			}
+
+		}
+	}
+	
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
@@ -93,4 +123,22 @@ void Interactable::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
+}
+void Interactable::Shoot()
+{
+	isShoot = false;
+	switch (player->GetDirection())
+	{
+	case Direction::Down:
+		break;
+	case Direction::Up:
+		break;
+	case Direction::Left:
+		break;
+	case Direction ::Right:
+		break;
+	default:
+		break;
+	}
+	
 }

@@ -27,7 +27,17 @@ enum class SceneIds
 
 enum class Sides
 {
+	Up,
 	Left,
+	Down,
 	Right,
 	None,
+};
+
+enum class Direction 
+{
+	Down, 
+	Left,
+	Right, 
+	Up 
 };

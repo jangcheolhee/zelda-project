@@ -4,7 +4,7 @@
 
 class Player :  public GameObject
 {
-enum class Direction { Down, Left, Right, Up };
+
 
 protected:
 	Direction currentDirection = Direction::Down;
@@ -20,6 +20,7 @@ protected:
 	HitBox hitBox;
 	int hp = 0;
 	int maxHp = 0;
+	bool isInteract = false;
 	
 
 public:
@@ -29,12 +30,15 @@ public:
 	int GetHp() { return hp; }
 	void SetHp(int hp) { this->hp = hp; }
 
+	void SetIsInteract(bool b) { isInteract = b; }
+	bool IsInteract() { return isInteract; }
+
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;
 	void SetScale(const sf::Vector2f& s) override;
 	void SetOrigin(const sf::Vector2f& o) override;
 	void SetOrigin(Origins preset) override;
-	
+	Direction GetDirection() { return currentDirection; }
 
 	sf::FloatRect GetLocalBounds() const override
 	{

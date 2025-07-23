@@ -10,6 +10,10 @@ protected:
 	HitBox hitBox;
 	Player* player;
 	SceneGame* sceneGame = nullptr;
+	
+	float shootTimer = 0.f;
+	bool isShoot = false;
+
 public:
 	Interactable(const std::string& name = "");
 	virtual ~Interactable() = default;
@@ -33,10 +37,15 @@ public:
 
 	sf::FloatRect GetGlobalBounds() const override
 	{
+
 		return body.getGlobalBounds();
 	}
 
 	virtual void OnInteract() = 0;
 	virtual bool IsDestructible() const { return false; }
+
+	void Shoot();
 };
+
+
 

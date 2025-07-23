@@ -113,16 +113,19 @@ void Player::Update(float dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
+		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		movement.y -= speed * dt;
 		currentDirection = Direction::Up;
 		moving = true;
+		
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 		movement.y += speed * dt;
 		currentDirection = Direction::Down;
 		moving = true;
+		
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
 	{
@@ -145,14 +148,16 @@ void Player::Update(float dt)
 			body.setTextureRect(animations[currentDirection][currentFrame]);
 			elapsedTime = 0.f;
 		}
+		//SetPosition(movement);
 		body.move(movement);
-		hitBox.UpdateTransform(body, body.getLocalBounds());
+		
 	}
 	else {
 		// �̵� ���ϸ� ù ������ ����
 		currentFrame = 0;
 		body.setTextureRect(animations[currentDirection][currentFrame]);
 	}
+	hitBox.UpdateTransform(body, body.getLocalBounds());
 }
 
 void Player::Draw(sf::RenderWindow& window)
