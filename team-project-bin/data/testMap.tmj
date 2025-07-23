@@ -61,7 +61,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"data/filed.tsj"
+         "source":"filed.tsj"
         }],
  "tilewidth":8,
  "type":"map",

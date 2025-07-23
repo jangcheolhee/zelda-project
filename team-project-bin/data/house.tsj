@@ -1,0 +1,14 @@
+{ "columns":17,
+ "image":"..\/..\/MapTool\/img\/house.png",
+ "imageheight":136,
+ "imagewidth":136,
+ "margin":0,
+ "name":"house",
+ "spacing":0,
+ "tilecount":289,
+ "tiledversion":"1.11.2",
+ "tileheight":8,
+ "tilewidth":8,
+ "type":"tileset",
+ "version":"1.10"
+}

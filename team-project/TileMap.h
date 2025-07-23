@@ -2,17 +2,26 @@
 #include "stdafx.h"
 #include "GameObject.h"
 
+struct Tileset
+{
+    sf::Texture texture;
+    int firstgid = 0;
+    int columns = 0;
+    sf::VertexArray va;
+
+    Tileset() :va(sf::Quads) {}
+};
+
 class TileMap : public GameObject
 {
 protected:
+    std::vector<Tileset> tilesets;
+    
     std::string tileMap;
     sf::Texture texture;
-    sf::VertexArray va;
 
     sf::Vector2f cellSize;
     sf::Vector2f cellCount;
-
-    int firstgid = 1;
 
     json tmJ;
 
