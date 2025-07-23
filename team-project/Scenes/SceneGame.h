@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "Enemy.h"
+#include "Interactable.h"
 class Player;
 class TileMap;
 class SceneGame : public Scene
@@ -8,6 +9,7 @@ class SceneGame : public Scene
 protected:
 	Player* player;
 	TileMap* tileMap;
+	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 

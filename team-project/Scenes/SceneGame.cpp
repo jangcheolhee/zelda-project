@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "TileMap.h"
 #include "BasicEnemy.h"
-
+#include "Bush.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -105,6 +105,10 @@ void SceneGame::Enter()
     // type 
 
     // I
+    auto bush = new Bush();
+    AddGameObject(bush);
+
+    interactables.push_back(bush); // 따로 관리
 	Scene::Enter();
    
 

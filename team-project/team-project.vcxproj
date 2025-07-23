@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\SFML-2.6.2\include;.\Framework;.\Scenes;$(ProjectDir);.\Enemy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\SFML-2.6.2\include;.\Framework;.\Scenes;$(ProjectDir);.\Enemy;.\Interact;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Interact\Bush.cpp" />
     <ClCompile Include="Enemy\BasicEnemy.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="Framework\AnimationClip.cpp" />
@@ -152,7 +153,7 @@
     <ClCompile Include="Framework\SpriteGo.cpp" />
     <ClCompile Include="Framework\Scene.cpp" />
     <ClCompile Include="Framework\GameMgr.cpp" />
-    <ClCompile Include="Interactable.cpp" />
+    <ClCompile Include="Interact\Interactable.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interact\Bush.h" />
     <ClInclude Include="Enemy\BasicEnemy.h" />
     <ClInclude Include="Enemy\Enemy.h" />
     <ClInclude Include="Framework\AnimationClip.h" />
@@ -187,7 +189,7 @@
     <ClInclude Include="Framework\SpriteGo.h" />
     <ClInclude Include="Framework\Scene.h" />
     <ClInclude Include="Framework\GameMgr.h" />
-    <ClInclude Include="Interactable.h" />
+    <ClInclude Include="Interact\Interactable.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="json.hpp" />

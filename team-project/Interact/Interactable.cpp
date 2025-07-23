@@ -1,5 +1,7 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Interactable.h"
+#include "Player.h"
+
 Interactable::Interactable(const std::string& name)
 	: GameObject(name)
 {
@@ -49,12 +51,46 @@ void Interactable::Release()
 
 void Interactable::Reset()
 {
+	if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
+	{
+		sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene(); //�ٿ� ĳ���� 
+	}
+	else
+	{
+		sceneGame = nullptr;
+	}
+
+
+	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
 }
 
 void Interactable::Update(float dt)
 {
+	
+	if (!GetActive())
+		return;
+
+	// 플레이어에서 더 크게 비교하는 바운드 리턴 함수 있으면 좋겠음
+	sf::FloatRect playerBounds = player->GetGlobalBounds();
+	playerBounds.left -= 2.f;
+	playerBounds.top -= 2.f;
+	playerBounds.width += 4.f;
+	playerBounds.height += 4.f;
+
+
+	if (playerBounds.intersects(GetGlobalBounds()))
+	{
+		if (InputMgr::GetKeyDown(sf::Keyboard::X))
+		{
+
+			OnInteract(); // 상태 변경, 파괴, 대화 등
+		}
+	}
+	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
 void Interactable::Draw(sf::RenderWindow& window)
 {
+	window.draw(body);
+	hitBox.Draw(window);
 }

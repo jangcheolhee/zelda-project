@@ -1,9 +1,15 @@
 #pragma once
 #include "GameObject.h"
+#include "HitBox.h"
+class SceneGame;
+class Player;
 class Interactable :  public GameObject
 {
 protected:
 	sf::Sprite body;
+	HitBox hitBox;
+	Player* player;
+	SceneGame* sceneGame = nullptr;
 public:
 	Interactable(const std::string& name = "");
 	virtual ~Interactable() = default;
@@ -20,6 +26,15 @@ public:
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
 
+	sf::FloatRect GetLocalBounds() const override
+	{
+		return body.getLocalBounds();
+	}
+
+	sf::FloatRect GetGlobalBounds() const override
+	{
+		return body.getGlobalBounds();
+	}
 
 	virtual void OnInteract() = 0;
 	virtual bool IsDestructible() const { return false; }
