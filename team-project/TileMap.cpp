@@ -2,86 +2,45 @@
 #include "TileMap.h"
 #include <fstream>
 
-TileMap::TileMap(const std::string& name, const std::string& tileMapFile)
-    : GameObject(name), tileMap(tileMapFile)
+TileMap::TileMap(const std::string& name) : GameObject(name)
 {
 }
 
-void TileMap::Init()
+bool TileMap::LoadTileMap()
 {
-    loadTileMap();
-}
-
-void TileMap::Release()
-{
-    va.clear();
-}
-
-void TileMap::Reset()
-{
-    va.clear();
-    loadTileMap();
-}
-
-void TileMap::Update(float dt)
-{
-}
-
-void TileMap::Draw(sf::RenderWindow& window)
-{
-    sf::RenderStates states;
-    states.texture = &texture;
-    window.draw(va, states);
-}
-
-bool TileMap::loadTileMap()
-{
-    // JSON 로딩
-    std::ifstream inFile(tileMap);
-    if (!inFile.is_open())
+    tileMap = "data/testMap.tmj";
+    std::ifstream tmFile(tileMap);
+    if (!tmFile.is_open())
     {
         std::cerr << "Failed to load tile map: " << tileMap << std::endl;
         return false;
     }
+    tmFile >> tmJ;
 
-    inFile >> j;
+    int mapWidth = tmJ["width"];
+    int mapHeight = tmJ["height"];
 
-    // 맵 사이즈
-    int mapWidth = j["width"];
-    int mapHeight = j["height"];
-    int tileWidth = j["tilewidth"];
-    int tileHeight = j["tileheight"];
+    int tileWidth = tmJ["tilewidth"];
+    int tileHeight = tmJ["tileheight"];
+
     cellSize = { (float)tileWidth, (float)tileHeight };
     cellCount = { (float)mapWidth, (float)mapHeight };
 
-    // tileset 경로
-    if (j["tilesets"].empty())
-    {
-        std::cerr << "No tilesets found." << std::endl;
-        return false;
-    }
+    //반복문 타일셋 로드
+    std::string tilesetPath = tmJ["tilesets"][0]["source"];
+    firstgid = tmJ["tilesets"][0]["firstgid"];
 
-    std::string tilesetPath = j["tilesets"][0]["source"];
-    firstgid = j["tilesets"][0]["firstgid"];
+    //반복문 -> tilesetPath로 가져와야 함. data+/ string 으로 가져오기
+    std::ifstream tsFile("data/filed.tsj");
+    json tsJ;
+    tsFile >> tsJ;
 
-    // TSJ 로딩
-    std::ifstream tsFile("data/" + tilesetPath);
-    if (!tsFile.is_open())
-    {
-        std::cerr << "Could not open tileset file: " << tilesetPath << std::endl;
-        return false;
-    }
-
-    json tilesetJson;
-    tsFile >> tilesetJson;
-
-    std::string imagePath = "data/" + tilesetJson["image"].get<std::string>();
-    int imageWidth = tilesetJson["imagewidth"];
-    int imageHeight = tilesetJson["imageheight"];
-    int columns = tilesetJson["columns"];
-    int tilecount = tilesetJson["tilecount"];
-
-    // 텍스처 로딩
+    //반복문 Png 로드 
+    std::string imagePath = "data/filed.png";
+    int imageWidth = tsJ["imagewidth"];
+    int imageHeight = tsJ["imageheight"];
+    int columns = tsJ["columns"];
+    int tilecount = tsJ["tilecount"];
     if (!texture.loadFromFile(imagePath))
     {
         std::cerr << "Failed to load tileset image: " << imagePath << std::endl;
@@ -92,7 +51,7 @@ bool TileMap::loadTileMap()
     va.setPrimitiveType(sf::Quads);
     va.clear();
 
-    for (const auto& layer : j["layers"])
+    for (const auto& layer : tmJ["layers"])
     {
         if (layer["type"] != "tilelayer")
             continue;
@@ -122,12 +81,37 @@ bool TileMap::loadTileMap()
                 quad[2].texCoords = sf::Vector2f((tu + 1) * tileWidth, (tv + 1) * tileHeight);
                 quad[3].texCoords = sf::Vector2f(tu * tileWidth, (tv + 1) * tileHeight);
 
-
                 for (int i = 0; i < 4; ++i)
                     va.append(quad[i]);
             }
         }
     }
-
     return true;
+}
+
+void TileMap::Init()
+{
+    LoadTileMap();
+}
+
+void TileMap::Release()
+{
+    va.clear();
+}
+
+void TileMap::Reset()
+{
+    va.clear();
+    LoadTileMap();
+}
+
+void TileMap::Update(float dt)
+{
+}
+
+void TileMap::Draw(sf::RenderWindow& window)
+{
+    sf::RenderStates states;
+    states.texture = &texture;
+    window.draw(va, states);
 }

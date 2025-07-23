@@ -14,18 +14,17 @@ protected:
 
     int firstgid = 1;
 
-    json j;
+    json tmJ;
 
 public:
-    TileMap(const std::string& name = "", const std::string& tileMapFile = "data/testMap.tmj");
+    TileMap(const std::string& name="");
     virtual ~TileMap() = default;
+
+    bool LoadTileMap();
 
     void Init() override;
     void Release() override;
     void Reset() override;
     void Update(float dt) override;
     void Draw(sf::RenderWindow& window) override;
-
-private:
-    bool loadTileMap();
 };
