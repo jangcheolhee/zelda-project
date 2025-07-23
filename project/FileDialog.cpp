@@ -1,10 +1,11 @@
 #include "stdafx.h"
-#include "FrleDialog.h"
+#include "FileDialog.h"
 #ifdef _WIN32
+#pragma comment(lib, "Comdlg32.lib")
 #include <windows.h>
 #include <commdlg.h>
 
-std::string FrleDialog::OpenAnimationFileDialog()
+std::string OpenAnimationFileDialog()
 {
     char file[MAX_PATH] = "";
     OPENFILENAMEA ofn{};
@@ -19,8 +20,6 @@ std::string FrleDialog::OpenAnimationFileDialog()
     return {};
 }
 #else
-std::string OpenAnimationFileDialog()
-{
-    return {}; // 다른 OS에선 빈 문자열 반환 or 다른 구현
-}
+
+std::string OpenAnimationFileDialog() { return {}; } // 다른 OS용 스텁
 #endif

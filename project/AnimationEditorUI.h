@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include "AnimationClip.h"
-
+#include "FileDialog.h"
 class AnimationEditorUI
 {
 private:
@@ -192,7 +192,9 @@ public:
 
         if (isMouseOver(loadButton, mousePos))
         {
-            std::string jsonPath = "animations/" + clip.name + ".json";
+            std::string path = OpenAnimationFileDialog();
+            if (path.empty()) return true; // 취소
+            std::string jsonPath = "animations/" + clip.name + ".csv";
             std::ifstream ifs(jsonPath);
             if (ifs.is_open())
             {
@@ -282,7 +284,7 @@ public:
         for (size_t i = 0; i < clip.frames.size(); ++i)
         {
             const FrameData& frame = clip.frames[i]; //csv파일속에 들어가는 이름 정의
-            file << "Link_down," << i << ","
+            file << "Sord," << i << ","
                 << frame.rect.left << ","
                 << frame.rect.top << ","
                 << frame.rect.width << ","

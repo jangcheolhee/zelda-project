@@ -93,7 +93,7 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="FrleDialog.cpp">
+    <ClCompile Include="FileDialog.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -185,7 +185,7 @@
     <ClInclude Include="Enemy.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="FrleDialog.h">
+    <ClInclude Include="FileDialog.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
