@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
+#include "Enemy.h"
 
 struct Tileset
 {
@@ -16,7 +17,7 @@ class TileMap : public GameObject
 {
 protected:
     std::vector<Tileset> tilesets;
-    
+
     std::string tileMap;
     sf::Texture texture;
 
@@ -24,12 +25,12 @@ protected:
     sf::Vector2f cellCount;
 
     json tmJ;
-
 public:
     TileMap(const std::string& name="");
     virtual ~TileMap() = default;
 
     bool LoadTileMap();
+    std::vector<sf::Vector2f> getPosition(int layerIndex, int targetGid);
 
     void Init() override;
     void Release() override;
