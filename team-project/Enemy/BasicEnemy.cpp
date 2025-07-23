@@ -8,7 +8,7 @@ void BasicEnemy::Init()
 	speed = 100.f;
 	hp = 40;
 	
-	// 여기서 sprite texture 변경하기
+	
 
 	
 }
@@ -16,8 +16,9 @@ void BasicEnemy::Init()
 void BasicEnemy::Reset()
 {
 	Enemy::Reset();
+	// 여기서 sprite texture 변경하기
 	body.setTexture(TEXTURE_MGR.Get("graphics/sprite_sheet.png"));
-	body.setTextureRect({ 26,0,61,125 });
+	body.setTextureRect({ 50,25,18,26 });
 }
 
 void BasicEnemy::UpdateBehavior(float dt)

@@ -55,7 +55,7 @@ void Player::Reset()
 {
 
 	body.setTexture(TEXTURE_MGR.Get("graphics/sprite_sheet.png"));
-	body.setTextureRect({ 26,0,61,125 });
+	body.setTextureRect({ 50,25,18,26 });
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
 

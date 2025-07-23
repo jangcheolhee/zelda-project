@@ -81,10 +81,9 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
 
-	player = new Player();
+	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-	tileMap->Init();
-	tileMap->Reset();
+	
 
 	AddGameObject(player);
 	AddGameObject(tileMap);
@@ -98,8 +97,8 @@ void SceneGame::Enter()
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
 	uiView.setCenter(center);
-	worldView.setSize(size);
-	worldView.setCenter({ 0.f, -200.f });
+    worldView.setSize({size.x *.5f, size.y *.5f});
+	worldView.setCenter({ 0.f,0.f });
     SpawnEnemy({ 20,20 }, Enemy::Types::Basic);
     // Enmy
     // pos.x, pos,y
@@ -107,6 +106,7 @@ void SceneGame::Enter()
 
     // I
 	Scene::Enter();
+   
 
 
 }

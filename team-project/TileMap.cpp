@@ -9,7 +9,8 @@ TileMap::TileMap(const std::string& name, const std::string& tileMapFile)
 
 void TileMap::Init()
 {
-    loadTileMap();
+    sortingLayer = SortingLayers::Background;
+    sortingOrder = 0;
 }
 
 void TileMap::Release()
@@ -66,7 +67,9 @@ bool TileMap::loadTileMap()
     firstgid = j["tilesets"][0]["firstgid"];
 
     // TSJ ·Îµù
-    std::ifstream tsFile("data/" + tilesetPath);
+    //std::ifstream tsFile("data/" + tilesetPath);
+
+    std::ifstream tsFile("data/filed.tsj");
     if (!tsFile.is_open())
     {
         std::cerr << "Could not open tileset file: " << tilesetPath << std::endl;
@@ -76,7 +79,8 @@ bool TileMap::loadTileMap()
     json tilesetJson;
     tsFile >> tilesetJson;
 
-    std::string imagePath = "data/" + tilesetJson["image"].get<std::string>();
+    //std::string imagePath = "data/" + tilesetJson["image"].get<std::string>();
+    std::string imagePath = "data/filed.png";
     int imageWidth = tilesetJson["imagewidth"];
     int imageHeight = tilesetJson["imageheight"];
     int columns = tilesetJson["columns"];

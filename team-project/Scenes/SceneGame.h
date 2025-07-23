@@ -16,8 +16,7 @@ public:
 
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
-
-	void DeleteEnemy(); // ������Ŭ ����
+	void DeleteEnemy(); 
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 
 	void Init() override;

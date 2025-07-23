@@ -2,7 +2,7 @@
 
 int main()
 {
-    FRAMEWORK.Init(1280, 720, "Zelda!!");
+    FRAMEWORK.Init(512, 478, "Zelda!!");
     FRAMEWORK.Do();
     FRAMEWORK.Release();
 
