@@ -13,7 +13,6 @@ public:
 		Chest,
 		JumpWall,
 		Item,
-
 	};
 protected:
 	sf::Sprite body;
@@ -67,6 +66,3 @@ public:
 
 	void Shoot();
 };
-
-
-

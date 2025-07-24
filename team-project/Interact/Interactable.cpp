@@ -61,8 +61,6 @@ void Interactable::Reset()
 	{
 		sceneGame = nullptr;
 	}
-
-
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
 	isShoot = false;
 	shootTimer = 0.f;
@@ -70,7 +68,6 @@ void Interactable::Reset()
 
 void Interactable::Update(float dt)
 {
-
 	if (!GetActive())
 		return;
 
@@ -134,5 +131,4 @@ void Interactable::Shoot()
 		dir = { 1.f, 0.f };
 		break;
 	}
-
 }

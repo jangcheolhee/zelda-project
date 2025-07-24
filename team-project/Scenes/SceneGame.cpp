@@ -4,6 +4,7 @@
 #include "TileMap.h"
 #include "BasicEnemy.h"
 #include "Bush.h"
+#include "Npc.h"
 #include "Chest.h"
 #include "Rupee.h"
 #include "JumpWall.h"
@@ -34,9 +35,6 @@ Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
 	}
 
 	if (newEnemy != nullptr) newEnemy->Init();
-
-	if (newEnemy != nullptr)
-		newEnemy->Init();
 
 	return newEnemy;
 }
@@ -99,18 +97,13 @@ void SceneGame::CheckCollison()
 			case Interactable::Type::Item: case Interactable::Type::JumpWall:
 
 				obj->OnInteract();
-
-
 				break;
 			}
-
-
 		}player->SetMovable(true);
-
 	}
 }
 
-void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
+void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid, std::string name)
 {
 	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
 
@@ -119,7 +112,16 @@ void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
 		auto bush = new Bush;
 		AddGameObject(bush);
 		interactables.push_back(bush);
+		bush->Reset();
 		bush->SetPosition(pos);
+		if (name == "bush")
+		{
+			bush->SetOrigin(Origins::ML);
+		}
+		else if (name == "hole")
+		{
+			bush->SetOrigin(Origins::TL);
+		}
 	}
 }
 
@@ -131,7 +133,6 @@ void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 	{
 		auto inter = new JumpWall();
 		
-
 		switch (targetGid)
 		{
 		case 25075:
@@ -177,7 +178,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/sprite_sheet.png");
 	texIds.push_back("graphics/bush.png");
 	texIds.push_back("graphics/Overworld.png");
-  texIds.push_back("graphics/npc.png");
+    texIds.push_back("graphics/npc.png");
 	texIds.push_back("graphics/Enemy_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
@@ -195,7 +196,6 @@ void SceneGame::Init()
 
 void SceneGame::Enter()
 {
-
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
@@ -204,14 +204,10 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
 
-	 SpawnBushesAtTile(1, 24670); //bushes
-    SpawnBushesAtTile(1, 24590); //hole
+	SpawnBushesAtTile(1, 24670, "bush");
+    SpawnBushesAtTile(1, 24590, "hole"); 
     SpawnNpcAtTile(2, 24638); 
-	
 	SpawnJumpAtTile(3, 25075);
-	
-
-	//interactables.push_back(bush); // 따로 관리   
 
 	Scene::Enter();
 	player->SetPosition(startPos);
@@ -222,5 +218,4 @@ void SceneGame::Update(float dt)
 	Scene::Update(dt);
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	CheckCollison();
-
 }
