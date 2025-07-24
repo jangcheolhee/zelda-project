@@ -105,7 +105,9 @@ void SceneGame::DeleteEnemy()
 
 void SceneGame::Init()
 {
-	texIds.push_back("graphics/sprite_sheet.png");
+
+    texIds.push_back("graphics/Overworld.png");
+    texIds.push_back("graphics/Enemy_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 
 	//ANI_CLIP_MGR.Load("animations/idle.csv");

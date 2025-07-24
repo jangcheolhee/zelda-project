@@ -19,7 +19,7 @@ void Bush::Init()
 void Bush::Reset()
 {
 	Interactable::Reset();
-	body.setTexture(TEXTURE_MGR.Get("graphics/sprite_sheet.png"));
-	body.setTextureRect({ 70,30,18,26 });
+	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
+	body.setTextureRect({ 304,57,16,16 });
 
 }

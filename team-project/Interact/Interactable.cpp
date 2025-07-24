@@ -90,6 +90,8 @@ void Interactable::Update(float dt)
 		else
 		{
 			shootTimer += dt;
+			position += speed * dt * direction;
+			SetPosition(position);
 			if (shootTimer > 1)
 			{
 				SetActive(false);
@@ -97,8 +99,7 @@ void Interactable::Update(float dt)
 
 		}
 
-		position += speed * dt * direction;
-		SetPosition(position);
+		
 		hitBox.UpdateTransform(body, GetLocalBounds());
 	}
 }
@@ -113,10 +114,10 @@ void Interactable::Shoot()
 	switch (player->GetDirection())
 	{
 	case Direction::Down:
-		direction = { 0.f,-1.f };
+		direction = { 0.f, 1.f };
 		break;
 	case Direction::Up:
-		direction = { 0.f, 1.f };
+		direction = { 0.f, -1.f };
 		break;
 	case Direction::Left:
 		direction = { -1.f,0.f };
