@@ -12,7 +12,6 @@ protected:
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
-
 public:
 	SceneGame();
 
@@ -26,4 +25,3 @@ public:
 	
 	void Update(float dt) override;
 };
-

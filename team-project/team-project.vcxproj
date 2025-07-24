@@ -209,10 +209,12 @@
     <None Include="..\team-project-bin\data\filed.tsj" />
     <None Include="..\team-project-bin\data\testMap.tmj" />
     <None Include="data\data.json" />
+    <None Include="data\field_20250724.tmj" />
     <None Include="data\filed.tsj" />
     <None Include="data\house.tsj" />
     <None Include="data\posTest.tmj" />
     <None Include="data\testMap.tmj" />
+    <None Include="data\zelda_house_outdoor.tsj" />
     <None Include="data\zelda_house_sheet.tsj" />
   </ItemGroup>
   <ItemGroup>

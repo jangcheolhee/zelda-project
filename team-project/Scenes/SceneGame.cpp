@@ -4,7 +4,6 @@
 #include "TileMap.h"
 #include "BasicEnemy.h"
 #include "Bush.h"
-#include "TileMap.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -27,7 +26,6 @@ Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
     case Enemy::Types::Basic:
         newEnemy = new BasicEnemy();
         break;
-   
     default:
         break;
     }
@@ -38,7 +36,6 @@ Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
     return newEnemy;
 }
 
-
 void SceneGame::RecycleEnemy(Enemy* enemy)
 {
     if (enemy)
@@ -47,7 +44,6 @@ void SceneGame::RecycleEnemy(Enemy* enemy)
         enemyPools[enemy->GetType()].push_back(std::unique_ptr<Enemy>(enemy));
     }
 }
-
 
 void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 {
@@ -63,7 +59,7 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 
 void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
 {
-    std::vector<sf::Vector2f> positions = tileMap->getPosition(layerIndex, targetGid);
+    std::vector<sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
     for (const auto& pos : positions)
     {
         SpawnEnemy(pos, type);
@@ -90,11 +86,9 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/run.csv");
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
-
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
 	
-
 	AddGameObject(player);
 	AddGameObject(tileMap);
 	
@@ -108,21 +102,22 @@ void SceneGame::Enter()
 	uiView.setSize(size);
 	uiView.setCenter(center);
     worldView.setSize({size.x *.5f, size.y *.5f});
-	worldView.setCenter({ 0.f,0.f });
-    //SpawnEnemy({ 20,20 }, Enemy::Types::Basic);
-    // Enmy
-    // pos.x, pos,y
-    // type 
+    worldView.setCenter(player->GetGlobalBounds().getPosition());
+    
+    sf::Vector2f startPos = tileMap->getPosition(1, 506);
     SpawnEnemyAtTile(2, 290, Enemy::Types::Basic);
-    // I
+    
     auto bush = new Bush();
     AddGameObject(bush);
 
     interactables.push_back(bush); // 따로 관리
 	Scene::Enter();
+    player->SetPosition(startPos);
 }
 
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
+    worldView.setCenter(player->GetGlobalBounds().getPosition());
+
 }

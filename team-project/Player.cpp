@@ -99,8 +99,6 @@ void Player::Release()
 
 void Player::Reset()
 {
-
-	
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
 
@@ -164,7 +162,6 @@ void Player::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
-	
 }
 
 bool Player::checkCollision(const HitBox& other)
