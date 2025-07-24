@@ -19,6 +19,8 @@ public:
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //�� ���� ����(Ȱ��)
+	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //�ϰ� ����
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 	void CheckCollison();
 

@@ -203,7 +203,6 @@
     <ClInclude Include="Framework\TextGo.h" />
     <ClInclude Include="Framework\Utils.h" />
     <ClInclude Include="Framework\Variables.h" />
-    <ClInclude Include="TileLayer.h" />
     <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <ItemGroup>

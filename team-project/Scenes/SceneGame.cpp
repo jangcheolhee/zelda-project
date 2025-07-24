@@ -4,6 +4,7 @@
 #include "TileMap.h"
 #include "BasicEnemy.h"
 #include "Bush.h"
+#include "TileMap.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -60,6 +61,12 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
     enemyList.push_back(enemy);
 }
 
+void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
+{
+    std::vector<sf::Vector2f> positions = tileMap->getPosition(layerIndex, targetGid);
+    for (const auto& pos : positions)
+    {
+        SpawnEnemy(pos, type);
 void SceneGame::CheckCollison()
 {
     for (auto& enemy : enemyList)
@@ -122,20 +129,17 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
     worldView.setSize({size.x *.5f, size.y *.5f});
 	worldView.setCenter({ 0.f,0.f });
-    SpawnEnemy({ 20,20 }, Enemy::Types::Basic);
+    //SpawnEnemy({ 20,20 }, Enemy::Types::Basic);
     // Enmy
     // pos.x, pos,y
     // type 
-
+    SpawnEnemyAtTile(2, 290, Enemy::Types::Basic);
     // I
     auto bush = new Bush();
     AddGameObject(bush);
 
     interactables.push_back(bush); // 따로 관리
 	Scene::Enter();
-   
-
-
 }
 
 void SceneGame::Update(float dt)

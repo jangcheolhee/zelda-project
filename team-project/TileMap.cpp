@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TileMap.h"
+#include "SceneGame.h"
 #include <fstream>
 
 TileMap::TileMap(const std::string& name) : GameObject(name)
@@ -84,11 +85,12 @@ bool TileMap::LoadTileMap()
                 
                 //VertexArray
                 sf::Vertex quad[4];
+                sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y};
 
-                quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight);
-                quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight);
-                quad[2].position = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight);
-                quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight);
+                quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight)+origin;
+                quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight) + origin;
+                quad[2].position = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight) + origin;
+                quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight) + origin;
 
                 quad[0].texCoords = sf::Vector2f(tu * tileWidth, tv * tileHeight);
                 quad[1].texCoords = sf::Vector2f((tu + 1) * tileWidth, tv * tileHeight);
@@ -101,6 +103,32 @@ bool TileMap::LoadTileMap()
         }
     }
     return true;
+}
+
+std::vector<sf::Vector2f> TileMap::getPosition(int layerIndex, int targetGid)
+{
+    std::vector<sf::Vector2f> pos;
+
+    const auto& layer = tmJ["layers"][layerIndex];
+    const auto& data = layer["data"];
+    int width = layer["width"];
+    int heihgt = layer["height"];
+
+    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
+
+    for (int i = 0; i < (int)data.size(); ++i)
+    {
+        int gid = data[i];
+        if (gid == targetGid)
+        {
+            int x = i % width;
+            int y = i / width;
+            sf::Vector2f worldPos{ x * cellSize.x, y * cellSize.y };
+            worldPos += origin + GetPosition();
+            pos.push_back(worldPos);
+        }
+    }
+    return pos;
 }
 
 void TileMap::Init()
