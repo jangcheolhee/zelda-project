@@ -106,6 +106,7 @@ void Player::Reset()
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
 	wantsToInteract = false;
+	isInteract = false;
 
 
 }

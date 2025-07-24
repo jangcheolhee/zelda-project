@@ -51,7 +51,7 @@ void Bush::UpdateBeHavior(float dt)
 			SetPosition(position);
 			if (shootTimer > 1)
 			{
-				//player->SetIsInteract(false);
+				player->SetIsInteract(false);
 				SetActive(false);
 
 			}

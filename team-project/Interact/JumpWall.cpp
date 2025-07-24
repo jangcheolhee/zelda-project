@@ -6,8 +6,27 @@ void JumpWall::OnInteract()
 	
 	if (direction == player->GetDirection())
 	{
-
-		player->SetPosition(player->GetPosition() + dir * GetLocalBounds().width);
+		switch (direction)
+		{
+		case Direction::Down:
+			dir = { 0.f,1.f };
+			break;
+		case Direction::Left:
+			dir = { -1.f,0.f };
+			break;
+		case Direction::Right:
+			dir = { 1.f,0.f };
+			
+			break;
+		
+			
+		case Direction::Up:
+			dir = { 0.f,-1.f };
+			break;
+		default:
+			break;
+		}
+		player->SetPosition(player->GetGlobalBounds().getPosition() + dir * GetLocalBounds().width);
 	}
 }
 
@@ -20,16 +39,12 @@ void JumpWall::Reset()
 {
 	Interactable::Reset();
 	type = Type::JumpWall;
-	dir = { -1.f,0.f };
 	
-
-
-
+	
 	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 	body.setTextureRect({ 304,57,8,8 });
 	sf::Color color = body.getColor();
 	color.a = 0;
 	body.setColor(color);
-
 
 }

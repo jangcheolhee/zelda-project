@@ -124,6 +124,8 @@ void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
 	}
 }
 
+
+// Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 {
 	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
@@ -223,5 +225,9 @@ void SceneGame::Update(float dt)
 	Scene::Update(dt);
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	CheckCollison();
+	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Game);
+	}
 
 }
