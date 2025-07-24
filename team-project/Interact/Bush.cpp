@@ -21,7 +21,7 @@ void Bush::Reset()
 	Interactable::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 	body.setTextureRect({ 304,57,16,16 });
-	SetPosition({20.f,20.f});
+	
 	type = Type::Throw;
 
 }

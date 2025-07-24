@@ -10,6 +10,7 @@ public:
     void OnInteract() override;
     void Init() override;
     void Reset() override;
+    void SetDirection(Direction d) { direction = d; }
 
 };
 

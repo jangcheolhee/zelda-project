@@ -21,7 +21,7 @@ public:
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //�� ���� ����(Ȱ��)
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //�ϰ� ����
 	void SpawnBushesAtTile(int layerIndex, int targetGid); 
-	
+	void SpawnJumpAtTile(int layerIndex, int targetGid);
 
 	void CheckCollison();
 

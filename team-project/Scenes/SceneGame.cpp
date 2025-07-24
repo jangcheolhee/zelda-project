@@ -23,17 +23,17 @@ Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
 		return reused;
 	}
 
-    Enemy* newEnemy = nullptr;
-    switch (type)
-    {
-    case Enemy::Types::Basic:
-        newEnemy = new BasicEnemy();
-        break;
-    default:
-        break;
-    }
+	Enemy* newEnemy = nullptr;
+	switch (type)
+	{
+	case Enemy::Types::Basic:
+		newEnemy = new BasicEnemy();
+		break;
+	default:
+		break;
+	}
 
-    if (newEnemy != nullptr) newEnemy->Init();
+	if (newEnemy != nullptr) newEnemy->Init();
 
 	if (newEnemy != nullptr)
 		newEnemy->Init();
@@ -64,7 +64,7 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 
 void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
 {
-	std::vector<sf::Vector2f> positions = tileMap->getPosition(layerIndex, targetGid);
+	std::vector<sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
 	for (const auto& pos : positions)
 	{
 		SpawnEnemy(pos, type);
@@ -95,34 +95,58 @@ void SceneGame::CheckCollison()
 					obj->OnInteract();
 				}
 				break;
-			
+
 			case Interactable::Type::Item: case Interactable::Type::JumpWall:
 
 				obj->OnInteract();
 
-		
+
 				break;
 			}
-			
+
 
 		}player->SetMovable(true);
-		
+
 	}
 }
 
 void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
 {
-    std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
 
-    for (const auto& pos : positions)
-    {
-        auto bush = new Bush;
-        AddGameObject(bush);
-        interactables.push_back(bush);
-        bush->SetScale({ 0.1f, 0.1f });
-        //bush->SetOrigin()
-        bush->SetPosition(pos);
-    }
+	for (const auto& pos : positions)
+	{
+		auto bush = new Bush;
+		AddGameObject(bush);
+		interactables.push_back(bush);
+		
+		bush->SetOrigin(Origins::BC);
+		bush->SetPosition(pos);
+	}
+}
+
+void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
+{
+	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+
+	for (const auto& pos : positions)
+	{
+		auto inter = new JumpWall();
+		
+
+		switch (targetGid)
+		{
+		case 25075:
+			inter->SetDirection(Direction::Down);
+			break;
+		default:
+			break;
+		}
+		AddGameObject(inter);
+		interactables.push_back(inter);
+		inter->SetOrigin(Origins::TC);
+		inter->SetPosition(pos);
+	}
 }
 
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
@@ -139,8 +163,7 @@ void SceneGame::DeleteEnemy()
 void SceneGame::Init()
 {
 	texIds.push_back("graphics/sprite_sheet.png");
-    texIds.push_back("graphics/bush.png");
-
+	texIds.push_back("graphics/bush.png");
 	texIds.push_back("graphics/Overworld.png");
 
 	texIds.push_back("graphics/Enemy_sheet.png");
@@ -151,7 +174,7 @@ void SceneGame::Init()
 
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-   
+
 	AddGameObject(player);
 	AddGameObject(tileMap);
 
@@ -160,32 +183,32 @@ void SceneGame::Init()
 
 void SceneGame::Enter()
 {
-	
+
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
 	uiView.setCenter(center);
-    worldView.setSize({size.x *.5f, size.y *.5f});
-    worldView.setCenter(player->GetGlobalBounds().getPosition());
-    sf::Vector2f startPos = tileMap->getPosition(2, 18585);
-    
-    //SpawnEnemyAtTile(1, 24670, Enemy::Types::Basic);
-    SpawnBushesAtTile(1, 24670);
+	worldView.setSize({ size.x * .5f, size.y * .5f });
+	worldView.setCenter(player->GetGlobalBounds().getPosition());
+	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
 
-    //auto bush = new Bush;
-    //AddGameObject(bush);
-    //bush->SetPosition({ 10,10 });
+	//SpawnEnemyAtTile(1, 24670, Enemy::Types::Basic);
+	SpawnBushesAtTile(1, 24670);
+	SpawnJumpAtTile(3, 25075);
+	//auto bush = new Bush;
+	//AddGameObject(bush);
+	//bush->SetPosition({ 10,10 });
 
-    //interactables.push_back(bush); // 따로 관리   
+	//interactables.push_back(bush); // 따로 관리   
 
-    Scene::Enter();
-    player->SetPosition(startPos);
+	Scene::Enter();
+	player->SetPosition(startPos);
 }
 
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
-    worldView.setCenter(player->GetGlobalBounds().getPosition());
+	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	CheckCollison();
 
 }
