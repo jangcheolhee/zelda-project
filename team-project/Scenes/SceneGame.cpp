@@ -66,6 +66,17 @@ void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types typ
     }
 }
 
+void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
+{
+    std::vector<sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+    for (const auto& pos : positions)
+    {
+        auto bush = new Bush;
+        AddGameObject(bush);
+        interactables.push_back(bush); // 따로 관리
+    }
+}
+
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
 {
@@ -88,7 +99,7 @@ void SceneGame::Init()
 
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-	
+   
 	AddGameObject(player);
 	AddGameObject(tileMap);
 	
@@ -103,14 +114,12 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
     worldView.setSize({size.x *.5f, size.y *.5f});
     worldView.setCenter(player->GetGlobalBounds().getPosition());
-    
     sf::Vector2f startPos = tileMap->getPosition(1, 506);
-    SpawnEnemyAtTile(2, 290, Enemy::Types::Basic);
     
-    auto bush = new Bush();
-    AddGameObject(bush);
+    //SpawnEnemyAtTile(2, 94, Enemy::Types::Basic);
+    SpawnBushesAtTile(2, 94);
 
-    interactables.push_back(bush); // 따로 관리
+
 	Scene::Enter();
     player->SetPosition(startPos);
 }
@@ -119,5 +128,4 @@ void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
     worldView.setCenter(player->GetGlobalBounds().getPosition());
-
 }

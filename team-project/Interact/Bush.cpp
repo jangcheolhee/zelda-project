@@ -8,7 +8,6 @@ void Bush::OnInteract()
 	player->SetIsInteract(true);
 	isShoot = true;
 	// 플레이어는 부쉬 든 상태를 해결
-	
 }
 
 void Bush::Init()
@@ -19,7 +18,6 @@ void Bush::Init()
 void Bush::Reset()
 {
 	Interactable::Reset();
-	body.setTexture(TEXTURE_MGR.Get("graphics/sprite_sheet.png"));
+	body.setTexture(TEXTURE_MGR.Get("graphics/bush.png"));
 	body.setTextureRect({ 70,30,18,26 });
-
 }

@@ -33,6 +33,14 @@
             "dynamicWrapping": true,
             "scaleInDock": 1
         },
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/field.tmj": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 3548,
+                "y": 3174
+            }
+        },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/filed.tsj": {
             "dynamicWrapping": false,
             "scaleInDock": 2,
@@ -122,17 +130,18 @@
     "last.exportedFilePath": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data",
     "last.imagePath": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data",
     "map.fixedSize": true,
-    "map.height": 512,
+    "map.height": 192,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.tileHeight": 8,
     "map.tileWidth": 8,
-    "map.width": 512,
+    "map.width": 128,
     "openFiles": [
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/filed.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/zelda_house_outdoor.tsj"
     ],
     "project": "zelda.tiled-project",
     "recentFiles": [
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/field.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/zelda_house_outdoor.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/filed.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/house.tsj",
@@ -143,8 +152,7 @@
         "zeldaRoom.tmx",
         "filed.tsx",
         "zelda_house_bottle.tsx",
-        "house.tsx",
-        "overworld-sheet.tsx"
+        "house.tsx"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {

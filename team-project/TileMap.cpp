@@ -9,7 +9,7 @@ TileMap::TileMap(const std::string& name) : GameObject(name)
 
 bool TileMap::LoadTileMap()
 {
-    tileMap = "data/field.tmj";
+    tileMap = "data/orginalMap.tmj";
     std::ifstream tmFile(tileMap);
     if (!tmFile.is_open())
     {

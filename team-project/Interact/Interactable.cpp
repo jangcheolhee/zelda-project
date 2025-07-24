@@ -62,7 +62,6 @@ void Interactable::Reset()
 		sceneGame = nullptr;
 	}
 
-
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
 	isShoot = false; 
 	shootTimer = 0.f;
@@ -70,24 +69,18 @@ void Interactable::Reset()
 
 void Interactable::Update(float dt)
 {
-	
-	if (!GetActive())
-		return;
+	if (!GetActive()) return;
 
-	
 	sf::FloatRect playerBounds = player->GetGlobalBounds();
 	playerBounds.left -= 8.f;
 	playerBounds.top -= 8.f;
 	playerBounds.width += 16.f;
 	playerBounds.height += 16.f;
 
-
 	if (playerBounds.intersects(GetGlobalBounds() ) && !isShoot)
 	{
-		
 		if (InputMgr::GetKeyDown(sf::Keyboard::X))
 		{
-
 			OnInteract(); // 상태 변경, 파괴, 대화 등
 			return;
 		}
@@ -108,14 +101,9 @@ void Interactable::Update(float dt)
 		else
 		{
 			shootTimer += dt;
-			if (shootTimer > 1)
-			{
-				SetActive(false);
-			}
-
+			if (shootTimer > 1) SetActive(false);
 		}
 	}
-	
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
@@ -124,6 +112,7 @@ void Interactable::Draw(sf::RenderWindow& window)
 	window.draw(body);
 	hitBox.Draw(window);
 }
+
 void Interactable::Shoot()
 {
 	isShoot = false;
@@ -140,5 +129,4 @@ void Interactable::Shoot()
 	default:
 		break;
 	}
-	
 }

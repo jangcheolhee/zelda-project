@@ -37,7 +37,6 @@ public:
 
 	sf::FloatRect GetGlobalBounds() const override
 	{
-
 		return body.getGlobalBounds();
 	}
 
@@ -46,6 +45,3 @@ public:
 
 	void Shoot();
 };
-
-
-
