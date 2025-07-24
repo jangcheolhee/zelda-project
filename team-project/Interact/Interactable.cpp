@@ -64,8 +64,7 @@ void Interactable::Reset()
 
 
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
-	isShoot = false;
-	shootTimer = 0.f;
+	
 }
 
 void Interactable::Update(float dt)
@@ -79,31 +78,8 @@ void Interactable::Update(float dt)
 	case Interactable::Type::None:
 		break;
 	case Interactable::Type::Throw:
-		if (player->IsInteract())
-		{
-			if (isShoot)
-			{
-				sf::Vector2f pos = player->GetGlobalBounds().getPosition();
-				pos.x += player->GetLocalBounds().width * 0.5f;
-				pos.y -= player->GetLocalBounds().height;
-				SetPosition(pos);
-				if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
-				{
-					Shoot(); 
-				}
-			}
-			else
-			{
-				shootTimer += dt;
-				position += speed * dt * dir;
-				SetPosition(position);
-				if (shootTimer > 1)
-				{
-					SetActive(false);
-					
-				}
-			}
-		}
+		UpdateBeHavior(dt);
+		break;
 	case Interactable::Type::Chest:
 		break;
 	default:
@@ -115,24 +91,4 @@ void Interactable::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
-}
-void Interactable::Shoot()
-{
-	isShoot = false;
-	switch (player->GetDirection())
-	{
-	case Direction::Down:
-		dir = { 0.f, 1.f };
-		break;
-	case Direction::Up:
-		dir = { 0.f, -1.f };
-		break;
-	case Direction::Left:
-		dir = { -1.f,0.f };
-		break;
-	case Direction::Right:
-		dir = { 1.f, 0.f };
-		break;
-	}
-
 }

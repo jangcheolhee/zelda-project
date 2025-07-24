@@ -21,8 +21,7 @@ protected:
 	Player* player;
 	SceneGame* sceneGame = nullptr;
 	
-	float shootTimer = 0.f;
-	bool isShoot = false;
+	
 
 	sf::Vector2f dir = { 0.f,0.f };
 	float speed = 150.f;
@@ -64,7 +63,7 @@ public:
 
 	virtual void OnInteract() = 0;
 	virtual bool IsDestructible() const { return false; }
-
+	virtual void UpdateBeHavior(float dt) {};
 	void Shoot();
 };
 

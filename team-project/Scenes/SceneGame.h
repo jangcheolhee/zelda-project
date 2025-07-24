@@ -22,6 +22,7 @@ public:
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //�ϰ� ����
 	void SpawnBushesAtTile(int layerIndex, int targetGid); 
 	void SpawnJumpAtTile(int layerIndex, int targetGid);
+	void SpawnNpcAtTile(int layerIndex, int targetGid);
 
 	void CheckCollison();
 

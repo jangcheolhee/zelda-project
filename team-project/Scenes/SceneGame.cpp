@@ -7,6 +7,7 @@
 #include "Chest.h"
 #include "Rupee.h"
 #include "JumpWall.h"
+#include "Npc.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -90,7 +91,7 @@ void SceneGame::CheckCollison()
 			switch (obj->GetType())
 			{
 			case Interactable::Type::Throw: case Interactable::Type::Chest:
-				if (player->WantsToInteract())
+				if (player->WantsToInteract() && !player->IsInteract())
 				{
 					obj->OnInteract();
 				}
@@ -130,7 +131,7 @@ void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 	for (const auto& pos : positions)
 	{
 		auto inter = new JumpWall();
-		
+
 
 		switch (targetGid)
 		{
@@ -149,16 +150,16 @@ void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 
 void SceneGame::SpawnNpcAtTile(int layerIndex, int targetGid)
 {
-    std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
 
-    for (const auto& pos : positions)
-    {
-        auto npc = new Npc;
-        AddGameObject(npc);
-        interactables.push_back(npc);
-        npc->SetScale({ 0.5f, 0.5f });
-        npc->SetPosition(pos);
-    }
+	for (const auto& pos : positions)
+	{
+		auto npc = new Npc();
+		AddGameObject(npc);
+		interactables.push_back(npc);
+		npc->SetScale({ 0.5f, 0.5f });
+		npc->SetPosition(pos);
+	}
 }
 
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
@@ -177,7 +178,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/sprite_sheet.png");
 	texIds.push_back("graphics/bush.png");
 	texIds.push_back("graphics/Overworld.png");
-  texIds.push_back("graphics/npc.png");
+	texIds.push_back("graphics/npc.png");
 	texIds.push_back("graphics/Enemy_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
@@ -204,12 +205,12 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
 
-	 SpawnBushesAtTile(1, 24670); //bushes
-    SpawnBushesAtTile(1, 24590); //hole
-    SpawnNpcAtTile(2, 24638); 
-	
+	SpawnBushesAtTile(1, 24670); //bushes
+	SpawnBushesAtTile(1, 24590); //hole
+	SpawnNpcAtTile(2, 24638);
+
 	SpawnJumpAtTile(3, 25075);
-	
+
 
 	//interactables.push_back(bush); // 따로 관리   
 
