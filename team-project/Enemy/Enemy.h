@@ -22,7 +22,7 @@ protected:
 
 	
 	sf::Vector2f velocity = { 0.f, 0.f };
-	sf::Vector2f direction;
+	
 	sf::Vector2f initPosition;
 
 	HitBox hitBox;
@@ -37,6 +37,8 @@ protected:
 	float skillTimer = 0.f;
 	int damage = 0;
 	int attackInterval = 0.f;
+	sf::Vector2f dir = { 0.f, 0.f };
+	Direction direction = Direction::Down;
 
 	
 

@@ -87,6 +87,7 @@ void Enemy::Reset()
 
 	SetOrigin(Origins::BC);
 
+
 }
 
 void Enemy::Update(float dt)
