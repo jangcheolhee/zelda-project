@@ -20,6 +20,7 @@ void Framework::Init(int w, int h, const std::string& t)
 
 void Framework::Do()
 {
+   
     while (window.isOpen())
     {
         sf::Time dt = clock.restart();
@@ -32,6 +33,7 @@ void Framework::Do()
         sf::Event event;
         while (window.pollEvent(event))
         {
+           
             if (event.type == sf::Event::Closed)
                 window.close();
             InputMgr::UpdateEvent(event);

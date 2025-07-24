@@ -275,7 +275,7 @@ public:
         for (size_t i = 0; i < clip.frames.size(); ++i)
         {
             const FrameData& frame = clip.frames[i]; //csv파일속에 들어가는 이름 정의
-            file << "Right," << i << ","
+            file << "idle," << i << ","
                 << frame.rect.left << ","
                 << frame.rect.top << ","
                 << frame.rect.width << ","

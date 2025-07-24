@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36127.28 d17.14
+VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "team-project", "team-project.vcxproj", "{11673853-143C-4C56-92BE-F2AF694319F7}"
 EndProject
@@ -11,6 +11,8 @@ Global
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		team-project-bin|x64 = team-project-bin|x64
+		team-project-bin|x86 = team-project-bin|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{11673853-143C-4C56-92BE-F2AF694319F7}.Debug|x64.ActiveCfg = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{11673853-143C-4C56-92BE-F2AF694319F7}.Release|x64.Build.0 = Release|x64
 		{11673853-143C-4C56-92BE-F2AF694319F7}.Release|x86.ActiveCfg = Release|Win32
 		{11673853-143C-4C56-92BE-F2AF694319F7}.Release|x86.Build.0 = Release|Win32
+		{11673853-143C-4C56-92BE-F2AF694319F7}.team-project-bin|x64.ActiveCfg = Debug|x64
+		{11673853-143C-4C56-92BE-F2AF694319F7}.team-project-bin|x64.Build.0 = Debug|x64
+		{11673853-143C-4C56-92BE-F2AF694319F7}.team-project-bin|x86.ActiveCfg = team-project-bin|Win32
+		{11673853-143C-4C56-92BE-F2AF694319F7}.team-project-bin|x86.Build.0 = team-project-bin|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,17 +1,17 @@
 #pragma once
 #include "GameObject.h"
 #include "HitBox.h"
-
+#include "Defines.h"
 class Player :  public GameObject
 {
 
 
 protected:
 	Direction currentDirection = Direction::Down;
-	size_t currentFrame = 0;
-	float frameTime = 0.2f;    // ������ ��ȯ �ð�
-	float elapsedTime = 0.f;
-	float speed = 200.f;        // �̵� �ӵ�
+	std::size_t currentFrame = 0;
+  // ������ ��ȯ �ð�
+	
+	     // �̵� �ӵ�
 	std::map<Direction, std::vector<sf::IntRect>> animations;
 
 	sf::Sprite body;
@@ -21,7 +21,9 @@ protected:
 	int hp = 0;
 	int maxHp = 0;
 	bool isInteract = false;
-	
+	float elapsedTime = 0.f;
+	float frameTime = 0.2f; // 예: 10fps
+	float speed = 200.f;
 
 public:
 	Player(const std::string& name = "");

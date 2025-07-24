@@ -11,6 +11,9 @@ protected:
 	sf::Vector2f velocity = { 0.f, 0.f };
 	bool isGrounded = true;
 	float speed = 500.f;
+	std::map<Direction, std::vector<sf::IntRect>> animations;
+	Direction currentDirection = Direction::Down;
+	std::size_t currentFrameIndex = 0;
 
 public:
 	AniPlayer(const std::string& name = "");
@@ -28,4 +31,8 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+	sf::IntRect GetCurrentFrameRect() const;
+	void SetDirection(Direction dir) { currentDirection = dir; }
+	// 프레임 인덱스 업데이트 (Play() 내부에서 증가시킨다 가정)
+	void SetFrameIndex(std::size_t idx) { currentFrameIndex = idx; }
 };

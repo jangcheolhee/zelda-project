@@ -4,6 +4,7 @@
 #include "TileMap.h"
 #include "BasicEnemy.h"
 #include "Bush.h"
+#include <istream>
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -73,7 +74,7 @@ void SceneGame::DeleteEnemy()
 
 void SceneGame::Init()
 {
-	texIds.push_back("graphics/sprite_sheet.png");
+	//texIds.push_back("graphics/sprite_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
@@ -83,7 +84,10 @@ void SceneGame::Init()
 
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-	
+    player->Init();
+    // 3) 타일맵도 만들고 Init()
+    tileMap = new TileMap("TileMap");
+    tileMap->Init();
 
 	AddGameObject(player);
 	AddGameObject(tileMap);
@@ -93,6 +97,7 @@ void SceneGame::Init()
 
 void SceneGame::Enter()
 {
+    player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
     sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
