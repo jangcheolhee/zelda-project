@@ -67,6 +67,8 @@ void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types typ
     for (const auto& pos : positions)
     {
         SpawnEnemy(pos, type);
+    }
+}
 void SceneGame::CheckCollison()
 {
     for (auto& enemy : enemyList)
