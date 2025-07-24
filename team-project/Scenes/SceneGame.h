@@ -12,16 +12,17 @@ protected:
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
-
 public:
 	SceneGame();
 
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
-
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //�� ���� ����(Ȱ��)
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //�ϰ� ����
-	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void SpawnBushesAtTile(int layerIndex, int targetGid); 
+	
+
 	void CheckCollison();
 
 	void Init() override;
@@ -29,4 +30,3 @@ public:
 	
 	void Update(float dt) override;
 };
-

@@ -1,0 +1,14 @@
+{ "columns":64,
+ "image":"home_background.png",
+ "imageheight":512,
+ "imagewidth":512,
+ "margin":0,
+ "name":"home_background",
+ "spacing":0,
+ "tilecount":4096,
+ "tiledversion":"1.11.2",
+ "tileheight":8,
+ "tilewidth":8,
+ "type":"tileset",
+ "version":"1.10"
+}

@@ -7,7 +7,6 @@ class SceneGame;
 class Player;
 class Enemy : public GameObject
 {
-
 public:
 	enum class Types
 	{
@@ -19,7 +18,6 @@ protected:
 	Animator animator;
 	SceneGame* sceneGame = nullptr;
 	Player* player;
-
 	
 	sf::Vector2f velocity = { 0.f, 0.f };
 	
@@ -39,8 +37,6 @@ protected:
 	int attackInterval = 0.f;
 	sf::Vector2f dir = { 0.f, 0.f };
 	Direction direction = Direction::Down;
-
-	
 
 public:
 	Enemy(const std::string& name = "");
@@ -78,9 +74,5 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 
 	virtual void UpdateBehavior(float dt) = 0; 
-
-
-
-
 };
 

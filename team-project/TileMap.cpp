@@ -9,7 +9,7 @@ TileMap::TileMap(const std::string& name) : GameObject(name)
 
 bool TileMap::LoadTileMap()
 {
-    tileMap = "data/posTest.tmj";
+    tileMap = "data/originalMap.tmj";
     std::ifstream tmFile(tileMap);
     if (!tmFile.is_open())
     {
@@ -105,7 +105,33 @@ bool TileMap::LoadTileMap()
     return true;
 }
 
-std::vector<sf::Vector2f> TileMap::getPosition(int layerIndex, int targetGid)
+sf::Vector2f TileMap::getPosition(int layerIndex, int targetGid)
+{
+    sf::Vector2f pos;
+
+    const auto& layer = tmJ["layers"][layerIndex];
+    const auto& data = layer["data"];
+    int width = layer["width"];
+    int heihgt = layer["height"];
+
+    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
+
+    for (int i = 0; i < (int)data.size(); ++i)
+    {
+        int gid = data[i];
+        if (gid == targetGid)
+        {
+            int x = i % width;
+            int y = i / width;
+            sf::Vector2f worldPos{ x * cellSize.x, y * cellSize.y };
+            worldPos += origin + GetPosition();
+            pos = worldPos;
+        }
+    }
+    return pos;
+}
+
+std::vector<sf::Vector2f> TileMap::getPositions(int layerIndex, int targetGid)
 {
     std::vector<sf::Vector2f> pos;
 

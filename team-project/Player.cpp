@@ -90,7 +90,7 @@ void Player::Init()
 		sf::IntRect(17, 113, 19, 26),
 		sf::IntRect(173, 113, 15, 25)
 	};
-	body.setScale(2.0f, 2.0f); // ũ�� ����
+	body.setScale(1, 1); // ũ�� ����
 	body.setTextureRect(animations[currentDirection][currentFrame]);
 	// ��Ʈ�ڽ� �ʱ�ȭ
 	hitBox.UpdateTransform(body, body.getLocalBounds());
@@ -103,8 +103,6 @@ void Player::Release()
 
 void Player::Reset()
 {
-
-	
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
 	wantsToInteract = false;
@@ -183,7 +181,6 @@ void Player::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
-	
 }
 
 bool Player::checkCollision(const HitBox& other)

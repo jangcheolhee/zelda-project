@@ -23,23 +23,23 @@ Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
 		return reused;
 	}
 
-	Enemy* newEnemy = nullptr;
-	switch (type)
-	{
-	case Enemy::Types::Basic:
-		newEnemy = new BasicEnemy();
-		break;
+    Enemy* newEnemy = nullptr;
+    switch (type)
+    {
+    case Enemy::Types::Basic:
+        newEnemy = new BasicEnemy();
+        break;
+    default:
+        break;
+    }
 
-	default:
-		break;
-	}
+    if (newEnemy != nullptr) newEnemy->Init();
 
 	if (newEnemy != nullptr)
 		newEnemy->Init();
 
 	return newEnemy;
 }
-
 
 void SceneGame::RecycleEnemy(Enemy* enemy)
 {
@@ -49,7 +49,6 @@ void SceneGame::RecycleEnemy(Enemy* enemy)
 		enemyPools[enemy->GetType()].push_back(std::unique_ptr<Enemy>(enemy));
 	}
 }
-
 
 void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 {
@@ -111,6 +110,21 @@ void SceneGame::CheckCollison()
 	}
 }
 
+void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
+{
+    std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+
+    for (const auto& pos : positions)
+    {
+        auto bush = new Bush;
+        AddGameObject(bush);
+        interactables.push_back(bush);
+        bush->SetScale({ 0.1f, 0.1f });
+        //bush->SetOrigin()
+        bush->SetPosition(pos);
+    }
+}
+
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
 {
@@ -124,21 +138,20 @@ void SceneGame::DeleteEnemy()
 
 void SceneGame::Init()
 {
+	texIds.push_back("graphics/sprite_sheet.png");
+    texIds.push_back("graphics/bush.png");
 
 	texIds.push_back("graphics/Overworld.png");
 
 	texIds.push_back("graphics/Enemy_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
-
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
-
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-
-
+   
 	AddGameObject(player);
 	AddGameObject(tileMap);
 
@@ -152,34 +165,27 @@ void SceneGame::Enter()
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
 	uiView.setCenter(center);
-	worldView.setSize({ size.x * .5f, size.y * .5f });
-	worldView.setCenter({ 0.f,0.f });
-	//SpawnEnemy({ 20,20 }, Enemy::Types::Basic);
-	// Enmy
-	// pos.x, pos,y
-	// type 
-	SpawnEnemyAtTile(2, 290, Enemy::Types::Basic);
-	// I
-	auto bush = new Bush();
-	AddGameObject(bush);
+    worldView.setSize({size.x *.5f, size.y *.5f});
+    worldView.setCenter(player->GetGlobalBounds().getPosition());
+    sf::Vector2f startPos = tileMap->getPosition(2, 18585);
+    
+    //SpawnEnemyAtTile(1, 24670, Enemy::Types::Basic);
+    SpawnBushesAtTile(1, 24670);
 
-	auto chest = new Chest();
-	AddGameObject(chest);
+    //auto bush = new Bush;
+    //AddGameObject(bush);
+    //bush->SetPosition({ 10,10 });
 
-	auto rupee = new Rupee();
-	AddGameObject(rupee);
-	auto wall = new JumpWall();
-	AddGameObject(wall);
-	interactables.push_back(bush); // 따로 관리
-	interactables.push_back(chest); // 따로 관리
-	interactables.push_back(rupee); // 따로 관리
-	interactables.push_back(wall); // 따로 관리
-	Scene::Enter();
+    //interactables.push_back(bush); // 따로 관리   
+
+    Scene::Enter();
+    player->SetPosition(startPos);
 }
 
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
+    worldView.setCenter(player->GetGlobalBounds().getPosition());
 	CheckCollison();
 
 }

@@ -73,4 +73,3 @@ public:
 	bool checkCollision(const HitBox& other);
 	sf::Sprite& GetBody() { return body; } // getter
 };
-

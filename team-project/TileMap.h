@@ -30,7 +30,8 @@ public:
     virtual ~TileMap() = default;
 
     bool LoadTileMap();
-    std::vector<sf::Vector2f> getPosition(int layerIndex, int targetGid);
+    sf::Vector2f getPosition(int layerIndex, int targetGid); //return pos
+    std::vector<sf::Vector2f> getPositions(int layerIndex, int targetGid); //return <vector>positions
 
     void Init() override;
     void Release() override;
