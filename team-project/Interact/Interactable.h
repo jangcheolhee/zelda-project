@@ -5,6 +5,15 @@ class SceneGame;
 class Player;
 class Interactable :  public GameObject
 {
+public:
+	enum class Type
+	{
+		None = -1,
+		Throw,
+		Chest,
+		Item,
+
+	};
 protected:
 	sf::Sprite body;
 	HitBox hitBox;
@@ -16,6 +25,7 @@ protected:
 
 	sf::Vector2f direction = { 0.f,0.f };
 	float speed = 150.f;
+	Type type = Type::None;
 
 public:
 	Interactable(const std::string& name = "");

@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Interact\Chest.cpp" />
     <ClCompile Include="Interact\Bush.cpp" />
     <ClCompile Include="Enemy\BasicEnemy.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interact\Chest.h" />
     <ClInclude Include="Interact\Bush.h" />
     <ClInclude Include="Enemy\BasicEnemy.h" />
     <ClInclude Include="Enemy\Enemy.h" />

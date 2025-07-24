@@ -4,7 +4,7 @@
 #include "TileMap.h"
 #include "BasicEnemy.h"
 #include "Bush.h"
-#include "TileMap.h"
+#include "Chest.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -141,6 +141,9 @@ void SceneGame::Enter()
     // I
     auto bush = new Bush();
     AddGameObject(bush);
+
+    auto chest = new Chest();
+    AddGameObject(chest);
 
     interactables.push_back(bush); // 따로 관리
 	Scene::Enter();

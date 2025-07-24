@@ -64,7 +64,7 @@ void Interactable::Reset()
 
 
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
-	isShoot = false; 
+	isShoot = false;
 	shootTimer = 0.f;
 }
 
@@ -74,34 +74,41 @@ void Interactable::Update(float dt)
 	if (!GetActive())
 		return;
 
-	if (player->IsInteract())
+	switch (type)
 	{
-		if (isShoot)
+	case Interactable::Type::None:
+		break;
+	case Interactable::Type::Throw:
+		if (player->IsInteract())
 		{
-			sf::Vector2f pos = player->GetGlobalBounds().getPosition();
-			pos.x += player->GetLocalBounds().width * 0.5f;
-			pos.y -= player->GetLocalBounds().height;
-			SetPosition(pos);
-			if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
+			if (isShoot)
 			{
-				Shoot(); // 상태 변경, 파괴, 대화 등
+				sf::Vector2f pos = player->GetGlobalBounds().getPosition();
+				pos.x += player->GetLocalBounds().width * 0.5f;
+				pos.y -= player->GetLocalBounds().height;
+				SetPosition(pos);
+				if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
+				{
+					Shoot(); // 상태 변경, 파괴, 대화 등
+				}
+			}
+			else
+			{
+				shootTimer += dt;
+				position += speed * dt * direction;
+				SetPosition(position);
+				if (shootTimer > 1)
+				{
+					SetActive(false);
+				}
 			}
 		}
-		else
-		{
-			shootTimer += dt;
-			position += speed * dt * direction;
-			SetPosition(position);
-			if (shootTimer > 1)
-			{
-				SetActive(false);
-			}
-
-		}
-
-		
-		hitBox.UpdateTransform(body, GetLocalBounds());
+	case Interactable::Type::Chest:
+		break;
+	default:
+		break;
 	}
+	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 void Interactable::Draw(sf::RenderWindow& window)
 {
@@ -122,11 +129,9 @@ void Interactable::Shoot()
 	case Direction::Left:
 		direction = { -1.f,0.f };
 		break;
-	case Direction ::Right:
+	case Direction::Right:
 		direction = { 1.f, 0.f };
 		break;
-	default:
-		break;
 	}
-	
+
 }
