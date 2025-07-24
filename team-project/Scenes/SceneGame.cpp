@@ -14,6 +14,82 @@ SceneGame::SceneGame()
 {
 }
 
+void SceneGame::InitZones()
+{
+	mapZones.clear();
+
+	mapZones.push_back({
+	  sf::FloatRect(0, 0, 512, 600),
+	  1,
+	  [this]()
+		{
+			worldView.setCenter({ 1153,388 });
+			std::cout << "Zone 1 Enter" << std::endl;
+		},
+	  [this]()
+		{
+			std::cout << "Zone 1 Exit" << std::endl;
+
+		},
+	  false
+		});
+
+	// Zone 2
+	mapZones.push_back({
+		sf::FloatRect(1025, 250, 256, 256),
+		2,
+		[this]()
+		{
+			std::cout << "Zone 2 Enter" << std::endl;
+			worldView.setCenter({ 1153,388 });
+		},
+		[this]()
+		{
+			std::cout << "Zone 2 Exit" << std::endl;
+			DeleteEnemy();
+		},
+		false
+		});
+}
+
+void SceneGame::UpdateZones()
+{
+		sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
+		for (auto& zone : mapZones)
+		{
+			bool nowInZone = zone.bounds.contains(playerPos);
+			if (nowInZone && !zone.entered)
+			{
+				zone.entered = true;
+				zoneID = zone.zoneId;
+				if (zone.onEnter) zone.onEnter();
+			}
+			else if (!nowInZone && zone.entered)
+			{
+				zone.entered = false;
+				if (zone.onExit) zone.onExit();
+			}
+		}
+}
+
+void SceneGame::UpdateBehaviorZone()
+{
+	switch (zoneID)
+	{
+	case 1:
+	{
+		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 100, 512);
+		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 100, 512);
+		worldView.setCenter({ x, y });
+
+	}
+		break;
+	case 2:
+		break;
+
+	}
+}
+
 Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
 {
 	auto& pool = enemyPools[type];
@@ -164,6 +240,8 @@ void SceneGame::SpawnNpcAtTile(int layerIndex, int targetGid)
 	}
 }
 
+
+
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
 {
@@ -192,7 +270,7 @@ void SceneGame::Init()
 
 	AddGameObject(player);
 	AddGameObject(tileMap);
-
+	InitZones();
 	Scene::Init();
 }
 
@@ -218,13 +296,18 @@ void SceneGame::Enter()
 
 	Scene::Enter();
 	player->SetPosition(startPos);
+
 }
+
+
 
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
-	worldView.setCenter(player->GetGlobalBounds().getPosition());
+	
 	CheckCollison();
+	UpdateZones();
+	UpdateBehaviorZone();
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
