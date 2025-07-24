@@ -78,8 +78,8 @@ void SceneGame::UpdateBehaviorZone()
 	{
 	case 1:
 	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 100, 512);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 100, 512);
+		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
 		worldView.setCenter({ x, y });
 
 	}
