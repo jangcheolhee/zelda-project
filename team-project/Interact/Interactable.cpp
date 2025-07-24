@@ -62,71 +62,77 @@ void Interactable::Reset()
 		sceneGame = nullptr;
 	}
 
+
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
-	isShoot = false; 
+	isShoot = false;
 	shootTimer = 0.f;
 }
 
 void Interactable::Update(float dt)
 {
-	if (!GetActive()) return;
 
-	sf::FloatRect playerBounds = player->GetGlobalBounds();
-	playerBounds.left -= 8.f;
-	playerBounds.top -= 8.f;
-	playerBounds.width += 16.f;
-	playerBounds.height += 16.f;
+	if (!GetActive())
+		return;
 
-	if (playerBounds.intersects(GetGlobalBounds() ) && !isShoot)
+	switch (type)
 	{
-		if (InputMgr::GetKeyDown(sf::Keyboard::X))
+	case Interactable::Type::None:
+		break;
+	case Interactable::Type::Throw:
+		if (player->IsInteract())
 		{
-			OnInteract(); // 상태 변경, 파괴, 대화 등
-			return;
-		}
-	}
-	if (player->IsInteract() )
-	{
-		if (isShoot)
-		{
-			sf::Vector2f pos = player->GetGlobalBounds().getPosition();
-			pos.x += player->GetLocalBounds().width * 0.5f;
-			pos.y -= player->GetLocalBounds().height;
-			SetPosition(pos);
-			if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
+			if (isShoot)
 			{
-				Shoot(); // 상태 변경, 파괴, 대화 등
+				sf::Vector2f pos = player->GetGlobalBounds().getPosition();
+				pos.x += player->GetLocalBounds().width * 0.5f;
+				pos.y -= player->GetLocalBounds().height;
+				SetPosition(pos);
+				if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
+				{
+					Shoot(); 
+				}
+			}
+			else
+			{
+				shootTimer += dt;
+				position += speed * dt * dir;
+				SetPosition(position);
+				if (shootTimer > 1)
+				{
+					SetActive(false);
+					
+				}
 			}
 		}
-		else
-		{
-			shootTimer += dt;
-			if (shootTimer > 1) SetActive(false);
-		}
+	case Interactable::Type::Chest:
+		break;
+	default:
+		break;
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
-
 void Interactable::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
 }
-
 void Interactable::Shoot()
 {
 	isShoot = false;
 	switch (player->GetDirection())
 	{
 	case Direction::Down:
+		dir = { 0.f, 1.f };
 		break;
 	case Direction::Up:
+		dir = { 0.f, -1.f };
 		break;
 	case Direction::Left:
+		dir = { -1.f,0.f };
 		break;
-	case Direction ::Right:
-		break;
-	default:
+	case Direction::Right:
+		dir = { 1.f, 0.f };
 		break;
 	}
+
 }

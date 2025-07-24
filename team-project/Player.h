@@ -1,17 +1,20 @@
 #pragma once
 #include "GameObject.h"
 #include "HitBox.h"
+#include "Enemy.h"
 
 class Player :  public GameObject
 {
 
 
 protected:
+	int rupee = 0;
 	Direction currentDirection = Direction::Down;
 	size_t currentFrame = 0;
 	float frameTime = 0.2f;    // ������ ��ȯ �ð�
 	float elapsedTime = 0.f;
 	float speed = 200.f;        // �̵� �ӵ�
+	sf::Vector2f velocity = { 0.f, 0.f };
 	std::map<Direction, std::vector<sf::IntRect>> animations;
 
 	sf::Sprite body;
@@ -20,7 +23,10 @@ protected:
 	HitBox hitBox;
 	int hp = 0;
 	int maxHp = 0;
+
+	bool movable = true;
 	bool isInteract = false;
+	bool wantsToInteract = false;
 	
 
 public:
@@ -30,8 +36,17 @@ public:
 	int GetHp() { return hp; }
 	void SetHp(int hp) { this->hp = hp; }
 
+	void SetMovable(bool b) { movable = b; }
+
 	void SetIsInteract(bool b) { isInteract = b; }
 	bool IsInteract() { return isInteract; }
+	
+	// 충돌 체크 함수-----------
+	void OnCollide(Enemy* enemy);
+	bool WantsToInteract(){ return wantsToInteract; }
+
+	void AddRupee(int i) { rupee += i; }
+	//--------------
 
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;

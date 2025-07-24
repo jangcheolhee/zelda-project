@@ -7,6 +7,10 @@ Player::Player(const std::string& name)
 {
 }
 
+void Player::OnCollide(Enemy* enemy)
+{
+}
+
 void Player::SetPosition(const sf::Vector2f& pos)
 {
 	GameObject::SetPosition(pos);
@@ -101,6 +105,8 @@ void Player::Reset()
 {
 	hp = GAME_MGR.GetPlayerData().hp;
 	SetPosition(GAME_MGR.GetPlayerData().position);
+	wantsToInteract = false;
+
 
 }
 void Player::Update(float dt)
@@ -156,6 +162,19 @@ void Player::Update(float dt)
 		body.setTextureRect(animations[currentDirection][currentFrame]);
 	}
 	hitBox.UpdateTransform(body, body.getLocalBounds());
+
+
+	// interactable과 x키 누르면 상호작용
+	if (InputMgr::GetKeyDown(sf::Keyboard::X))
+	{
+		wantsToInteract = true;
+	}
+	else
+	{
+		wantsToInteract = false;
+	}
+
+
 }
 
 void Player::Draw(sf::RenderWindow& window)

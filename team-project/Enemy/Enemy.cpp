@@ -40,6 +40,11 @@ void Enemy::SetOrigin(Origins preset)
 	}
 }
 
+void Enemy::OnCollide(Player* player)
+{
+	//std::cout << 1345;
+}
+
 void Enemy::OnDamage(int damage)
 {
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
@@ -77,6 +82,8 @@ void Enemy::Reset()
 	SetScale({ 1.f,1.f });
 
 	SetOrigin(Origins::BC);
+
+
 }
 
 void Enemy::Update(float dt)

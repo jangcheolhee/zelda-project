@@ -18,11 +18,13 @@ public:
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
-	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //ÇÑ ¸¶¸® »ý¼º(È°¿ë)
-	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //ÀÏ°ý »ý¼º
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(È°ï¿½ï¿½)
+	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void SpawnBushesAtTile(int layerIndex, int targetGid); 
-	void SpawnNpcAtTile(int layerIndex, int targetGid);
-	
+	void SpawnJumpAtTile(int layerIndex, int targetGid);
+
+	void CheckCollison();
+
 	void Init() override;
 	void Enter() override;
 	

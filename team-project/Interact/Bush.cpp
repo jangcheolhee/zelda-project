@@ -4,21 +4,24 @@
 
 void Bush::OnInteract()
 {
-	// ÇÃ·¹ÀÌ¾î¿¡°Ô ºÎ½¬ µé¾ú´Ù°í Àü´ÞÇÏ±â -> boolÅ¸ÀÔÀ¸·Î Àü´Þ ?
+	// ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Î½ï¿½ ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ -> boolÅ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ?
 	player->SetIsInteract(true);
 	isShoot = true;
-	// ÇÃ·¹ÀÌ¾î´Â ºÎ½¬ µç »óÅÂ¸¦ ÇØ°á
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½Î½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½Ø°ï¿½
 }
 
 void Bush::Init()
 {
 	Interactable::Init();
+	
 }
 
 void Bush::Reset()
 {
 	Interactable::Reset();
-	body.setTexture(TEXTURE_MGR.Get("graphics/bush.png"));
+	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
+	body.setTextureRect({ 304,57,16,16 });
 	SetOrigin(Origins::ML);
-	//body.setTextureRect({ 70,30,18,26 });
+	type = Type::Throw;
+
 }
