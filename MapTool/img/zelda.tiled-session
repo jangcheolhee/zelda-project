@@ -132,6 +132,7 @@
     "map.fixedSize": true,
     "map.height": 192,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "json",
     "map.tileHeight": 8,
     "map.tileWidth": 8,
     "map.width": 128,

@@ -30,8 +30,7 @@ Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
         break;
     }
 
-    if (newEnemy != nullptr)
-        newEnemy->Init();
+    if (newEnemy != nullptr) newEnemy->Init();
 
     return newEnemy;
 }
@@ -68,12 +67,16 @@ void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types typ
 
 void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
 {
-    std::vector<sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+    std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+
     for (const auto& pos : positions)
     {
         auto bush = new Bush;
         AddGameObject(bush);
-        interactables.push_back(bush); // 따로 관리
+        interactables.push_back(bush);
+        bush->SetScale({ 0.1f, 0.1f });
+        //bush->SetOrigin()
+        bush->SetPosition(pos);
     }
 }
 
@@ -91,8 +94,8 @@ void SceneGame::DeleteEnemy()
 void SceneGame::Init()
 {
 	texIds.push_back("graphics/sprite_sheet.png");
+    texIds.push_back("graphics/bush.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
-
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
@@ -114,13 +117,18 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
     worldView.setSize({size.x *.5f, size.y *.5f});
     worldView.setCenter(player->GetGlobalBounds().getPosition());
-    sf::Vector2f startPos = tileMap->getPosition(1, 506);
+    sf::Vector2f startPos = tileMap->getPosition(2, 18585);
     
-    //SpawnEnemyAtTile(2, 94, Enemy::Types::Basic);
-    SpawnBushesAtTile(2, 94);
+    //SpawnEnemyAtTile(1, 24670, Enemy::Types::Basic);
+    SpawnBushesAtTile(1, 24670);
 
+    //auto bush = new Bush;
+    //AddGameObject(bush);
+    //bush->SetPosition({ 10,10 });
 
-	Scene::Enter();
+    //interactables.push_back(bush); // 따로 관리   
+
+    Scene::Enter();
     player->SetPosition(startPos);
 }
 

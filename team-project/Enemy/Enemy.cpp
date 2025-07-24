@@ -42,7 +42,6 @@ void Enemy::SetOrigin(Origins preset)
 
 void Enemy::OnDamage(int damage)
 {
-
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 	if (hp == 0)
 	{
@@ -55,7 +54,6 @@ void Enemy::Init()
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = -1;
 	animator.SetTarget(&body);
-
 }
 
 void Enemy::Release()
@@ -72,8 +70,6 @@ void Enemy::Reset()
 	{
 		sceneGame = nullptr;
 	}
-
-
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
 
 	SetActive(true);
@@ -81,7 +77,6 @@ void Enemy::Reset()
 	SetScale({ 1.f,1.f });
 
 	SetOrigin(Origins::BC);
-
 }
 
 void Enemy::Update(float dt)
@@ -94,8 +89,6 @@ void Enemy::Update(float dt)
 		// ex) player->OnDamage(damage);
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
-
-
 }
 
 void Enemy::Draw(sf::RenderWindow& window)

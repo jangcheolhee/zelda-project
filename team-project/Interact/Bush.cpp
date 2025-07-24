@@ -19,5 +19,5 @@ void Bush::Reset()
 {
 	Interactable::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/bush.png"));
-	body.setTextureRect({ 70,30,18,26 });
+	//body.setTextureRect({ 70,30,18,26 });
 }
