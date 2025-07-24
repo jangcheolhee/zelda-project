@@ -13,11 +13,12 @@ void BasicEnemy::Init()
 
 void BasicEnemy::Reset()
 {
-	Enemy::Reset();
+	
 	// 여기서 sprite texture 변경하기
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
 	direction = (Direction) Utils::RandomRange(0, 4);
 	ChangeSprite();
+	Enemy::Reset();
 }
 
 void BasicEnemy::UpdateBehavior(float dt)

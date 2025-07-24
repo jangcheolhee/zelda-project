@@ -89,7 +89,7 @@ void Interactable::Update(float dt)
 				SetPosition(pos);
 				if (InputMgr::GetKeyDown(sf::Keyboard::X) || InputMgr::GetKeyDown(sf::Keyboard::Z))
 				{
-					Shoot(); // 상태 변경, 파괴, 대화 등
+					Shoot(); 
 				}
 			}
 			else
@@ -100,6 +100,7 @@ void Interactable::Update(float dt)
 				if (shootTimer > 1)
 				{
 					SetActive(false);
+					
 				}
 			}
 		}

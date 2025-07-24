@@ -42,7 +42,7 @@ void Enemy::SetOrigin(Origins preset)
 
 void Enemy::OnCollide(Player* player)
 {
-	std::cout << 1345;
+	//std::cout << 1345;
 }
 
 void Enemy::OnDamage(int damage)

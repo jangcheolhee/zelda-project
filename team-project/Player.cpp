@@ -109,6 +109,7 @@ void Player::Reset()
 	SetPosition(GAME_MGR.GetPlayerData().position);
 	wantsToInteract = false;
 
+
 }
 void Player::Update(float dt)
 {

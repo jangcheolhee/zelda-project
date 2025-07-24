@@ -86,35 +86,28 @@ void SceneGame::CheckCollison()
 	{
 		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
 		{
+			player->SetMovable(false);
 			// 플레이어가 obj가 충돌한 방향으로는 움지길수 없게 하기
 			switch (obj->GetType())
 			{
-			case Interactable::Type::Throw:
+			case Interactable::Type::Throw: case Interactable::Type::Chest:
 				if (player->WantsToInteract())
 				{
 					obj->OnInteract();
 				}
 				break;
-			case Interactable::Type::Chest:
-				if (player->WantsToInteract())
-				{
-					obj->OnInteract();
-				}
-				break;
-			case Interactable::Type::Item:
+			
+			case Interactable::Type::Item: case Interactable::Type::JumpWall:
 
 				obj->OnInteract();
 
-				break;
-			case Interactable::Type::JumpWall:
-
-				obj->OnInteract();
-
+		
 				break;
 			}
 			
 
-		}
+		}player->SetMovable(true);
+		
 	}
 }
 
@@ -133,6 +126,7 @@ void SceneGame::Init()
 {
 
 	texIds.push_back("graphics/Overworld.png");
+
 	texIds.push_back("graphics/Enemy_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 
@@ -153,6 +147,7 @@ void SceneGame::Init()
 
 void SceneGame::Enter()
 {
+	
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);

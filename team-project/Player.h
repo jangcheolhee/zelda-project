@@ -14,6 +14,7 @@ protected:
 	float frameTime = 0.2f;    // ������ ��ȯ �ð�
 	float elapsedTime = 0.f;
 	float speed = 200.f;        // �̵� �ӵ�
+	sf::Vector2f velocity = { 0.f, 0.f };
 	std::map<Direction, std::vector<sf::IntRect>> animations;
 
 	sf::Sprite body;
@@ -22,6 +23,8 @@ protected:
 	HitBox hitBox;
 	int hp = 0;
 	int maxHp = 0;
+
+	bool movable = true;
 	bool isInteract = false;
 	bool wantsToInteract = false;
 	
@@ -32,6 +35,8 @@ public:
 
 	int GetHp() { return hp; }
 	void SetHp(int hp) { this->hp = hp; }
+
+	void SetMovable(bool b) { movable = b; }
 
 	void SetIsInteract(bool b) { isInteract = b; }
 	bool IsInteract() { return isInteract; }

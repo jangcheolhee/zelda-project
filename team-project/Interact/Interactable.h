@@ -33,7 +33,7 @@ public:
 	Interactable(const std::string& name = "");
 	virtual ~Interactable() = default;
 
-	Type GetType() { return type; }
+	Type GetType() const { return type; }
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;
 	void SetScale(const sf::Vector2f& s) override;
