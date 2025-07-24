@@ -21,6 +21,7 @@ public:
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //茄 付府 积己(劝侩)
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //老褒 积己
 	void SpawnBushesAtTile(int layerIndex, int targetGid); 
+	void SpawnNpcAtTile(int layerIndex, int targetGid);
 	
 	void Init() override;
 	void Enter() override;

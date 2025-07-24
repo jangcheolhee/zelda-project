@@ -157,6 +157,7 @@
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Interact\Npc.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Framework\QuestMgr.cpp" />
     <ClCompile Include="SaveMgr.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Interact\Npc.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Framework\QuestMgr.h" />
     <ClInclude Include="SaveMgr.h" />

@@ -3,7 +3,8 @@
 #include "Player.h"
 #include "TileMap.h"
 #include "BasicEnemy.h"
-#include "Bush.h"
+#include "Bush.h"]
+#include "Npc.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -75,8 +76,21 @@ void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid)
         AddGameObject(bush);
         interactables.push_back(bush);
         bush->SetScale({ 0.1f, 0.1f });
-        //bush->SetOrigin()
         bush->SetPosition(pos);
+    }
+}
+
+void SceneGame::SpawnNpcAtTile(int layerIndex, int targetGid)
+{
+    std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+
+    for (const auto& pos : positions)
+    {
+        auto npc = new Npc;
+        AddGameObject(npc);
+        interactables.push_back(npc);
+        npc->SetScale({ 0.5f, 0.5f });
+        npc->SetPosition(pos);
     }
 }
 
@@ -95,6 +109,7 @@ void SceneGame::Init()
 {
 	texIds.push_back("graphics/sprite_sheet.png");
     texIds.push_back("graphics/bush.png");
+    texIds.push_back("graphics/npc.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
@@ -120,13 +135,9 @@ void SceneGame::Enter()
     sf::Vector2f startPos = tileMap->getPosition(2, 18585);
     
     //SpawnEnemyAtTile(1, 24670, Enemy::Types::Basic);
-    SpawnBushesAtTile(1, 24670);
-
-    //auto bush = new Bush;
-    //AddGameObject(bush);
-    //bush->SetPosition({ 10,10 });
-
-    //interactables.push_back(bush); // 따로 관리   
+    SpawnBushesAtTile(1, 24670); //bushes
+    SpawnBushesAtTile(1, 24590); //hole
+    SpawnNpcAtTile(2, 24638); 
 
     Scene::Enter();
     player->SetPosition(startPos);
