@@ -1,11 +1,14 @@
 
-1.AnimationApp.cpp에서 파일 이름 변경가능
-
+1.AnimationApp.cpp에서 
+ currentClip.name = "shield_clip";<-파일 이름 변경가능
 texture.loadFromFile("graphics/Link.png");<-불러올 이미지파일 변경
 
-2.Character.h에서currentClip.name = "idle"; <-내용물 이름 변경
+1-2.Game.cpp에서 창뷰에 불러올 스프라이트 변경
+ sheetTex.loadFromFile("graphics/Link.png"); <-불러올 이미지파일 변경
 
-
+2. AnimationEditorUI.h에서
+const FrameData& frame = clip.frames[i]; 
+ file << "Sord," << i << ",<-csv파일속에 들어가는 이름 정의
 
 디버깅 모드(F5)
 

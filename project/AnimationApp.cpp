@@ -12,7 +12,7 @@ AnimationApp::AnimationApp()
     sprite.setScale(2.f, 2.f);
     ui.SetSpriteSheetTexture(&texture);
     
-    currentClip.name = "shield_clip";
+    currentClip.name = "Link_right";
     currentClip.loop = true;
 
     player = new AnimationPlayer(&currentClip);
