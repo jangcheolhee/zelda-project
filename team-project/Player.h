@@ -8,6 +8,7 @@ class Player :  public GameObject
 
 
 protected:
+	int rupee = 0;
 	Direction currentDirection = Direction::Down;
 	size_t currentFrame = 0;
 	float frameTime = 0.2f;    // ������ ��ȯ �ð�
@@ -38,6 +39,8 @@ public:
 	// 충돌 체크 함수-----------
 	void OnCollide(Enemy* enemy);
 	bool WantsToInteract(){ return wantsToInteract; }
+
+	void AddRupee(int i) { rupee += i; }
 	//--------------
 
 	void SetPosition(const sf::Vector2f& pos) override;

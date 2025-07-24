@@ -157,9 +157,11 @@
     <ClCompile Include="Interact\Interactable.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Interact\JumpWall.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Framework\QuestMgr.cpp" />
+    <ClCompile Include="Interact\Rupee.cpp" />
     <ClCompile Include="SaveMgr.cpp" />
     <ClCompile Include="Scenes\SceneGame.cpp" />
     <ClCompile Include="Framework\SceneMgr.cpp" />
@@ -195,8 +197,10 @@
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Interact\JumpWall.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Framework\QuestMgr.h" />
+    <ClInclude Include="Interact\Rupee.h" />
     <ClInclude Include="SaveMgr.h" />
     <ClInclude Include="Scenes\SceneGame.h" />
     <ClInclude Include="Framework\SceneMgr.h" />

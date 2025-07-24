@@ -11,6 +11,7 @@ public:
 		None = -1,
 		Throw,
 		Chest,
+		JumpWall,
 		Item,
 
 	};
@@ -23,14 +24,16 @@ protected:
 	float shootTimer = 0.f;
 	bool isShoot = false;
 
-	sf::Vector2f direction = { 0.f,0.f };
+	sf::Vector2f dir = { 0.f,0.f };
 	float speed = 150.f;
 	Type type = Type::None;
+	Direction direction = Direction::Down;
 
 public:
 	Interactable(const std::string& name = "");
 	virtual ~Interactable() = default;
 
+	Type GetType() { return type; }
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;
 	void SetScale(const sf::Vector2f& s) override;
@@ -51,7 +54,12 @@ public:
 	sf::FloatRect GetGlobalBounds() const override
 	{
 
-		return body.getGlobalBounds();
+		sf::FloatRect rect = body.getGlobalBounds();
+		rect.left -= 8.f;
+		rect.top -= 8.f;
+		rect.width += 16.f;
+		rect.height += 16.f;
+		return rect;
 	}
 
 	virtual void OnInteract() = 0;

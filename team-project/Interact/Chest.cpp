@@ -3,7 +3,12 @@
 
 void Chest::OnInteract()
 {
-	available = false;
+	if (available)
+	{
+		// 행위 추가
+		available = false;
+	}
+	
 
 }
 
