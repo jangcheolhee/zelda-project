@@ -28,6 +28,8 @@ void SceneGame::InitZones()
 			worldView.setCenter({ 1153,388 });
 			std::cout << "Zone 1 Enter" << std::endl;
 			SpawnJumpAtTile(3, 25075);
+			SpawnJumpAtTile(3, 24592);
+			SpawnJumpAtTile(3, 25068);
 		},
 	  [this]()
 		{
