@@ -7,6 +7,8 @@ enum class AnimationLoopTypes
 	//PingPong,
 };
 
+
+
 struct AnimationFrame
 {
 	std::string texId;
@@ -26,4 +28,9 @@ struct AnimationClip
 
 	bool loadFromFile(const std::string& filePath);
 };
+namespace AnimationIO
+{
+	/// @brief CSV에서 프레임(Rect) 목록을 읽어옵니다.
+	std::vector<sf::IntRect> loadFromCSV(const std::string& csvPath);
+}
 

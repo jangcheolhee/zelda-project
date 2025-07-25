@@ -27,17 +27,18 @@ struct AnimationEventHash
 class Animator
 {
 protected:
+	void SetFrame(const AnimationFrame& frame);
 	static const std::string emptyString;
 	std::unordered_map<std::pair<std::string, int>, AnimationEvent, AnimationEventHash> events;
 	std::queue<std::string> playQueue;
 
 	AnimationClip* currentClip;
 	sf::Sprite* sprite;
-
 	bool isPlaying = false;
-	int currentFrame = 0;
-	int totalFrame = 0;
-	int checkFrame = 0;
+
+	std::size_t currentFrame = 0;
+	std::size_t totalFrame = 0;
+	std::size_t checkFrame = 0;
 
 	float frameDuration = 0.f;
 	float accumTime = 0.f;
@@ -62,14 +63,14 @@ public:
 	//}
 
 	void Update(float dt);
-
+	
 	bool IsPlaying() const { return isPlaying; }
 	void SetSpeed(float speed) 
 	{ 
 		this->speed = speed;
 		checkFrame = this->speed > 0.f ? totalFrame : -1;
 	}
-
+	
 	void Play(const std::string& clipId, bool clearQueue = true);
 	void Play(AnimationClip* clip, bool clearQueue = true);
 
@@ -79,7 +80,7 @@ public:
 
 	//void Pause(bool pause);
 
-	void SetFrame(const AnimationFrame& frame);
+	
 
 	const std::string& GetCurrentClipId() const 
 	{

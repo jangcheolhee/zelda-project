@@ -14,6 +14,7 @@ protected:
 	sf::Clock clock;
 	float timeScale = 1.f;
 
+
 	float time = 0.f;
 	float deltaTime = 0.f;
 

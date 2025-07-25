@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "HitBox.h"
+#include "Defines.h"
 #include "Enemy.h"
 
 class Player :  public GameObject
@@ -28,6 +29,9 @@ protected:
 	bool isInteract = false;
 	bool wantsToInteract = false;
 	
+	float elapsedTime = 0.f;
+	float frameTime = 0.2f; // 예: 10fps
+	float speed = 200.f;
 
 public:
 	Player(const std::string& name = "");
