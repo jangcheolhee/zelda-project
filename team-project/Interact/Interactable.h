@@ -13,7 +13,6 @@ public:
 		Chest,
 		JumpWall,
 		Item,
-
 	};
 protected:
 	sf::Sprite body;
@@ -66,6 +65,3 @@ public:
 	virtual void UpdateBeHavior(float dt) {};
 	void Shoot();
 };
-
-
-

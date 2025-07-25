@@ -61,15 +61,12 @@ void Interactable::Reset()
 	{
 		sceneGame = nullptr;
 	}
-
-
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
 	
 }
 
 void Interactable::Update(float dt)
 {
-
 	if (!GetActive())
 		return;
 
