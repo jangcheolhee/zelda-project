@@ -25,9 +25,9 @@ void JumpWall::OnInteract()
 			break;
 		default:
 			break;
-		}
-		player->SetPosition(player->GetGlobalBounds().getPosition() + dir * GetLocalBounds().width);
 	}
+		}player->SetPosition(player->GetGlobalBounds().getPosition() + dir * GetLocalBounds().width);
+
 }
 
 void JumpWall::Init()
