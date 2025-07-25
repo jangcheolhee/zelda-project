@@ -161,23 +161,11 @@ void SceneGame::CheckCollison()
 	{
 		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
 		{
-			player->SetMovable(false);
+
 			// 플레이어가 obj가 충돌한 방향으로는 움지길수 없게 하기
-			switch (obj->GetType())
-			{
-			case Interactable::Type::Throw: case Interactable::Type::Chest:
-				if (player->WantsToInteract() && !player->IsInteract())
-				{
-					obj->OnInteract();
-				}
-				break;
 
-			case Interactable::Type::Item: case Interactable::Type::JumpWall:
-
-				obj->OnInteract();
-				break;
-			}
-		}player->SetMovable(true);
+			obj->OnInteract();
+		}
 	}
 }
 

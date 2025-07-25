@@ -5,8 +5,18 @@
 void Bush::OnInteract()
 {
 	// �÷��̾�� �ν� ����ٰ� �����ϱ� -> boolŸ������ ���� ?
-	player->SetIsInteract(true);
-	isShoot = true;
+	if (player->WantsToInteract() && !player->IsInteract())
+	{
+		player->SetIsInteract(true);
+		isShoot = true;
+	}
+	if (!isShoot)
+	{
+		//player->SetPosition(GetPosition());
+		// 플레이어 위치를 다시 셋팅하기
+
+	}
+	
 	// �÷��̾�� �ν� �� ���¸� �ذ�
 }
 

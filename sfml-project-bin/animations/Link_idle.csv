@@ -1,3 +1,4 @@
 Direction,Frame,X,Y,Width,Height
-idle,0,0,2,18,23
-idle,1,0,1,17,25
+idle,0,292,108,16,24
+idle,1,311,109,15,25
+idle,2,327,114,15,19
