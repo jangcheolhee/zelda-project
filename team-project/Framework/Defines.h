@@ -35,10 +35,10 @@ enum class Sides
 
 enum class Direction
 {
-	None,
+	None = -1,
 	Down, 
 	Left,
 	Right, 
 	Up,
-	None,
+
 };

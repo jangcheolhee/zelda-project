@@ -3,7 +3,7 @@
 #include "Player.h"
 void JumpWall::OnInteract()
 {
-	
+
 	if (direction == player->GetDirection())
 	{
 		switch (direction)
@@ -20,13 +20,12 @@ void JumpWall::OnInteract()
 		case Direction::Up:
 			dir = { 0.f,-1.f };
 			break;
-		case Direction::None:
-			dir = { 0., 0.f };
-			break;
+		
 		default:
 			break;
+		}
+		player->SetPosition(player->GetGlobalBounds().getPosition() + dir * GetLocalBounds().width);
 	}
-		}player->SetPosition(player->GetGlobalBounds().getPosition() + dir * GetLocalBounds().width);
 
 }
 
@@ -39,11 +38,13 @@ void JumpWall::Reset()
 {
 	Interactable::Reset();
 	type = Type::JumpWall;
-	
+
 	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 	body.setTextureRect({ 304,57,8,8 });
 	sf::Color color = body.getColor();
 	color.a = 0;
 	body.setColor(color);
+
+	dir = { 0.f,0.f };
 
 }

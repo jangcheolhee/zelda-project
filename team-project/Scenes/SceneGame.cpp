@@ -157,14 +157,28 @@ void SceneGame::CheckCollison()
 		}
 	}
 
+	sf::FloatRect rect = player->GetGlobalBounds();
+	rect.left -= 2.f;
+	rect.top -= 2.f;
+	rect.width += 4.f;
+	rect.height += 4.f;
 	for (auto& obj : interactables)
 	{
+		
+		if (obj->GetType() == Interactable::Type::Throw)
+		{
+			if (rect.intersects(obj->GetGlobalBounds()))
+			{
+				obj->OnInteract();
+			}
+		}
 		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
 		{
-
+			player->SetMovable(false);
 			// 플레이어가 obj가 충돌한 방향으로는 움지길수 없게 하기
-
 			obj->OnInteract();
+			
+
 		}
 	}
 }

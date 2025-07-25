@@ -178,13 +178,13 @@ void Player::Update(float dt)
 	}
 	
 	// 2) **딱 한번** 벡터를 가져오고
-	auto& vec = animations[currentDirection];
-	if (vec.empty()) {
-		// 애니메이션 데이터 없으면 이동만 처리
-		body.move(movement);
-		hitBox.UpdateTransform(body, body.getLocalBounds());
-		return;
-	}
+	//auto& vec = animations[currentDirection];
+	//if (vec.empty()) {
+	//	// 애니메이션 데이터 없으면 이동만 처리
+	//	body.move(movement);
+	//	hitBox.UpdateTransform(body, body.getLocalBounds());
+	//	return;
+	//}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
@@ -224,12 +224,39 @@ void Player::Update(float dt)
 	else
 	{
 		// Up, Down, Right 는 그대로
-		auto& vec = animations[currentDirection];
-		if (!vec.empty())
-			body.setTextureRect(vec[currentFrame]);
+		//auto& vec = animations[currentDirection];
+		//if (!vec.empty())
+		//	body.setTextureRect(vec[currentFrame]);
 	}
-	
-	body.move(movement);
+	if (movable)
+	{
+
+		body.move(movement);
+		SetPosition(body.getPosition());
+	}
+	else
+	{
+		switch (currentDirection)
+		{
+		case Direction::None:
+			break;
+		case Direction::Down:
+			SetPosition({ GetPosition().x , GetPosition().y - 0.1f});
+			break;
+		case Direction::Left:
+			SetPosition({ GetPosition().x  + 0.1f, GetPosition().y });
+			break;
+		case Direction::Right:
+			SetPosition({ GetPosition().x - 0.1f , GetPosition().y  });
+			break;
+		case Direction::Up:
+			SetPosition({ GetPosition().x , GetPosition().y + 0.1f});
+			break;
+		default:
+			break;
+		}
+		movable = true;
+	}
 	hitBox.UpdateTransform(body, body.getLocalBounds());
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {

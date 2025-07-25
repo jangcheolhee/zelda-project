@@ -51,10 +51,10 @@ public:
 	{
 
 		sf::FloatRect rect = body.getGlobalBounds();
-		rect.left -= 8.f;
-		rect.top -= 8.f;
-		rect.width += 16.f;
-		rect.height += 16.f;
+		rect.left -= 2.f;
+		rect.top -= 2.f;
+		rect.width += 4.f;
+		rect.height += 4.f;
 		return rect;
 	}
 
