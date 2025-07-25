@@ -1,0 +1,14 @@
+{ "columns":128,
+ "image":"Lumiere_44_1024-1024.png",
+ "imageheight":1024,
+ "imagewidth":1024,
+ "margin":0,
+ "name":"Lumiere_44_1024-1024",
+ "spacing":0,
+ "tilecount":16384,
+ "tiledversion":"1.11.2",
+ "tileheight":8,
+ "tilewidth":8,
+ "type":"tileset",
+ "version":"1.10"
+}

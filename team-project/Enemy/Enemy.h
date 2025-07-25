@@ -7,7 +7,6 @@ class SceneGame;
 class Player;
 class Enemy : public GameObject
 {
-
 public:
 	enum class Types
 	{
@@ -19,10 +18,9 @@ protected:
 	Animator animator;
 	SceneGame* sceneGame = nullptr;
 	Player* player;
-
 	
 	sf::Vector2f velocity = { 0.f, 0.f };
-	sf::Vector2f direction;
+	
 	sf::Vector2f initPosition;
 
 	HitBox hitBox;
@@ -37,8 +35,8 @@ protected:
 	float skillTimer = 0.f;
 	int damage = 0;
 	int attackInterval = 0.f;
-
-	
+	sf::Vector2f dir = { 0.f, 0.f };
+	Direction direction = Direction::Down;
 
 public:
 	Enemy(const std::string& name = "");
@@ -63,10 +61,12 @@ public:
 		return body.getGlobalBounds();
 	}
 
-
+	void OnCollide(Player* player);
+	int GetDamage() { return damage; }
 
 	const HitBox& GetHitBox() const { return hitBox; }
 	void OnDamage(int damage);
+	
 	void Init() override;
 	void Release() override;
 	void Reset() override;
@@ -74,9 +74,5 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 
 	virtual void UpdateBehavior(float dt) = 0; 
-
-
-
-
 };
 
