@@ -21,11 +21,11 @@ void SceneGame::InitZones()
 	mapZones.clear();
 
 	mapZones.push_back({
+	  //zone1 origin
 	  sf::FloatRect(0, 200, 512, 550), //zone 1_confirm
 	  1,
 	  [this]()
 		{
-			worldView.setCenter({ 1153,388 });
 			std::cout << "Zone 1 Enter" << std::endl;
 		},
 	  [this]()
@@ -35,18 +35,33 @@ void SceneGame::InitZones()
 	  false
 		});
 
-	// Zone 2
+	// Zone 2 origin_left1
 	mapZones.push_back({
-		sf::FloatRect(1025, 250, 256, 256), //zone2_dummy
+		sf::FloatRect(0, 200, 512, 550), 
 		2,
 		[this]()
 		{
 			std::cout << "Zone 2 Enter" << std::endl;
-			worldView.setCenter({ 1153,388 });
 		},
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
+			DeleteEnemy();
+		},
+		false
+		});
+
+	// Zone 3 origin_up1
+	mapZones.push_back({
+		sf::FloatRect(0, 200, 512, 550), 
+		3,
+		[this]()
+		{
+			std::cout << "Zone 3 Enter" << std::endl;
+		},
+		[this]()
+		{
+			std::cout << "Zone 3 Exit" << std::endl;
 			DeleteEnemy();
 		},
 		false
@@ -78,19 +93,31 @@ void SceneGame::UpdateZones()
 		}
 }
 
-void SceneGame::UpdateBehaviorZone() 
+void SceneGame::UpdateBehaviorZone()
 {
 	switch (zoneID)
-	{
-	case 1: 
-	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
-		worldView.setCenter({ x, y });
-	}
-		break;
-	case 2:
-		break;
+	{//player 기준
+		case 1:
+		{
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
+			worldView.setCenter({ x, y });
+			break;
+		}
+		case 2:
+		{
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 0, 128);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
+			worldView.setCenter({ x, y });
+			break;
+		}
+		case 3:
+		{
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 0, 128);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 0, 384);
+			worldView.setCenter({ x, y });
+			break;
+		}
 	}
 }
 
@@ -185,7 +212,6 @@ void SceneGame::CheckCollison()
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
-
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {	
 	//layer 1 : bush
@@ -199,15 +225,17 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			if((pos.x>=zone.left && pos.x<=(zone.left+zone.width))&&(pos.y>=zone.top&&pos.y<=zone.top+zone.height))
 			{//bush
 				auto bush = new Bush;
+				std::cout << "spawnZone2test" << pos.x << std::endl;
 				AddGameObject(bush);
 				interactables.push_back(bush);
 				bush->Reset();
 				bush->SetPosition(pos);
 				if (id == 24670)
 				{
+					std::cout << "spawnZone2test" << pos.x << std::endl;
 					bush->SetOrigin(Origins::ML);
 				}
-				else if (id == 24590)
+				else if (id == 24590) //hole
 				{
 					bush->SetOrigin(Origins::TL);
 				}
