@@ -67,7 +67,7 @@ void AniPlayer::Reset()
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
 
-	//animator.Play("animations/idle.csv");
+	//animator.Play("animations/Link_idle.csv");
 	SetOrigin(Origins::BC);
 }
 
@@ -85,7 +85,7 @@ void AniPlayer::Update(float dt)
 	{
 		isGrounded = false;
 		velocity.y = -250.f;
-		animator.Play("animations/jump.csv");
+		//animator.Play("animations/jump.csv");
 	}
 	if (!isGrounded)
 	{
@@ -110,27 +110,51 @@ void AniPlayer::Update(float dt)
 	{
 		if (h != 0.f)
 		{
-			animator.Play("animations/run.csv");
+			//animator.Play("animations/run.csv");
 		}
 	}
 	else if (animator.GetCurrentClipId() == "Run")
 	{
 		if (h == 0.f)
 		{
-			animator.Play("animations/idle.csv");
+			//animator.Play("animations/idle.csv");
 		}
 	}
 	else if (animator.GetCurrentClipId() == "Jump" && isGrounded)
 	{
 		if (h == 0.f)
 		{
-			animator.Play("animations/idle.csv");
+			//animator.Play("animations/idle.csv");
 		}
 		else
 		{
-			animator.Play("animations/run.csv");
+			//animator.Play("animations/run.csv");
 		}
 	}
+}
+sf::IntRect AniPlayer::GetCurrentFrameRect() const
+{// 기본 프레임
+
+	 // 1) 이 방향에 데이터가 없으면 빈 Rect 반환
+	auto it = animations.find(currentDirection);
+	if (it == animations.end() || it->second.empty())
+		return sf::IntRect();
+
+	// 2) 인덱스를 안전하게 보정
+	const auto& vec = it->second;
+	std::size_t idx = currentFrameIndex % vec.size();
+
+	// 3) 실제 Rect 가져오기
+	sf::IntRect rect = vec[idx];
+
+	// ← 방향이면 뒤집기
+	if (currentDirection == Direction::Left)
+	{
+		rect.left = rect.left + rect.width;
+		rect.width = -rect.width;
+	}
+
+	return rect;
 }
 
 void AniPlayer::Draw(sf::RenderWindow& window)

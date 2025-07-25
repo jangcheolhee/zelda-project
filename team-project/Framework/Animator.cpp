@@ -16,22 +16,23 @@ void Animator::AddEvent(const std::string& id, int frame, std::function<void()> 
 
 void Animator::Update(float dt)
 {
-	if (!isPlaying)
+	
+	if (!isPlaying || !currentClip || totalFrame == 0 || !sprite)
 		return;
+
 
 	accumTime += dt * std::fabs(speed);
 	if (accumTime < frameDuration)
 		return;
-
-	currentFrame += speed > 0.f ? 1 : -1;
 	accumTime = 0.f;
 
-	if (currentFrame == checkFrame)
+	currentFrame += (speed >= 0.f ? +1 : -1);
+
+	if (currentFrame >= totalFrame || currentFrame < 0)
 	{
 		if (!playQueue.empty())
 		{
-			std::string clipId = playQueue.front();
-			Play(clipId, false);
+			Play(playQueue.front(), false);
 			playQueue.pop();
 			return;
 		}
@@ -47,19 +48,30 @@ void Animator::Update(float dt)
 		}
 	}
 
-	SetFrame(currentClip->frames[currentFrame]);
-	auto find = events.find({ currentClip->id, currentFrame });
-	if (find != events.end())
+	// 안전 보정: 
+	// totalFrame 이상이면 순환
+	std::cerr
+		<< "[Animator::Update] clip=" << currentClip->id
+		<< " frame=" << currentFrame
+		<< "/" << totalFrame
+		<< "\n";
+	if (currentFrame < 0 || currentFrame >= totalFrame)
 	{
-		auto& ev = find->second;
-		for (auto& action : ev.actions)
-		{
-			if (action)
-			{
-				action();
-			}
-		}
+		std::cerr << "[Animator::Update] INVALID INDEX! frame="
+			<< currentFrame << " total=" << totalFrame << "\n";
+		return;
 	}
+
+
+	SetFrame(currentClip->frames[currentFrame]);
+	// 이벤트 처리(기존 로직)
+	auto it = events.find({ currentClip->id, currentFrame });
+	if (it != events.end())
+	{
+		for (auto& action : it->second.actions)
+			if (action) action();
+	}
+	
 }
 
 void Animator::Play(const std::string& clipId, bool clearQueue)
@@ -76,11 +88,28 @@ void Animator::Play(AnimationClip* clip, bool clearQueue)
 			playQueue.pop();
 		}
 	}
-
+	if (!clip)
+	{
+		std::cerr << "[Animator] Play 호출 실패: clip 포인터 nullptr\n";
+		isPlaying = false;
+		return;
+	}
 	isPlaying = true;
 
 	currentClip = clip;
 	totalFrame = clip->frames.size();
+	std::cerr
+		<< "[Animator::Play] clip=" << clip->id
+		<< " totalFrame=" << totalFrame
+		<< "\n";
+	// 빈 프레임 방어
+	if (totalFrame == 0)
+	{
+		std::cerr << "[Animator] 빈 애니메이션: " << clip->id << "\n";
+		isPlaying = false;
+		return;
+	}
+
 	checkFrame = this->speed > 0.f ? totalFrame : -1;
 	currentFrame = speed > 0.f ? 0 : totalFrame - 1;
 

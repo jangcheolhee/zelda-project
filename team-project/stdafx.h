@@ -11,7 +11,7 @@
 #include <functional>
 #include <fstream>
 #include <direct.h>
-
+#include <string>
 #include "json.hpp"
 using json = nlohmann::json;
 

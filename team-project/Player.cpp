@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
-
+#include "AnimationClip.h"
 
 Player::Player(const std::string& name)
 	: GameObject(name)
@@ -51,6 +51,8 @@ void Player::SetOrigin(Origins preset)
 
 void Player::Init()
 {
+	
+
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
 	
@@ -61,37 +63,37 @@ void Player::Init()
 	}
 	texture = &TEXTURE_MGR.Get(texPath);
 	body.setTexture(*texture);
+	// Up
+	animations[Direction::Up] = AnimationIO::loadFromCSV("animations/Link_up.csv");
 
 	// Down
-	animations[Direction::Down] =
-	{
-			sf::IntRect(0, 0, 16, 32),
-			sf::IntRect(20, 0, 16, 32),
-			sf::IntRect(35, 0, 16, 32)
-	};
-	// Left
-	animations[Direction::Left] =
-	{
-		sf::IntRect(20, 58, -20,27),
-		sf::IntRect(53, 58, -16,23),              
-		sf::IntRect(35, 58, -15,28)
-	};
+	animations[Direction::Down] = AnimationIO::loadFromCSV("animations/Link_down.csv");
+	
+	
 	// Right
-	animations[Direction::Right] =
-	{
-		sf::IntRect(0, 58, 19, 25),
-		sf::IntRect(22, 58, 15, 23),
-		sf::IntRect(37, 58, 16, 23)
-	};
-	// Up
-	animations[Direction::Up] =
-	{
-		sf::IntRect(-1, 113, 20, 19),
-		sf::IntRect(17, 113, 19, 26),
-		sf::IntRect(173, 113, 15, 25)
-	};
-	body.setScale(1, 1); // ũ�� ����
-	body.setTextureRect(animations[currentDirection][currentFrame]);
+	animations[Direction::Right] = AnimationIO::loadFromCSV("animations/Link_right.csv");
+	// Left
+	animations[Direction::Left] = animations[Direction::Right];
+
+	currentDirection = Direction::Down;
+	currentFrame = 0;
+	elapsedTime = 0.f;
+	frameTime = 1.f / 8.f;   // 예: 초당 8프레임
+
+	auto& vec = animations[currentDirection];
+	if (!vec.empty()) {
+		body.setTextureRect(vec[currentFrame]);
+
+	}
+	else {
+		std::cerr << "[Init] 빈 애니메이션: Direction="
+			<< static_cast<int>(currentDirection)
+			<< "\n";
+	}
+
+	
+	body.setScale(2.0f, 2.0f); // ũ�� ����
+	
 	// ��Ʈ�ڽ� �ʱ�ȭ
 	hitBox.UpdateTransform(body, body.getLocalBounds());
 }
@@ -115,6 +117,22 @@ void Player::Update(float dt)
 	
 	sf::Vector2f movement(0.f, 0.f);
 	bool moving = false;
+	Direction nextDirection = currentDirection;
+
+	if (nextDirection != currentDirection) {
+		currentDirection = nextDirection;
+		currentFrame = 0;
+		elapsedTime = 0.f;
+	}
+
+	// 2) **딱 한번** 벡터를 가져오고
+	auto& vec = animations[currentDirection];
+	if (vec.empty()) {
+		// 애니메이션 데이터 없으면 이동만 처리
+		body.move(movement);
+		hitBox.UpdateTransform(body, body.getLocalBounds());
+		return;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
@@ -122,46 +140,73 @@ void Player::Update(float dt)
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		movement.y -= speed * dt;
-		currentDirection = Direction::Up;
+		nextDirection = Direction::Up;
 		moving = true;
 		
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 		movement.y += speed * dt;
-		currentDirection = Direction::Down;
+		nextDirection = Direction::Down;
 		moving = true;
 		
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
 	{
 		movement.x -= speed * dt;
-		currentDirection = Direction::Left;
+		nextDirection = Direction::Left;
 		moving = true;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
 	{
 		movement.x += speed * dt;
-		currentDirection = Direction::Right;
+		nextDirection = Direction::Right;
 		moving = true;
 	}
-
+	if (nextDirection != currentDirection) {
+		currentDirection = nextDirection;
+		currentFrame = 0;
+		elapsedTime = 0.f;
+	}
+	
 	if (moving) {
 		elapsedTime += dt;
 		if (elapsedTime >= frameTime) 
 		{
-			currentFrame = (currentFrame + 1) % animations[currentDirection].size();
-			body.setTextureRect(animations[currentDirection][currentFrame]);
+			currentFrame = (currentFrame + 1) % vec.size();
 			elapsedTime = 0.f;
 		}
-		//SetPosition(movement);
-		body.move(movement);
+		/*SetPosition(movement);
+		body.move(movement);*/
 		
 	}
 	else {
 		// �̵� ���ϸ� ù ������ ����
 		currentFrame = 0;
-		body.setTextureRect(animations[currentDirection][currentFrame]);
+		//body.setTextureRect(animations[currentDirection][currentFrame]);
+	} 
+	// 5) 최종으로 텍스처 사각형 결정
+	if (currentDirection == Direction::Left)
+	{
+		// 오른쪽 프레임을 가져와서 뒤집는다
+		auto& rightVec = animations[Direction::Right];
+		if (!rightVec.empty())
+		{
+			sf::IntRect r = rightVec[currentFrame];
+			// 뒤집기: 왼쪽에서 width 만큼 옮긴 뒤 너비를 음수로
+			r.left = r.left + r.width;
+			r.width = -r.width;
+			body.setTextureRect(r);
+		}
 	}
+	else
+	{
+		// Up, Down, Right 는 그대로
+		auto& vec = animations[currentDirection];
+		if (!vec.empty())
+			body.setTextureRect(vec[currentFrame]);
+	}
+	
+	body.move(movement);
 	hitBox.UpdateTransform(body, body.getLocalBounds());
 
 
