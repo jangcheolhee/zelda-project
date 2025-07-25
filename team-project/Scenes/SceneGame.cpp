@@ -21,7 +21,7 @@ void SceneGame::InitZones()
 	mapZones.clear();
 
 	mapZones.push_back({
-	  sf::FloatRect(0, 0, 512, 600),
+	  sf::FloatRect(0, 200, 512, 550), //zone 1_confirm
 	  1,
 	  [this]()
 		{
@@ -31,14 +31,13 @@ void SceneGame::InitZones()
 	  [this]()
 		{
 			std::cout << "Zone 1 Exit" << std::endl;
-
 		},
 	  false
 		});
 
 	// Zone 2
 	mapZones.push_back({
-		sf::FloatRect(1025, 250, 256, 256),
+		sf::FloatRect(1025, 250, 256, 256), //zone2_dummy
 		2,
 		[this]()
 		{
@@ -62,33 +61,36 @@ void SceneGame::UpdateZones()
 			bool nowInZone = zone.bounds.contains(playerPos);
 			if (nowInZone && !zone.entered)
 			{
-				zone.entered = true;
-				zoneID = zone.zoneId;
-				if (zone.onEnter) zone.onEnter();
+				zone.entered = true; 
+				zoneID = zone.zoneId; 
+				if (zone.onEnter)
+				{
+					zone.onEnter();
+					SpawnInteractableObject(zone.bounds);
+				}
 			}
 			else if (!nowInZone && zone.entered)
 			{
 				zone.entered = false;
 				if (zone.onExit) zone.onExit();
+				DeleteInteractables();
 			}
 		}
 }
 
-void SceneGame::UpdateBehaviorZone()
+void SceneGame::UpdateBehaviorZone() 
 {
 	switch (zoneID)
 	{
-	case 1:
+	case 1: 
 	{
 		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
 		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
 		worldView.setCenter({ x, y });
-
 	}
 		break;
 	case 2:
 		break;
-
 	}
 }
 
@@ -146,6 +148,7 @@ void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types typ
 		SpawnEnemy(pos, type);
 	}
 }
+
 void SceneGame::CheckCollison()
 {
 	for (auto& enemy : enemyList)
@@ -181,77 +184,102 @@ void SceneGame::CheckCollison()
 	}
 }
 
-void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid, std::string name)
-{
-	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+// Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 
-	for (const auto& pos : positions)
+void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
+{	
+	//layer 1 : bush
+	int layer1Gid[] = { 24670, 24590 };
+	for (int id : layer1Gid)
 	{
-		auto bush = new Bush;
-		AddGameObject(bush);
-		interactables.push_back(bush);
-		bush->Reset();
-		bush->SetPosition(pos);
-		if (name == "bush")
-		{
-			bush->SetOrigin(Origins::ML);
-		}
-		else if (name == "hole")
-		{
-			bush->SetOrigin(Origins::TL);
+		std::vector <sf::Vector2f> positions = tileMap->getPositions(1, id);
+
+		for (const auto& pos : positions)
+		{	
+			if((pos.x>=zone.left && pos.x<=(zone.left+zone.width))&&(pos.y>=zone.top&&pos.y<=zone.top+zone.height))
+			{//bush
+				auto bush = new Bush;
+				AddGameObject(bush);
+				interactables.push_back(bush);
+				bush->Reset();
+				bush->SetPosition(pos);
+				if (id == 24670)
+				{
+					bush->SetOrigin(Origins::ML);
+				}
+				else if (id == 24590)
+				{
+					bush->SetOrigin(Origins::TL);
+				}
+			}
 		}
 	}
-}
-
-// Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
-void SceneGame::SpawnJumpAtTile()
-{
-	int layer = 3;
-	int gid[] = {25075,25067,24699,25068,24592};
-
+	
+	//layer 2 : npc
+	int layer2Gid[] = { 24638 };
+	for (int id : layer2Gid)
+	{	
+		std::vector <sf::Vector2f> positions = tileMap->getPositions(2, id);
+		for (const auto& pos : positions)
+		{//npc
+			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
+			{
+				auto npc = new Npc();
+				AddGameObject(npc);
+				interactables.push_back(npc);
+				npc->SetScale({ 0.5f, 0.5f });
+				npc->Reset();
+				npc->SetPosition(pos);
+			}
+		}
+	}	
+	
+	//layer3: collision
+	int gid[] = { 25075,25067,24699,25068,24592 };
 	for (int id : gid)
 	{
-		std::vector <sf::Vector2f> positions = tileMap->getPositions(layer, id);
+		std::vector <sf::Vector2f> positions = tileMap->getPositions(3, id);
 		for (const auto& pos : positions)
 		{
-			auto inter = new JumpWall();
-			switch (id)
+			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-			case 25075:
-				inter->SetDirection(Direction::Down);
-				break;
-			case 25067:
-				inter->SetDirection(Direction::Up);
-				break;
-			case 24699:
-				inter->SetDirection(Direction::Left);
-				break;
-			case 25068: case 24592:
-				inter->SetDirection(Direction::None);
-				break;
-			default:
-				break;
+				auto inter = new JumpWall();
+				switch (id)
+				{
+				case 25075:
+					inter->SetDirection(Direction::Down);
+					break;
+				case 25067:
+					inter->SetDirection(Direction::Up);
+					break;
+				case 24699:
+					inter->SetDirection(Direction::Left);
+					break;
+				case 25068: case 24592:
+					inter->SetDirection(Direction::None);
+					break;
+				default:
+					break;
+				}
+				AddGameObject(inter);
+				interactables.push_back(inter);
+				inter->SetOrigin(Origins::TC);
+				inter->Reset();
+				inter->SetPosition(pos);
 			}
-			AddGameObject(inter);
-			interactables.push_back(inter);
-			inter->SetOrigin(Origins::TC);
-			inter->SetPosition(pos);
 		}
 	}
 }
 
-void SceneGame::SpawnNpcAtTile(int layerIndex, int targetGid)
+void SceneGame::DeleteInteractables()
 {
-	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
-
-	for (const auto& pos : positions)
+	auto it = interactables.begin();
+	while (it != interactables.end())
 	{
-		auto npc = new Npc();
-		AddGameObject(npc);
-		interactables.push_back(npc);
-		npc->SetScale({ 0.5f, 0.5f });
-		npc->SetPosition(pos);
+		RemoveGameObject(*it);
+		it = interactables.erase(it);
 	}
+	interactables.clear();
 }
 
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
@@ -270,7 +298,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/sprite_sheet.png");
 	texIds.push_back("graphics/bush.png");
 	texIds.push_back("graphics/Overworld.png");
-    texIds.push_back("graphics/npc.png");
+	texIds.push_back("graphics/npc.png");
 	texIds.push_back("graphics/Enemy_sheet.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
@@ -279,14 +307,16 @@ void SceneGame::Init()
 
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-    player->Init();
-    // 3) 타일맵도 만들고 Init()
-    tileMap = new TileMap("TileMap");
-    tileMap->Init();
+	player->Init();
+	// 3) 타일맵도 만들고 Init()
+	tileMap = new TileMap("TileMap");
+	tileMap->Init();
 
 	AddGameObject(player);
 	AddGameObject(tileMap);
+
 	InitZones();
+
 	Scene::Init();
 }
 
@@ -300,12 +330,6 @@ void SceneGame::Enter()
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
-
-	SpawnBushesAtTile(1, 24670, "bush");
-    SpawnBushesAtTile(1, 24590, "hole"); 
-    SpawnNpcAtTile(2, 24638); 
-	SpawnJumpAtTile();
-
 	Scene::Enter();
 	player->SetPosition(startPos);
 }

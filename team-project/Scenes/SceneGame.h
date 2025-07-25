@@ -44,11 +44,12 @@ public:
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
-	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //�� ���� ����(Ȱ��)
-	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //�ϰ� ����
-	void SpawnBushesAtTile(int layerIndex, int targetGid, std::string="");
-	void SpawnJumpAtTile();
-	void SpawnNpcAtTile(int layerIndex, int targetGid);
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
+	
+	//존으로 변경
+	void SpawnInteractableObject(sf::FloatRect zone);
+	void DeleteInteractables();
 
 	void CheckCollison();
 
