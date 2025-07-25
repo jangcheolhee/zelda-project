@@ -40,6 +40,7 @@ public:
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();
+	void DeleteInteractables();
 
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);

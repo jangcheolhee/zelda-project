@@ -114,7 +114,7 @@ sf::Vector2f TileMap::getPosition(int layerIndex, int targetGid)
     int width = layer["width"];
     int heihgt = layer["height"];
 
-    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
+    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, - cellSize.y * 0.5f * cellCount.y };
 
     for (int i = 0; i < (int)data.size(); ++i)
     {

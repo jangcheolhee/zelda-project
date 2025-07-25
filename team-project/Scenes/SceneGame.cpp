@@ -27,10 +27,12 @@ void SceneGame::InitZones()
 		{
 			worldView.setCenter({ 1153,388 });
 			std::cout << "Zone 1 Enter" << std::endl;
+			SpawnJumpAtTile(3, 25075);
 		},
 	  [this]()
 		{
 			std::cout << "Zone 1 Exit" << std::endl;
+			DeleteInteractables();
 
 		},
 	  false
@@ -90,6 +92,18 @@ void SceneGame::UpdateBehaviorZone()
 		break;
 
 	}
+}
+
+void SceneGame::DeleteInteractables()
+{
+	auto it = interactables.begin();
+	while (it != interactables.end())
+	{
+		RemoveGameObject(*it);
+		it = interactables.erase(it);
+	}
+	interactables.clear();
+
 }
 
 Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
@@ -165,7 +179,7 @@ void SceneGame::CheckCollison()
 	for (auto& obj : interactables)
 	{
 		
-		if (obj->GetType() == Interactable::Type::Throw)
+		if (obj->GetType() == Interactable::Type::Throw || obj->GetType() == Interactable::Type::Chest)
 		{
 			if (rect.intersects(obj->GetGlobalBounds()))
 			{
@@ -236,6 +250,7 @@ void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 		interactables.push_back(inter);
 		inter->SetOrigin(Origins::TC);
 		inter->SetPosition(pos);
+		inter->Reset();
 	}
 }
 
@@ -277,7 +292,6 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
 	player = new Player("Player");
-	tileMap = new TileMap("TileMap");
     player->Init();
     // 3) 타일맵도 만들고 Init()
     tileMap = new TileMap("TileMap");
@@ -300,16 +314,16 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
 
-	SpawnBushesAtTile(1, 24670, "bush");
-    SpawnBushesAtTile(1, 24590, "hole"); 
-    SpawnNpcAtTile(2, 24638); 
-	SpawnJumpAtTile(3, 25075);
-	SpawnJumpAtTile(3, 25068);
-	SpawnJumpAtTile(3, 24592);
-	SpawnJumpAtTile(3, 25067);
-	SpawnJumpAtTile(3, 25078);
-	SpawnJumpAtTile(3, 25077);
-	SpawnJumpAtTile(3, 24699);
+	//SpawnBushesAtTile(1, 24670, "bush");
+ //   SpawnBushesAtTile(1, 24590, "hole"); 
+ //   SpawnNpcAtTile(2, 24638); 
+	//SpawnJumpAtTile(3, 25075);
+	//SpawnJumpAtTile(3, 25068);
+	//SpawnJumpAtTile(3, 24592);
+	//SpawnJumpAtTile(3, 25067);
+	//SpawnJumpAtTile(3, 25078);
+	//SpawnJumpAtTile(3, 25077);
+	//SpawnJumpAtTile(3, 24699);
 
 	Scene::Enter();
 	player->SetPosition(startPos);
