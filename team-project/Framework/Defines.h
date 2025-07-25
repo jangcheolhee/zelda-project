@@ -38,5 +38,6 @@ enum class Direction
 	Down, 
 	Left,
 	Right, 
-	Up 
+	Up,
+	None,
 };

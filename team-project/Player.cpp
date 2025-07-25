@@ -91,8 +91,7 @@ void Player::Init()
 			<< "\n";
 	}
 
-	
-	body.setScale(2.0f, 2.0f); // ũ�� ����
+	body.setScale(1, 1); // ũ�� ����
 	
 	// ��Ʈ�ڽ� �ʱ�ȭ
 	hitBox.UpdateTransform(body, body.getLocalBounds());

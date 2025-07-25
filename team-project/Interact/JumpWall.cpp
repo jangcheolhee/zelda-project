@@ -16,12 +16,12 @@ void JumpWall::OnInteract()
 			break;
 		case Direction::Right:
 			dir = { 1.f,0.f };
-			
 			break;
-		
-			
 		case Direction::Up:
 			dir = { 0.f,-1.f };
+			break;
+		case Direction::None:
+			dir = { 0., 0.f };
 			break;
 		default:
 			break;
@@ -39,7 +39,6 @@ void JumpWall::Reset()
 {
 	Interactable::Reset();
 	type = Type::JumpWall;
-	
 	
 	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 	body.setTextureRect({ 304,57,8,8 });
