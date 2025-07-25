@@ -272,7 +272,6 @@
     <ClInclude Include="Framework\SpriteGo.h" />
     <ClInclude Include="Framework\Scene.h" />
     <ClInclude Include="Framework\GameMgr.h" />
-    <ClInclude Include="Interact\Collision.h" />
     <ClInclude Include="Interact\Interactable.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />

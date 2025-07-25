@@ -50,13 +50,9 @@ public:
 	void SpawnJumpAtTile(int layerIndex, int targetGid);
 	void SpawnNpcAtTile(int layerIndex, int targetGid);
 
-
 	void CheckCollison();
 
 	void Init() override;
 	void Enter() override;
-
-
-	
 	void Update(float dt) override;
 };

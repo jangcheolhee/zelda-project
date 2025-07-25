@@ -19,8 +19,6 @@ protected:
 	HitBox hitBox;
 	Player* player;
 	SceneGame* sceneGame = nullptr;
-	
-	
 
 	sf::Vector2f dir = { 0.f,0.f };
 	float speed = 150.f;

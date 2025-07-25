@@ -9,7 +9,7 @@
 #include "Rupee.h"
 #include "JumpWall.h"
 #include <istream>
-#include "Npc.h"
+
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -191,7 +191,6 @@ void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid, std::string nam
 	}
 }
 
-
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 {
@@ -205,6 +204,18 @@ void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 		{
 		case 25075:
 			inter->SetDirection(Direction::Down);
+			break;
+		case 25067:
+			inter->SetDirection(Direction::Up);
+			break;
+		case 24699:
+			inter->SetDirection(Direction::Left);
+			break;
+		case 25068:
+			inter->SetDirection(Direction::None);
+			break;
+		case 24592:
+			inter->SetDirection(Direction::None);
 			break;
 		default:
 			break;
@@ -229,8 +240,6 @@ void SceneGame::SpawnNpcAtTile(int layerIndex, int targetGid)
 		npc->SetPosition(pos);
 	}
 }
-
-
 
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
@@ -283,13 +292,16 @@ void SceneGame::Enter()
     SpawnBushesAtTile(1, 24590, "hole"); 
     SpawnNpcAtTile(2, 24638); 
 	SpawnJumpAtTile(3, 25075);
+	SpawnJumpAtTile(3, 25068);
+	SpawnJumpAtTile(3, 24592);
+	SpawnJumpAtTile(3, 25067);
+	SpawnJumpAtTile(3, 25078);
+	SpawnJumpAtTile(3, 25077);
+	SpawnJumpAtTile(3, 24699);
 
 	Scene::Enter();
 	player->SetPosition(startPos);
-
 }
-
-
 
 void SceneGame::Update(float dt)
 {
@@ -302,5 +314,4 @@ void SceneGame::Update(float dt)
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
-
 }
