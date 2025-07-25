@@ -10,11 +10,11 @@ class Player :  public GameObject
 
 protected:
 	int rupee = 0;
-	Direction currentDirection = Direction::Down;
+	
 	size_t currentFrame = 0;
 	float frameTime = 0.2f;    // ������ ��ȯ �ð�
 	float elapsedTime = 0.f;
-	float speed = 200.f;        // �̵� �ӵ�
+	float speed = 50.f;        // �̵� �ӵ�
 	sf::Vector2f velocity = { 0.f, 0.f };
 	std::map<Direction, std::vector<sf::IntRect>> animations;
 
@@ -29,7 +29,12 @@ protected:
 	bool isInteract = false;
 	bool wantsToInteract = false;
 	
-
+	Direction currentDirection = Direction::Down;
+	Direction heldDirection = Direction::None;
+	bool isHoldingDirection = false;
+	bool isMovingLeft = false;
+	bool isRightPressed = false;
+	bool isLeftPressed = false;
 public:
 	Player(const std::string& name = "");
 	virtual ~Player() = default;

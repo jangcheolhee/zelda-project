@@ -209,14 +209,12 @@ void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
 			inter->SetDirection(Direction::Up);
 			break;
 		case 24699:
-			inter->SetDirection(Direction::Left);
+			inter->SetDirection(Direction::Right);
 			break;
-		case 25068:
+		case 25068:case 24592:
 			inter->SetDirection(Direction::None);
 			break;
-		case 24592:
-			inter->SetDirection(Direction::None);
-			break;
+	
 		default:
 			break;
 		}
