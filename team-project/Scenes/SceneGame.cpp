@@ -204,38 +204,39 @@ void SceneGame::SpawnBushesAtTile(int layerIndex, int targetGid, std::string nam
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
-void SceneGame::SpawnJumpAtTile(int layerIndex, int targetGid)
+void SceneGame::SpawnJumpAtTile()
 {
-	std::vector <sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+	int layer = 3;
+	int gid[] = {25075,25067,24699,25068,24592};
 
-	for (const auto& pos : positions)
+	for (int id : gid)
 	{
-		auto inter = new JumpWall();
-		
-		switch (targetGid)
+		std::vector <sf::Vector2f> positions = tileMap->getPositions(layer, id);
+		for (const auto& pos : positions)
 		{
-		case 25075:
-			inter->SetDirection(Direction::Down);
-			break;
-		case 25067:
-			inter->SetDirection(Direction::Up);
-			break;
-		case 24699:
-			inter->SetDirection(Direction::Left);
-			break;
-		case 25068:
-			inter->SetDirection(Direction::None);
-			break;
-		case 24592:
-			inter->SetDirection(Direction::None);
-			break;
-		default:
-			break;
+			auto inter = new JumpWall();
+			switch (id)
+			{
+			case 25075:
+				inter->SetDirection(Direction::Down);
+				break;
+			case 25067:
+				inter->SetDirection(Direction::Up);
+				break;
+			case 24699:
+				inter->SetDirection(Direction::Left);
+				break;
+			case 25068: case 24592:
+				inter->SetDirection(Direction::None);
+				break;
+			default:
+				break;
+			}
+			AddGameObject(inter);
+			interactables.push_back(inter);
+			inter->SetOrigin(Origins::TC);
+			inter->SetPosition(pos);
 		}
-		AddGameObject(inter);
-		interactables.push_back(inter);
-		inter->SetOrigin(Origins::TC);
-		inter->SetPosition(pos);
 	}
 }
 
@@ -303,13 +304,7 @@ void SceneGame::Enter()
 	SpawnBushesAtTile(1, 24670, "bush");
     SpawnBushesAtTile(1, 24590, "hole"); 
     SpawnNpcAtTile(2, 24638); 
-	SpawnJumpAtTile(3, 25075);
-	SpawnJumpAtTile(3, 25068);
-	SpawnJumpAtTile(3, 24592);
-	SpawnJumpAtTile(3, 25067);
-	SpawnJumpAtTile(3, 25078);
-	SpawnJumpAtTile(3, 25077);
-	SpawnJumpAtTile(3, 24699);
+	SpawnJumpAtTile();
 
 	Scene::Enter();
 	player->SetPosition(startPos);
