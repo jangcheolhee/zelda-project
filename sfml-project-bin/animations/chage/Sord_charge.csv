@@ -1,0 +1,13 @@
+Direction,Frame,X,Y,Width,Height
+charge,0,224,47,63,60
+charge,1,290,47,63,61
+charge,2,356,46,64,62
+charge,3,424,47,62,60
+charge,4,224,114,63,61
+charge,5,290,114,62,61
+charge,6,356,114,63,61
+charge,7,423,113,63,62
+charge,8,223,181,64,60
+charge,9,290,181,62,61
+charge,10,357,181,62,60
+charge,11,425,182,61,60

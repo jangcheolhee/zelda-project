@@ -3,20 +3,33 @@
 #include "HitBox.h"
 #include "Defines.h"
 #include "Enemy.h"
+enum class PlayerState
+{
+	Idle,
+	Move,
+	Attack,
+};
 
 class Player :  public GameObject
 {
-
-
 protected:
 	int rupee = 0;
-	
+	sf::Texture* swordTexture = nullptr;
+	PlayerState state = PlayerState::Idle;
+	std::vector<sf::IntRect> attackFrames;
+	float attackElapsed = 0.f;
+	int attackFrameIndex = 0;
+	bool isAttacking = false;
+
 	size_t currentFrame = 0;
-	float frameTime = 0.2f;    // ������ ��ȯ �ð�
+	float frameTime = 0.2f;   
 	float elapsedTime = 0.f;
-	float speed = 50.f;        // �̵� �ӵ�
+	float speed = 50.f;        
+	float attackFrameTime = 1.f / 20.f;
+
 	sf::Vector2f velocity = { 0.f, 0.f };
 	std::map<Direction, std::vector<sf::IntRect>> animations;
+	std::map<Direction, std::vector<sf::IntRect>> attackAnimations;
 
 	sf::Sprite body;
 	sf::Texture* texture = nullptr;

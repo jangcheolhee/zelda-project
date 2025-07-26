@@ -63,6 +63,35 @@ void Player::Init()
 	}
 	texture = &TEXTURE_MGR.Get(texPath);
 	body.setTexture(*texture);
+
+	std::string swordTexPath = "graphics/Sword_ani.png";
+	if (!TEXTURE_MGR.Exists(swordTexPath))
+	{
+		TEXTURE_MGR.Load(swordTexPath);
+	}
+	swordTexture = &TEXTURE_MGR.Get(swordTexPath);
+
+	//Sord_Up
+	attackAnimations[Direction::Up] = AnimationIO::loadFromCSV("animations/Sword_attack_u.csv");
+
+	//Sord_Down
+	attackAnimations[Direction::Down] = AnimationIO::loadFromCSV("animations/Sword_attack_d.csv");
+
+	//sord_Right
+	attackAnimations[Direction::Right] = AnimationIO::loadFromCSV("animations/Sword_attack_r.csv");
+
+	//Sord_Left
+	auto& attackVec = (currentDirection == Direction::Left)
+		? attackAnimations[Direction::Right]
+		: attackAnimations[currentDirection];
+
+	for (auto& [dir, vec] : attackAnimations)
+	{
+		std::cout << "[Init] Loaded attack animation for Direction "
+			<< static_cast<int>(dir)
+			<< " → " << vec.size() << " frames\n";
+	}
+
 	// Up
 	animations[Direction::Up] = AnimationIO::loadFromCSV("animations/Link_up.csv");
 
@@ -116,37 +145,113 @@ void Player::Reset()
 }
 void Player::Update(float dt)
 {
+	if (!isAttacking && InputMgr::GetKeyDown(sf::Keyboard::Z))
+	{
+		state = PlayerState::Attack;
+		isAttacking = true;
+		attackElapsed = 0.f;
+		attackFrameIndex = 0;
+
+		if (swordTexture)
+			body.setTexture(*swordTexture);
+
+		auto& attackVec = attackAnimations
+			[currentDirection == Direction::Left? Direction::Right
+			: currentDirection];
+
+		if (!attackVec.empty())
+		{
+			sf::IntRect rect = attackVec[attackFrameIndex];
+			if (currentDirection == Direction::Left)
+			{
+				rect.left += rect.width;
+				rect.width = -rect.width;
+			}
+			body.setTextureRect(rect);
+
+		}
+		
+	}	
+
+	if (state == PlayerState::Attack)
+	{
+		attackElapsed += dt;
+
+		auto& attackVec = attackAnimations[currentDirection];
+		if (attackVec.empty() && currentDirection == Direction::Left)
+			attackVec = attackAnimations[Direction::Right]; // 좌우 반전 처리용
+
+		if (!attackVec.empty() && attackFrameIndex < attackVec.size())
+		{
+			if (attackElapsed >= attackFrameTime)
+			{
+				attackElapsed = 0.f;
+				attackFrameIndex++;
+
+
+
+				if (attackFrameIndex >= attackVec.size())
+				{
+					isAttacking = false;
+					state = PlayerState::Idle;
+					currentFrame = 0;
+					elapsedTime = 0.f;
+
+					// ⭐ 공격 끝나면 원래 텍스처(Link.png)로 복귀
+					if (texture)
+						body.setTexture(*texture);
+				}
+				else
+				{
+					// 다음 공격 프레임
+					sf::IntRect rect = attackVec[attackFrameIndex];
+					if (currentDirection == Direction::Left)
+					{
+						rect.left += rect.width;
+						rect.width = -rect.width;
+					}
+					body.setTextureRect(rect);
+				}
+			}
+		}
+		
+
 	
+		body.move(sf::Vector2f(0.f, 0.f)); // 공격 중엔 이동 없음
+		hitBox.UpdateTransform(body, body.getLocalBounds());
+		return; // 공격 중에는 나머지 처리 스킵
+			
+		}
+
 	sf::Vector2f movement(0.f, 0.f);
 	bool moving = false;
 	bool isMovingLeft = false;
+	// 방향 키 입력 시 방향 결정
+		if (!isHoldingDirection)
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				currentDirection = Direction::Up;
+				isHoldingDirection = true;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+				currentDirection = Direction::Down;
+				isHoldingDirection = true;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+				currentDirection = Direction::Left;
+				isHoldingDirection = true;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+				currentDirection = Direction::Right;
+				isHoldingDirection = true;
+			}
 
-
-	if (!isHoldingDirection)
-	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-			currentDirection = Direction::Up;
-			isHoldingDirection = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			currentDirection = Direction::Down;
-			isHoldingDirection = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-			currentDirection = Direction::Left;
-			isHoldingDirection = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-			currentDirection = Direction::Right;
-			isHoldingDirection = true;
+			if (isHoldingDirection) {
+				currentFrame = 0;
+				elapsedTime = 0.f;
+			}
 		}
 
-		if (isHoldingDirection) {
-			//currentDirection = heldDirection;
-			currentFrame = 0;
-			elapsedTime = 0.f;
-		}
-	}
 
 	// 2. 이동 방향은 3개까지 입력 가능 (움직임만)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
@@ -167,7 +272,7 @@ void Player::Update(float dt)
 		movement.y += speed * dt;
 		moving = true;
 	}
-	
+
 	// 키가 모두 떨어졌는지 체크
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
 		!sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
@@ -176,64 +281,42 @@ void Player::Update(float dt)
 		isHoldingDirection = false;
 
 	}
-	
-	// 2) **딱 한번** 벡터를 가져오고
+
+	// ================== 이동 애니메이션 프레임 처리 ==================
 	auto& vec = animations[currentDirection];
-	if (vec.empty()) {
+	
+		if (!vec.empty())
+		{
+			if (moving)
+			{
+				elapsedTime += dt;
+				if (elapsedTime >= frameTime)
+				{
+					elapsedTime = 0.f;
+					currentFrame = (currentFrame + 1) % vec.size();
+				}
+			}
+			else
+			{
+				currentFrame = 0;
+			}
+
+			sf::IntRect rect = vec[currentFrame];
+			if (currentDirection == Direction::Left)
+			{
+				rect.left += rect.width;
+				rect.width = -rect.width;
+			}
+			body.setTextureRect(rect);
+		}
 		// 애니메이션 데이터 없으면 이동만 처리
 		body.move(movement);
 		hitBox.UpdateTransform(body, body.getLocalBounds());
-		return;
-	}
+		
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
-		
-	}
-	
-	
-	if (moving) {
-		elapsedTime += dt;
-		if (elapsedTime >= frameTime) 
-		{
-			auto& vec = animations[currentDirection];
-			currentFrame = (currentFrame + 1) % vec.size();
-			elapsedTime = 0.f;
-		}
-	
-	}
-	else {
-		
-		currentFrame = 0;
-		
-	} 
-	// 5) 최종으로 텍스처 사각형 결정
-	if (currentDirection == Direction::Left)
-	{
-		// 오른쪽 프레임을 가져와서 뒤집는다
-		auto& rightVec = animations[Direction::Right];
-		if (!rightVec.empty())
-		{
-			sf::IntRect r = rightVec[currentFrame];
-			// 뒤집기: 왼쪽에서 width 만큼 옮긴 뒤 너비를 음수로
-			r.left = r.left + r.width;
-			r.width = -r.width;
-			body.setTextureRect(r);
-		}
-	}
-	else
-	{
-		// Up, Down, Right 는 그대로
-		auto& vec = animations[currentDirection];
-		if (!vec.empty())
-			body.setTextureRect(vec[currentFrame]);
-	}
-	
-	body.move(movement);
-	hitBox.UpdateTransform(body, body.getLocalBounds());
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {
-		hitBox.visible = !hitBox.visible;
 	}
 	// interactable과 x키 누르면 상호작용
 	if (InputMgr::GetKeyDown(sf::Keyboard::X))
@@ -245,8 +328,24 @@ void Player::Update(float dt)
 		wantsToInteract = false;
 	}
 
+	
+	}
+	
+	
+// 공격 프레임 적용
+       /* if (attackFrameIndex < attackFrames.size())
+		{
+            body.setTextureRect(attackFrames[attackFrameIndex]);
+    }
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {
+			hitBox.visible = !hitBox.visible;
+		}
+		*/
+		
 
-}
+
+	
+
 
 void Player::Draw(sf::RenderWindow& window)
 {

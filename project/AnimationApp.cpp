@@ -5,14 +5,14 @@ AnimationApp::AnimationApp()
     : window(sf::VideoMode(800, 600), "SFML Animation Tool")
 {
 
-    texture.loadFromFile("graphics/Link.png");
+    texture.loadFromFile("graphics/Sword_ani.png");
     sprite.setTexture(texture);
     sprite.setPosition(0.f, 0.f);
     animSprite.setTexture(texture);
     sprite.setScale(2.f, 2.f);
     ui.SetSpriteSheetTexture(&texture);
     
-    currentClip.name = "Link_idle";
+    currentClip.name = "Basement_hole";
     currentClip.loop = true;
 
     player = new AnimationPlayer(&currentClip);
