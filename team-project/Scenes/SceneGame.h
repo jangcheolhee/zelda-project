@@ -22,6 +22,14 @@ struct MapZone
 	}
 };
 
+struct FlowerEffect
+{
+	sf::Sprite sprite;
+	sf::Vector2f position;
+	float timer = 0.0f;
+	bool visible = false;
+};
+
 class SceneGame : public Scene
 {
 protected:
@@ -33,6 +41,13 @@ protected:
 
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
+
+	//flower
+	std::vector<FlowerEffect> flowers;
+	float flowerTimer = 0.0f;
+	float flowerInterval = 0.1f;
+	float flowerDuration = 1.0f; 
+	int maxFlowers = 10; 
 
 public:
 	SceneGame();
@@ -56,4 +71,7 @@ public:
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
+
+	void InitFlowers();
+	void UpdateFlowerEffect(float dt);
 };

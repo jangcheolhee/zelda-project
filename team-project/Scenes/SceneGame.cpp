@@ -34,10 +34,9 @@ void SceneGame::InitZones()
 		},
 	  false
 		});
-
 	// Zone 2 origin_left1
 	mapZones.push_back({
-		sf::FloatRect(0, 200, 512, 550), 
+		sf::FloatRect(-512, 200, 512, 550), 
 		2,
 		[this]()
 		{
@@ -50,10 +49,9 @@ void SceneGame::InitZones()
 		},
 		false
 		});
-
 	// Zone 3 origin_up1
 	mapZones.push_back({
-		sf::FloatRect(0, 200, 512, 550), 
+		sf::FloatRect(0, -350, 512, 550), 
 		3,
 		[this]()
 		{
@@ -62,6 +60,21 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
+			DeleteEnemy();
+		},
+		false
+		});
+	// Zone 4 origin_up2
+	mapZones.push_back({
+		sf::FloatRect(0, -900, 512, 550),
+		4,
+		[this]()
+		{
+			std::cout << "Zone 4 Enter" << std::endl;
+		},
+		[this]()
+		{
+			std::cout << "Zone 4 Exit" << std::endl;
 			DeleteEnemy();
 		},
 		false
@@ -82,6 +95,7 @@ void SceneGame::UpdateZones()
 				{
 					zone.onEnter();
 					SpawnInteractableObject(zone.bounds);
+					InitFlowers();
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -99,25 +113,32 @@ void SceneGame::UpdateBehaviorZone()
 	{//player 기준
 		case 1:
 		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128,384);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
 			worldView.setCenter({ x, y });
-			break;
 		}
+			break;
 		case 2:
 		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 0, 128);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 768);
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, -384, -128);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
 			worldView.setCenter({ x, y });
-			break;
 		}
+			break;
 		case 3:
 		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 0, 128);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 0, 384);
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -250, 100);
 			worldView.setCenter({ x, y });
-			break;
 		}
+			break;
+		case 4:
+		{
+			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -750, -400);
+			worldView.setCenter({ x, y });
+		}
+		break;
 	}
 }
 
@@ -328,6 +349,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Overworld.png");
 	texIds.push_back("graphics/npc.png");
 	texIds.push_back("graphics/Enemy_sheet.png");
+	texIds.push_back("graphics/flower.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
@@ -369,8 +391,60 @@ void SceneGame::Update(float dt)
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();
+	UpdateFlowerEffect(dt);
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
+	}
+}
+
+void SceneGame::InitFlowers()
+{
+	flowers.clear();
+	std::vector<sf::Vector2f> flowerPositions = tileMap->getPositions(4, 24696);
+	sf::FloatRect currentZone = mapZones[zoneID - 1].bounds; 
+
+	for (const auto& pos : flowerPositions)
+	{
+		if ((pos.x >= currentZone.left && pos.x <= (currentZone.left + currentZone.width)) &&
+			(pos.y >= currentZone.top && pos.y <= (currentZone.top + currentZone.height)))
+		{
+			FlowerEffect flower;
+			flower.sprite.setTexture(TEXTURE_MGR.Get("graphics/flower.png"));
+			flower.sprite.setOrigin(flower.sprite.getLocalBounds().width * 0.5f,
+				flower.sprite.getLocalBounds().height * 0.5f);
+			flower.position = pos;
+			flower.sprite.setPosition(pos);
+			flower.visible = false;
+			flower.timer = 0.0f;
+
+			flowers.push_back(flower);
+		}
+	}
+}
+
+void SceneGame::UpdateFlowerEffect(float dt)
+{
+	flowerTimer += dt;
+	if (flowerTimer >= flowerInterval)
+	{
+		flowerTimer = 0.0f;
+
+		for (auto& flower : flowers)
+		{
+			flower.visible = true;
+			flower.timer = 0.0f;
+		}
+	}
+	for (auto& flower : flowers)
+	{
+		if (flower.visible)
+		{
+			flower.timer += dt;
+			if (flower.timer >= flowerDuration)
+			{
+				flower.visible = false;
+			}
+		}
 	}
 }
