@@ -9,6 +9,13 @@ Player::Player(const std::string& name)
 
 void Player::OnCollide(Enemy* enemy)
 {
+	// 칼 히트박스가 활성화되어 있고,
+		// 현재 적의 바운딩박스와 충돌한다면
+		if (swordHitBoxActive &&
+			swordHitBox.rect.getGlobalBounds().intersects(enemy->GetGlobalBounds()))
+		{
+			enemy->OnCollideBySword(); // 적 피격 처리
+		}
 }
 
 void Player::SetPosition(const sf::Vector2f& pos)
@@ -211,6 +218,38 @@ void Player::Update(float dt)
 						rect.width = -rect.width;
 					}
 					body.setTextureRect(rect);
+
+					// ✅ 히트박스 위치 갱신
+					sf::FloatRect bodyBounds = body.getGlobalBounds();
+					sf::Vector2f swordPos = { bodyBounds.left + bodyBounds.width * 0.5f,
+											  bodyBounds.top + bodyBounds.height * 0.5f };
+					sf::Vector2f offset;
+					sf::Vector2f size;
+					float swordRange = 20.f;  // 칼 거리
+					switch (currentDirection)
+					{
+					case Direction::Up:
+						size = { 8.f, 15.f };
+						offset = { 0.f, -9.f };
+						break;
+					case Direction::Down:
+						size = { 8.f, 15.f };
+						offset = { 0.f, +9.f };
+						break;
+					case Direction::Left:
+						size = { 15.f, 8.f };
+						offset = { -9.f, 0.f };
+						break;
+					case Direction::Right:
+						size = { 15.f, 8.f };      // ← 크기 줄임
+						offset = { +9.f, 0.f };    // ← 위치 안쪽으로
+						break;
+					}
+					swordHitBox.rect.setSize(size);
+					swordHitBox.rect.setOrigin(size * 0.5f);
+					swordHitBox.rect.setPosition(swordPos + offset);
+					swordHitBox.visible = true;
+					swordHitBoxActive = true;
 				}
 			}
 		}
@@ -331,26 +370,16 @@ void Player::Update(float dt)
 	
 	}
 	
-	
-// 공격 프레임 적용
-       /* if (attackFrameIndex < attackFrames.size())
-		{
-            body.setTextureRect(attackFrames[attackFrameIndex]);
-    }
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {
-			hitBox.visible = !hitBox.visible;
-		}
-		*/
-		
-
-
-	
 
 
 void Player::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
+	if (swordHitBoxActive)
+	{
+		swordHitBox.Draw(window);
+	}
 }
 
 bool Player::checkCollision(const HitBox& other)

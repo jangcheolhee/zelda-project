@@ -38,6 +38,9 @@ protected:
 	int hp = 0;
 	int maxHp = 0;
 
+	HitBox swordHitBox;
+	bool swordHitBoxActive = false;
+
 	bool movable = true;
 	bool isInteract = false;
 	bool wantsToInteract = false;

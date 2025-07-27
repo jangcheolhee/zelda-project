@@ -104,3 +104,20 @@ void Enemy::Draw(sf::RenderWindow& window)
 	hitBox.Draw(window);
 }
 
+void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
+{
+	if (isHitThisFrame) return;
+	std::cout << "[Enemy] 칼에 맞음! -1 데미지" << std::endl;
+	OnHit(1);//데미지 처리
+	isHitThisFrame = true;
+}
+
+void Enemy::OnHit(int damage)
+{
+	hp -= damage;
+	if (hp <= 0)
+	{
+		SetActive(false);
+	}
+}
+

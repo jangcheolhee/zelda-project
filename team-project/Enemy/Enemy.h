@@ -28,7 +28,7 @@ protected:
 	int maxHp = 0;
 	int hp = 0;
 	float speed = 0.f;
-
+	bool isHitThisFrame = false;
 	Types type = Types::Basic;
 	
 	float skillInetrval = 0.f;
@@ -74,5 +74,7 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 
 	virtual void UpdateBehavior(float dt) = 0; 
+	virtual void OnCollideBySword();
+	virtual void OnHit(int damage);
 };
 
