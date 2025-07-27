@@ -11,11 +11,9 @@ TileMap::TileMap(const std::string& name, const std::string& tilePath) : GameObj
 bool TileMap::LoadTileMap(const std::string& tilePath)
 {
     tileMap = tilePath;
-    std::cout << "Attempting to load tile map: " << tileMap << std::endl;
     std::ifstream tmFile(tileMap);
     if (!tmFile.is_open())
     {
-        std::cerr << "Failed to load tile map: " << tileMap << std::endl;
         return false;
     }
     tmFile >> tmJ;
@@ -49,7 +47,6 @@ bool TileMap::LoadTileMap(const std::string& tilePath)
         std::string imagePath = tsDirectory + imageFile;
 
         if (!tileset.texture.loadFromFile(imagePath)) {
-            std::cerr << "Failed to load tileset image: " << imagePath << std::endl;
             return false;
         }
         tileset.columns = tsJ["columns"];

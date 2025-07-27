@@ -316,6 +316,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
 				auto npc = new Npc();
+				npc->SetPlayer(player);
 				AddGameObject(npc);
 				interactables.push_back(npc);
 				npc->SetScale({ 0.5f, 0.5f });
