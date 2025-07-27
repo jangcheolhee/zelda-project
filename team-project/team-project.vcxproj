@@ -217,6 +217,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Interact\Chest.cpp" />
     <ClCompile Include="Interact\Bush.cpp" />
     <ClCompile Include="Enemy\BasicEnemy.cpp" />
@@ -254,6 +256,8 @@
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="Interact\Chest.h" />
     <ClInclude Include="Interact\Bush.h" />
     <ClInclude Include="Enemy\BasicEnemy.h" />
