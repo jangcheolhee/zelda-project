@@ -8,6 +8,8 @@
 #include "Chest.h"
 #include "Rupee.h"
 #include "JumpWall.h"
+#include "Heart.h"
+#include "HUD.h"
 #include <istream>
 
 
@@ -27,9 +29,7 @@ void SceneGame::InitZones()
 		{
 			worldView.setCenter({ 1153,388 });
 			std::cout << "Zone 1 Enter" << std::endl;
-			SpawnJumpAtTile(3, 25075);
-			SpawnJumpAtTile(3, 24592);
-			SpawnJumpAtTile(3, 25068);
+
 		},
 	  [this]()
 		{
@@ -184,20 +184,61 @@ void SceneGame::CheckCollison()
 	rect.height += 4.f;
 	for (auto& obj : interactables)
 	{
-		
+
 		if (obj->GetType() == Interactable::Type::Throw || obj->GetType() == Interactable::Type::Chest)
 		{
 			if (rect.intersects(obj->GetGlobalBounds()))
 			{
-				obj->OnInteract();
+				if (player->WantsToInteract() && !player->IsInteract())
+				{
+					int r = Utils::RandomRange(0, 3);
+					
+					switch (r)
+					{
+					case 0:
+					{
+						Rupee* rupee = new Rupee();
+						rupee->SetPosition(obj->GetPosition());
+						rupee->Reset();
+						AddGameObject(rupee);
+						interactables.push_back(rupee);
+
+						break;
+					}
+
+					case 1:
+					{
+						Heart* heart = new Heart();
+						heart->SetPosition(obj->GetPosition());
+						heart->Reset();
+						AddGameObject(heart);
+						interactables.push_back(heart);
+
+						break;
+					}
+
+					}
+					obj->OnInteract();
+				}
+
 			}
 		}
+
 		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
 		{
+			if (obj->GetType() == Interactable::Type::Item)
+			{
+				obj->OnInteract();
+
+				continue;
+			}
 			player->SetMovable(false);
-			// 플레이어가 obj가 충돌한 방향으로는 움지길수 없게 하기
-			obj->OnInteract();
-			
+			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
+			{
+
+				obj->OnInteract();
+			}
+
 
 		}
 	}
@@ -290,16 +331,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	}
 }
 
-void SceneGame::DeleteInteractables()
-{
-	auto it = interactables.begin();
-	while (it != interactables.end())
-	{
-		RemoveGameObject(*it);
-		it = interactables.erase(it);
-	}
-	interactables.clear();
-}
+
 
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
@@ -319,6 +351,8 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Overworld.png");
 	texIds.push_back("graphics/npc.png");
 	texIds.push_back("graphics/Enemy_sheet.png");
+	texIds.push_back("graphics/Items.png");
+	texIds.push_back("graphics/HUD.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
@@ -326,17 +360,23 @@ void SceneGame::Init()
 
 	player = new Player("Player");
 	tileMap = new TileMap("TileMap");
-	player->Init();
 	// 3) 타일맵도 만들고 Init()
 	tileMap = new TileMap("TileMap");
 	tileMap->Init();
-
+	AddGameObject(new HUD());
 	AddGameObject(player);
 	AddGameObject(tileMap);
 
 	InitZones();
 
 	Scene::Init();
+}
+
+void SceneGame::Release()
+{
+	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
+	GAME_MGR.SaveGame("data/data.json");
+	Scene::Release();
 }
 
 void SceneGame::Enter()
@@ -350,7 +390,7 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
 	Scene::Enter();
-	player->SetPosition(startPos);
+
 }
 
 void SceneGame::Update(float dt)
