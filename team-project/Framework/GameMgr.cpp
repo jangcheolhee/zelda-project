@@ -48,7 +48,7 @@ void GameMgr::LoadGame(const std::string& filename)
 	playerData.position.y = j["player"]["position"]["y"];
 }
 
-void GameMgr::SetPlayerData(int hp, sf::Vector2f& pos)
+void GameMgr::SetPlayerData(int hp, const sf::Vector2f& pos)
 {
 	playerData.hp = hp;
 	playerData.position = pos;

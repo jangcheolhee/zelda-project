@@ -12,7 +12,7 @@ void Player::OnCollide(Enemy* enemy)
 	// 칼 히트박스가 활성화되어 있고,
 		// 현재 적의 바운딩박스와 충돌한다면
 		if (swordHitBoxActive &&
-			swordHitBox.rect.getGlobalBounds().intersects(enemy->GetGlobalBounds()))
+			swordHitBox.rect.getGlobalBounds().intersects(enemy->GetHitBox().rect.getGlobalBounds()))
 		{
 			enemy->OnCollideBySword(); // 적 피격 처리
 		}
@@ -22,28 +22,28 @@ void Player::SetPosition(const sf::Vector2f& pos)
 {
 	GameObject::SetPosition(pos);
 	body.setPosition(pos);
-	hitBox.UpdateTransform(body, body.getLocalBounds());
+	UpdateFixedHitBox();
 }
 
 void Player::SetRotation(float rot)
 {
 	GameObject::SetRotation(rot);
 	body.setRotation(rot);
-	hitBox.UpdateTransform(body, body.getLocalBounds());
+	UpdateFixedHitBox();
 }
 
 void Player::SetScale(const sf::Vector2f& s)
 {
 	GameObject::SetScale(s);
 	body.setScale(s);
-	hitBox.UpdateTransform(body, body.getLocalBounds());
+	UpdateFixedHitBox();
 }
 
 void Player::SetOrigin(const sf::Vector2f& o)
 {
 	GameObject::SetOrigin(o);
 	body.setOrigin(o);
-	hitBox.UpdateTransform(body, body.getLocalBounds());
+	UpdateFixedHitBox();
 }
 
 void Player::SetOrigin(Origins preset)
@@ -53,12 +53,16 @@ void Player::SetOrigin(Origins preset)
 	{
 		Utils::SetOrigin(body, preset);
 	}
-	hitBox.UpdateTransform(body, body.getLocalBounds());
+	UpdateFixedHitBox();
 }
 
 void Player::Init()
 {
-	
+	sf::FloatRect bounds = body.getLocalBounds();
+	body.setOrigin(bounds.width / 2.f, bounds.height);
+
+	hp = maxHp; // 명확히 초기화
+	GAME_MGR.SetPlayerData(hp, GetPosition());
 
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
@@ -131,7 +135,7 @@ void Player::Init()
 	body.setScale(1.0f, 1.0f); // ũ�� ����
 	
 	// ��Ʈ�ڽ� �ʱ�ȭ
-	hitBox.UpdateTransform(body, body.getLocalBounds());
+	//hitBox.UpdateTransform(body, body.getLocalBounds());
 }
 
 void Player::Release()
@@ -152,6 +156,24 @@ void Player::Reset()
 }
 void Player::Update(float dt)
 {
+	timeSinceLastDamage += dt;
+	// 깜빡임 무적 처리
+	if (isInvincible)
+	{
+		invincibleElapsed += dt;
+
+		// 깜빡이게 하기: 0.1초마다 표시/숨김 반복
+		float blinkCycle = 0.1f;
+		bool visible = static_cast<int>(invincibleElapsed / blinkCycle) % 2 == 0;
+		body.setColor(visible ? sf::Color::White : sf::Color(255, 255, 255, 0)); // 깜빡임
+
+		if (invincibleElapsed >= invincibleTime)
+		{
+			isInvincible = false;
+			body.setColor(sf::Color::White); // 원래대로
+		}
+	}
+
 	if (!isAttacking && InputMgr::GetKeyDown(sf::Keyboard::Z))
 	{
 		state = PlayerState::Attack;
@@ -176,6 +198,7 @@ void Player::Update(float dt)
 			}
 			body.setTextureRect(rect);
 
+			
 		}
 		
 	}	
@@ -228,7 +251,7 @@ void Player::Update(float dt)
 											  bodyBounds.top + bodyBounds.height * 0.5f };
 					sf::Vector2f offset;
 					sf::Vector2f size;
-					float swordRange = 20.f;  // 칼 거리
+					float swordRange = 50.f;  // 칼 거리
 					switch (currentDirection)
 					{
 					case Direction::Up:
@@ -236,7 +259,7 @@ void Player::Update(float dt)
 						offset = { 0.f, -9.f };
 						break;
 					case Direction::Down:
-						size = { 8.f, 15.f };
+						size = { 15.f, 31.f };
 						offset = { 0.f, +9.f };
 						break;
 					case Direction::Left:
@@ -260,7 +283,7 @@ void Player::Update(float dt)
 
 	
 		body.move(sf::Vector2f(0.f, 0.f)); // 공격 중엔 이동 없음
-		hitBox.UpdateTransform(body, body.getLocalBounds());
+		UpdateFixedHitBox();
 		return; // 공격 중에는 나머지 처리 스킵
 			
 		}
@@ -353,7 +376,7 @@ void Player::Update(float dt)
 		}
 		// 애니메이션 데이터 없으면 이동만 처리
 		body.move(movement);
-		hitBox.UpdateTransform(body, body.getLocalBounds());
+		UpdateFixedHitBox();
 		
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
@@ -369,7 +392,7 @@ void Player::Update(float dt)
 	{
 		wantsToInteract = false;
 	}
-
+	
 	
 	}
 	
@@ -389,3 +412,48 @@ bool Player::checkCollision(const HitBox& other)
 {
 	return hitBox.rect.getGlobalBounds().intersects(other.rect.getGlobalBounds());
 }
+
+void Player::TakeDamageIfPossible(int damage)
+{
+	if (timeSinceLastDamage >= damageCooldown)
+	{
+		OnDamage(damage);
+		timeSinceLastDamage = 0.f;
+	}
+}
+void Player::OnDamage(int damage)
+{
+	if (isInvincible) return;
+
+	hp = Utils::Clamp(hp - damage, 0, maxHp);
+
+	std::cout << "[Player] damage! " << damage << " ▶ HP: " << hp << "\n";
+
+	if (hp <= 0)
+	{
+		std::cout << "[Player] Die!\n";
+		SetActive(false); // 비활성화 또는 리스폰 처리
+		// 여기에 죽었을 때 상태 전환이나 UI 호출 가능
+	}
+	isInvincible = true;
+	invincibleElapsed = 0.0f;
+
+	// 추가로 맞을 수 없도록 쿨타임도 초기화
+	timeSinceLastDamage = 0.f;
+}
+
+void Player::UpdateFixedHitBox()
+{
+	sf::Vector2f fixedSize = { 3.f, 6.f };              // 원하는 히트박스 크기
+	hitBox.rect.setSize(fixedSize);
+	hitBox.rect.setOrigin(fixedSize * 0.5f);
+
+	hitBox.rect.setPosition(body.getPosition() + sf::Vector2f(0.f, -15.f));
+}
+
+bool Player::IsAttacking() const
+{
+	return isAttacking;
+}
+
+

@@ -28,7 +28,7 @@ public:
 	bool GetActive() const { return active; }
 	virtual void SetActive(bool a) { active = a; }
 
-	sf::Vector2f GetPosition() const { return position; }
+	virtual sf::Vector2f GetPosition() const { return position; }
 	virtual void SetPosition(const sf::Vector2f& pos) { position = pos; }
 
 	float GetRotation() const { return rotation; }
@@ -54,7 +54,7 @@ public:
 	{
 		return { 0.f, 0.f, 0.f, 0.f };
 	}
-
+	
 	virtual void Init() = 0;
 	virtual void Release() = 0;
 	virtual void Reset() = 0;

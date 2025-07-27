@@ -13,6 +13,8 @@ enum class PlayerState
 class Player :  public GameObject
 {
 protected:
+	
+
 	int rupee = 0;
 	sf::Texture* swordTexture = nullptr;
 	PlayerState state = PlayerState::Idle;
@@ -36,10 +38,17 @@ protected:
 	
 	HitBox hitBox;
 	int hp = 0;
-	int maxHp = 0;
+	int maxHp = 10;
+
+	bool isInvincible = false;
+	float invincibleTime = 1.0f;        // 무적 지속 시간 (초)
+	float invincibleElapsed = 0.0f;     // 무적 상태 경과 시간
 
 	HitBox swordHitBox;
 	bool swordHitBoxActive = false;
+
+	float timeSinceLastDamage = 0.f;
+	float damageCooldown = 0.5f;
 
 	bool movable = true;
 	bool isInteract = false;
@@ -52,6 +61,7 @@ protected:
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
 public:
+
 	Player(const std::string& name = "");
 	virtual ~Player() = default;
 
@@ -92,6 +102,16 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+
 	bool checkCollision(const HitBox& other);
 	sf::Sprite& GetBody() { return body; } // getter
+	void TakeDamageIfPossible(int damage);
+	void OnDamage(int damage);
+	void UpdateFixedHitBox();
+
+	sf::Vector2f GetPosition() const override
+	{
+		return body.getPosition();
+	}
+	bool IsAttacking() const;
 };
