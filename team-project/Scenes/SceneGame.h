@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "SpriteGo.h"
 #include "Enemy.h"
 #include "Interactable.h"
 class Player;
@@ -22,14 +23,6 @@ struct MapZone
 	}
 };
 
-struct FlowerEffect
-{
-	sf::Sprite sprite;
-	sf::Vector2f position;
-	float timer = 0.0f;
-	bool visible = false;
-};
-
 class SceneGame : public Scene
 {
 protected:
@@ -45,12 +38,10 @@ protected:
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
 
-	//flower
-	std::vector<FlowerEffect> flowers;
-	float flowerTimer = 0.0f;
-	float flowerInterval = 0.1f;
-	float flowerDuration = 1.0f; 
-	int maxFlowers = 10; 
+	std::vector<SpriteGo*> flowers;
+	float flowerTimer;
+	bool flowerBool;
+	float flowerRate = 0.3;
 
 public:
 	SceneGame();
@@ -65,6 +56,9 @@ public:
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
 	
+	void SpawnFlowers(sf::FloatRect zone);
+	void FlowerBreath(float dt);
+
 	//존으로 변경
 	void SpawnInteractableObject(sf::FloatRect zone);
 	void DeleteInteractables();
@@ -75,6 +69,4 @@ public:
 	void Enter() override;
 	void Update(float dt) override;
 
-	void InitFlowers();
-	void UpdateFlowerEffect(float dt);
 };

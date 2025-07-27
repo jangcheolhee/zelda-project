@@ -96,7 +96,7 @@ void SceneGame::UpdateZones()
 				{
 					zone.onEnter();
 					SpawnInteractableObject(zone.bounds);
-					InitFlowers();
+					SpawnFlowers(zone.bounds);
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -104,6 +104,11 @@ void SceneGame::UpdateZones()
 				zone.entered = false;
 				if (zone.onExit) zone.onExit();
 				DeleteInteractables();
+				for (auto f : flowers)
+				{
+					RemoveGameObject(f);
+				}
+				flowers.clear();
 			}
 		}
 }
@@ -195,6 +200,44 @@ void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types typ
 	for (const auto& pos : positions)
 	{
 		SpawnEnemy(pos, type);
+	}
+}
+
+void SceneGame::SpawnFlowers(sf::FloatRect zone)
+{
+	std::vector<sf::Vector2f> positions = tileMapGame->getPositions(4, 24696);
+	for (const auto& pos : positions)
+	{
+		if (zone.contains(pos))
+		{
+			auto flower = new SpriteGo();
+			flower->SetName("Flower");
+			flower->Init();
+
+			flower->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
+			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 }); 
+
+			flower->SetActive(flowerBool);
+			flower->SetOrigin(Origins::TL);
+			flower->SetPosition(pos);
+			AddGameObject(flower);
+			flowers.push_back(flower);
+
+		}
+	}
+}
+
+void SceneGame::FlowerBreath(float dt)
+{
+	flowerTimer += dt;
+	if (flowerTimer >= flowerRate)
+	{
+		flowerBool = !flowerBool;
+		for (auto& flower : flowers)
+		{
+			flower->SetActive(flowerBool);
+		}
+		flowerTimer = 0.f;
 	}
 }
 
@@ -366,7 +409,10 @@ void SceneGame::Init()
 	
 	endPos = tileMapGame->getPosition(4, 24590);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
-	std::cout << "End position set to: (" << endPos.x << ", " << endPos.y << ")" << std::endl;
+
+	flowerTimer = 0.f;
+	flowerBool = true;
+
 	Scene::Init();
 }
 
@@ -391,7 +437,7 @@ void SceneGame::Update(float dt)
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();
-	UpdateFlowerEffect(dt);
+	FlowerBreath(dt);
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Hidden" << std::endl;
@@ -412,53 +458,3 @@ void SceneGame::Update(float dt)
 	}
 }
 
-void SceneGame::InitFlowers()
-{
-	flowers.clear();
-	std::vector<sf::Vector2f> flowerPositions = tileMapGame->getPositions(4, 24696);
-	sf::FloatRect currentZone = mapZones[zoneID - 1].bounds; 
-
-	for (const auto& pos : flowerPositions)
-	{
-		if ((pos.x >= currentZone.left && pos.x <= (currentZone.left + currentZone.width)) &&
-			(pos.y >= currentZone.top && pos.y <= (currentZone.top + currentZone.height)))
-		{
-			FlowerEffect flower;
-			flower.sprite.setTexture(TEXTURE_MGR.Get("graphics/flower.png"));
-			flower.sprite.setOrigin(flower.sprite.getLocalBounds().width * 0.5f,
-				flower.sprite.getLocalBounds().height * 0.5f);
-			flower.position = pos;
-			flower.sprite.setPosition(pos);
-			flower.visible = false;
-			flower.timer = 0.0f;
-
-			flowers.push_back(flower);
-		}
-	}
-}
-
-void SceneGame::UpdateFlowerEffect(float dt)
-{
-	flowerTimer += dt;
-	if (flowerTimer >= flowerInterval)
-	{
-		flowerTimer = 0.0f;
-
-		for (auto& flower : flowers)
-		{
-			flower.visible = true;
-			flower.timer = 0.0f;
-		}
-	}
-	for (auto& flower : flowers)
-	{
-		if (flower.visible)
-		{
-			flower.timer += dt;
-			if (flower.timer >= flowerDuration)
-			{
-				flower.visible = false;
-			}
-		}
-	}
-}
