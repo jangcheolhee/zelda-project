@@ -207,6 +207,9 @@ void Player::Update(float dt)
 					// ⭐ 공격 끝나면 원래 텍스처(Link.png)로 복귀
 					if (texture)
 						body.setTexture(*texture);
+					// 히트박스 비활성화
+					swordHitBoxActive = false;
+					swordHitBox.visible = false;
 				}
 				else
 				{

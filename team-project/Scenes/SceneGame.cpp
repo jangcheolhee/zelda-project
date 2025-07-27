@@ -52,6 +52,25 @@ void SceneGame::InitZones()
 		},
 		false
 		});
+
+	mapZones.clear();
+
+	mapZones.push_back({
+		//zone1 origin
+		sf::FloatRect(0, 200, 512, 550), //zone 1_confirm
+		1,
+		[this]()
+		  {
+			  std::cout << "Zone 1 Enter" << std::endl;
+			  sf::Vector2f enemyPos = tileMap->getPosition(2, 18585);
+			  SpawnEnemy(enemyPos, Enemy::Types::Basic);
+		  },
+		[this]()
+		  {
+			  std::cout << "Zone 1 Exit" << std::endl;
+		  },
+		false
+		});
 }
 
 void SceneGame::UpdateZones()
@@ -129,10 +148,11 @@ void SceneGame::RecycleEnemy(Enemy* enemy)
 void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 {
 	Enemy* enemy = CreateOrReuseEnemy(type);
-	enemy->SetInitPosition(pos);
 
+	enemy->Init();
+	enemy->SetInitPosition(pos);
 	enemy->Reset();
-	enemy->SetActive(false);
+	enemy->SetActive(true);
 
 	AddGameObject(enemy);
 	enemyList.push_back(enemy);
