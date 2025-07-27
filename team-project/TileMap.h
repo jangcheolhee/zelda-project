@@ -19,6 +19,7 @@ protected:
     std::vector<Tileset> tilesets;
 
     std::string tileMap;
+    std::string tilePath;
     sf::Texture texture;
 
     sf::Vector2f cellSize;
@@ -26,10 +27,10 @@ protected:
 
     json tmJ;
 public:
-    TileMap(const std::string& name="");
+    TileMap(const std::string& name="", const std::string& tilePath="");
     virtual ~TileMap() = default;
 
-    bool LoadTileMap();
+    bool LoadTileMap(const std::string& tilePath);
     sf::Vector2f getPosition(int layerIndex, int targetGid); //return pos
     std::vector<sf::Vector2f> getPositions(int layerIndex, int targetGid); //return <vector>positions
 

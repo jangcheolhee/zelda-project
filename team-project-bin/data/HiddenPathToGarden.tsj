@@ -1,0 +1,14 @@
+{ "columns":96,
+ "image":"HiddenPathToGarden.png",
+ "imageheight":512,
+ "imagewidth":768,
+ "margin":0,
+ "name":"HiddenPathToGarden",
+ "spacing":0,
+ "tilecount":6144,
+ "tiledversion":"1.11.2",
+ "tileheight":8,
+ "tilewidth":8,
+ "type":"tileset",
+ "version":"1.10"
+}

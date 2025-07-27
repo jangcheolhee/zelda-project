@@ -34,13 +34,16 @@ class SceneGame : public Scene
 {
 protected:
 	Player* player;
-	TileMap* tileMap;
+	TileMap* tileMapGame;
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
+
+	sf::Vector2f endPos;
+	sf::FloatRect endHole;
 
 	//flower
 	std::vector<FlowerEffect> flowers;

@@ -10,7 +10,6 @@
 #include "JumpWall.h"
 #include <istream>
 
-
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
 {
@@ -18,6 +17,7 @@ SceneGame::SceneGame()
 
 void SceneGame::InitZones()
 {
+	std::cerr << "field error" << std::endl;
 	mapZones.clear();
 
 	mapZones.push_back({
@@ -83,6 +83,7 @@ void SceneGame::InitZones()
 
 void SceneGame::UpdateZones()
 {
+
 		sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
 		for (auto& zone : mapZones)
 		{
@@ -182,7 +183,7 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 	enemy->SetInitPosition(pos);
 
 	enemy->Reset();
-	enemy->SetActive(false);
+	enemy->SetActive(true);
 
 	AddGameObject(enemy);
 	enemyList.push_back(enemy);
@@ -190,7 +191,7 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 
 void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
 {
-	std::vector<sf::Vector2f> positions = tileMap->getPositions(layerIndex, targetGid);
+	std::vector<sf::Vector2f> positions = tileMapGame->getPositions(layerIndex, targetGid);
 	for (const auto& pos : positions)
 	{
 		SpawnEnemy(pos, type);
@@ -239,21 +240,19 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	int layer1Gid[] = { 24670, 24590 };
 	for (int id : layer1Gid)
 	{
-		std::vector <sf::Vector2f> positions = tileMap->getPositions(1, id);
+		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
 
 		for (const auto& pos : positions)
 		{	
 			if((pos.x>=zone.left && pos.x<=(zone.left+zone.width))&&(pos.y>=zone.top&&pos.y<=zone.top+zone.height))
 			{//bush
 				auto bush = new Bush;
-				std::cout << "spawnZone2test" << pos.x << std::endl;
 				AddGameObject(bush);
 				interactables.push_back(bush);
 				bush->Reset();
 				bush->SetPosition(pos);
 				if (id == 24670)
 				{
-					std::cout << "spawnZone2test" << pos.x << std::endl;
 					bush->SetOrigin(Origins::ML);
 				}
 				else if (id == 24590) //hole
@@ -268,7 +267,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
 	{	
-		std::vector <sf::Vector2f> positions = tileMap->getPositions(2, id);
+		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(2, id);
 		for (const auto& pos : positions)
 		{//npc
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
@@ -287,7 +286,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	int gid[] = { 25075,25067,24699,25068,24592 };
 	for (int id : gid)
 	{
-		std::vector <sf::Vector2f> positions = tileMap->getPositions(3, id);
+		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(3, id);
 		for (const auto& pos : positions)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
@@ -356,17 +355,18 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
 	player = new Player("Player");
-	tileMap = new TileMap("TileMap");
-	player->Init();
 	// 3) 타일맵도 만들고 Init()
-	tileMap = new TileMap("TileMap");
-	tileMap->Init();
+	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
+	tileMapGame->Init();
 
 	AddGameObject(player);
-	AddGameObject(tileMap);
+	AddGameObject(tileMapGame);
 
 	InitZones();
-
+	
+	endPos = tileMapGame->getPosition(4, 24590);
+	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
+	std::cout << "End position set to: (" << endPos.x << ", " << endPos.y << ")" << std::endl;
 	Scene::Init();
 }
 
@@ -379,7 +379,7 @@ void SceneGame::Enter()
 	uiView.setCenter(center);
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
-	sf::Vector2f startPos = tileMap->getPosition(2, 18585);
+	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
 	Scene::Enter();
 	player->SetPosition(startPos);
 }
@@ -392,16 +392,30 @@ void SceneGame::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone();
 	UpdateFlowerEffect(dt);
+	if (endHole.contains(player->GetGlobalBounds().getPosition()))
+	{
+		std::cout << "Hidden" << std::endl;
+		SCENE_MGR.ChangeScene(SceneIds::Hidden);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
+	{
+		std::cout << "Hidden" << std::endl;
+		SCENE_MGR.ChangeScene(SceneIds::Hidden);
+	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
+	{
+		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
 }
 
 void SceneGame::InitFlowers()
 {
 	flowers.clear();
-	std::vector<sf::Vector2f> flowerPositions = tileMap->getPositions(4, 24696);
+	std::vector<sf::Vector2f> flowerPositions = tileMapGame->getPositions(4, 24696);
 	sf::FloatRect currentZone = mapZones[zoneID - 1].bounds; 
 
 	for (const auto& pos : flowerPositions)

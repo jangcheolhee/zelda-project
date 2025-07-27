@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "SceneMgr.h"
 #include "SceneGame.h"
+#include "SceneHidden.h"
 
 void SceneMgr::Init()
 {
 
 	scenes.push_back(new SceneGame());
+	scenes.push_back(new SceneHidden());
 
 	for (auto scene : scenes)
 	{
