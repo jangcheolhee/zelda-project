@@ -479,7 +479,7 @@ void SceneGame::Init()
 void SceneGame::Exit()
 {
 	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
-	GAME_MGR.SaveGame("data/data.json");
+	//GAME_MGR.SaveGame("data/data.json");
 	Scene::Exit();
 }
 
