@@ -494,7 +494,7 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
 	Scene::Enter();
-	//player->SetPosition(startPos);
+	player->SetPosition(startPos);
 }
 
 void SceneGame::Update(float dt)

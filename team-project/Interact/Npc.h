@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Interactable.h"
 class Player;
 
@@ -16,7 +16,7 @@ public:
 	void DirectionSprite(Direction dir);
 	Direction GetDirectionToPlayer();
 
-	// InteractableÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// Interactableï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	void OnInteract() override;
 	void Init();
 	void Reset();

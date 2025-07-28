@@ -22,28 +22,32 @@ void Npc::DirectionSprite(Direction dir)
     case Direction::Down: // Front
         body.setTextureRect({ 664, 1394, 25, 30 });
         SetOrigin(Origins::MC);
+        SetScale({ 1, 1 });
         break;
 
     case Direction::Up: // Back
         body.setTextureRect({ 695, 1392, 26, 26 });
         SetOrigin(Origins::MC);
+        SetScale({ 1, 1 });
         break;
 
     case Direction::Left:
         body.setTextureRect({ 724, 1395, 24, 29 });
         SetOrigin(Origins::MC);
+        SetScale({ 1, 1 });
         break;
 
     case Direction::Right:
         body.setTextureRect({ 724, 1395, 24, 29 });
         SetOrigin(Origins::MC);
-        SetScale({-1, 1});
+        SetScale({ -1, 1 });
         break;
 
     case Direction::None:
     default:
         body.setTextureRect({ 664, 1394, 25, 30 });
         SetOrigin(Origins::MC);
+        SetScale({ 1, 1 });
         break;
     }
 }
@@ -73,14 +77,14 @@ void Npc::OnInteract()
 
 void Npc::Init()
 {
-	Interactable::Init();
+    Interactable::Init();
 }
 
 void Npc::Reset()
 {
-	currentDirection = Direction::Down;
-	DirectionSprite(currentDirection);
-	Interactable::Reset();
+    currentDirection = Direction::Down;
+    DirectionSprite(currentDirection);
+    Interactable::Reset();
 }
 
 void Npc::Update(float dt)
