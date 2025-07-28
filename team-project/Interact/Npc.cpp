@@ -40,14 +40,14 @@ void Npc::DirectionSprite(Direction dir)
     case Direction::Right:
         body.setTextureRect({ 724, 1395, 24, 29 });
         SetOrigin(Origins::MC);
-        SetScale({-1, 1});
+        SetScale({ -1, 1 });
         break;
 
     case Direction::None:
     default:
         body.setTextureRect({ 664, 1394, 25, 30 });
-        SetScale({ 1, 1 });
         SetOrigin(Origins::MC);
+        SetScale({ 1, 1 });
         break;
     }
 }
@@ -63,13 +63,11 @@ Direction Npc::GetDirectionToPlayer()
 
     if (std::abs(direction.x) > std::abs(direction.y))
     {
-        if (direction.x > 0) return Direction::Right;
-        else return Direction::Left;
+        return (direction.x > 0) ? Direction::Right : Direction::Left;
     }
     else
     {
-        if (direction.y > 0) return Direction::Down;
-        else return Direction::Up;
+        return (direction.y > 0) ? Direction::Down : Direction::Up;
     }
 }
 
@@ -79,14 +77,14 @@ void Npc::OnInteract()
 
 void Npc::Init()
 {
-	Interactable::Init();
+    Interactable::Init();
 }
 
 void Npc::Reset()
 {
-	currentDirection = Direction::Down;
-	DirectionSprite(currentDirection);
-	Interactable::Reset();
+    currentDirection = Direction::Down;
+    DirectionSprite(currentDirection);
+    Interactable::Reset();
 }
 
 void Npc::Update(float dt)
