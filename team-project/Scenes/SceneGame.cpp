@@ -333,7 +333,7 @@ void SceneGame::CheckCollison()
 
 					continue;
 				}
-				player->SetMovable(false);
+				player->SetPosition(player->GetPos());
 				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
 				{
 

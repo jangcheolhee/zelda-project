@@ -155,7 +155,7 @@ void Player::Reset()
 }
 void Player::Update(float dt)
 {
-	sf::Vector2f previousPosition = GetPosition();
+	previousPosition = GetPosition();
 	timeSinceLastDamage += dt;
 	// 깜빡임 무적 처리
 	if (isInvincible)
@@ -277,21 +277,15 @@ void Player::Update(float dt)
 				}
 			}
 		}
-
-
-
 		body.move(sf::Vector2f(0.f, 0.f)); // 공격 중엔 이동 없음
 		UpdateFixedHitBox();
 		return; // 공격 중에는 나머지 처리 스킵
-
 	}
 
 	sf::Vector2f movement(0.f, 0.f);
 	bool moving = false;
 	//bool isMovingLeft = false;
 	// 방향 키 입력 시 방향 결정
-	
-
 
 	// 2. 이동 방향은 3개까지 입력 가능 (움직임만)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
@@ -318,8 +312,6 @@ void Player::Update(float dt)
 		movement.y += speed * dt;
 		moving = true;
 	}
-
-
 	// ================== 이동 애니메이션 프레임 처리 ==================
 	auto& vec = animations[currentDirection];
 
@@ -352,18 +344,10 @@ void Player::Update(float dt)
 	}
 	
 	// 애니메이션 데이터 없으면 이동만 처리
-	if (movable)
-	{
-		sf::Vector2f newPos = body.getPosition() + movement;
-		SetPosition(newPos);
-	}
-	else
-	{
-		
-		movable = true;
-	}
-	
 
+	
+	sf::Vector2f newPos = body.getPosition() + movement;
+	SetPosition(newPos);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
@@ -379,7 +363,7 @@ void Player::Update(float dt)
 		wantsToInteract = false;
 	}
 
-	SetPosition(body.getPosition());
+	
 
 }
 

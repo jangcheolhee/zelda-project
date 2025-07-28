@@ -60,9 +60,12 @@ protected:
 	bool isMovingLeft = false;
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
+	sf::Vector2f previousPosition;
 	
 public:
-
+	sf::Vector2f GetPos() {
+		return previousPosition;
+	}
 	Player(const std::string& name = "");
 	virtual ~Player() = default;
 
