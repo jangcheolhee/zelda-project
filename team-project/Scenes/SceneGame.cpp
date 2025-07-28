@@ -28,13 +28,13 @@ void SceneGame::InitZones()
 	  [this]()
 		{
 			std::cout << "Zone 1 Enter" << std::endl;
+			sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
+			SpawnEnemy(enemyPos, Enemy::Types::Basic);
 
 		},
 	  [this]()
 		{
 			std::cout << "Zone 1 Exit" << std::endl;
-			sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
-			SpawnEnemy(enemyPos, Enemy::Types::Basic);
 			DeleteInteractables();
 
 		},
