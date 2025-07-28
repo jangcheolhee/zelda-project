@@ -225,6 +225,7 @@ void SceneHidden::Update(float dt)
 	UpdateBehaviorZone();
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
+		GAME_MGR.SetPlayerData(player->GetHp(), sf::Vector2f{ 0,0 });
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
 }

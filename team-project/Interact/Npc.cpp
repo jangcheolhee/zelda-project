@@ -63,11 +63,13 @@ Direction Npc::GetDirectionToPlayer()
 
     if (std::abs(direction.x) > std::abs(direction.y))
     {
-        return (direction.x > 0) ? Direction::Right : Direction::Left;
+        if (direction.x > 0) return Direction::Right;
+        else return Direction::Left;
     }
     else
     {
-        return (direction.y > 0) ? Direction::Down : Direction::Up;
+        if (direction.y > 0) return Direction::Down;
+        else return Direction::Up;
     }
 }
 
