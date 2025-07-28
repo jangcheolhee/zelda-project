@@ -77,7 +77,7 @@ void Bush::UpdateBeHavior(float dt)
 		SetPosition(position);
 
 		// 벽/적과 충돌 시 바로 파괴하거나, lifeTime이 끝나면 파괴
-		if (life > 1)
+		if (life > 0.5)
 		{
 			if (player) player->SetIsInteract(false);
 			SetActive(false);        // 파괴 or 풀로 반환

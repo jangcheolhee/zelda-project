@@ -57,6 +57,11 @@ void Player::SetOrigin(Origins preset)
 	UpdateFixedHitBox();
 }
 
+sf::FloatRect Player::GetGlobalBounds() const
+{
+	return hitBox.rect.getGlobalBounds();
+}
+
 void Player::Init()
 {
 	sf::FloatRect bounds = body.getLocalBounds();
@@ -351,7 +356,6 @@ void Player::Update(float dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
-
 	}
 	// interactable과 x키 누르면 상호작용
 	if (InputMgr::GetKeyDown(sf::Keyboard::X))
@@ -362,9 +366,6 @@ void Player::Update(float dt)
 	{
 		wantsToInteract = false;
 	}
-
-	
-
 }
 
 

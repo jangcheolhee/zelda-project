@@ -22,27 +22,27 @@ void SceneGame::InitZones()
 	mapZones.clear();
 
 	mapZones.push_back({
-	  //zone1 origin
-	  sf::FloatRect(0, 200, 512, 550), //zone 1_confirm
-	  1,
-	  [this]()
-		{
-			std::cout << "Zone 1 Enter" << std::endl;
-			sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
-			SpawnEnemy(enemyPos, Enemy::Types::Basic);
+		//zone1 origin
+		sf::FloatRect(0, 200, 512, 550), //zone 1_confirm
+		1,
+		[this]()
+		  {
+			  std::cout << "Zone 1 Enter" << std::endl;
+			  sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
+			  SpawnEnemy(enemyPos, Enemy::Types::Basic);
 
-		},
-	  [this]()
-		{
-			std::cout << "Zone 1 Exit" << std::endl;
-			DeleteInteractables();
+		  },
+		[this]()
+		  {
+			  std::cout << "Zone 1 Exit" << std::endl;
+			  DeleteInteractables();
 
-		},
-	  false
+		  },
+		false
 		});
 	// Zone 2 origin_left1
 	mapZones.push_back({
-		sf::FloatRect(-512, 200, 512, 550), 
+		sf::FloatRect(-512, 200, 512, 550),
 		2,
 		[this]()
 		{
@@ -57,7 +57,7 @@ void SceneGame::InitZones()
 		});
 	// Zone 3 origin_up1
 	mapZones.push_back({
-		sf::FloatRect(0, -350, 512, 550), 
+		sf::FloatRect(0, -350, 512, 550),
 		3,
 		[this]()
 		{
@@ -90,72 +90,72 @@ void SceneGame::InitZones()
 void SceneGame::UpdateZones()
 {
 
-		sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
-		for (auto& zone : mapZones)
+	sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
+	for (auto& zone : mapZones)
+	{
+		bool nowInZone = zone.bounds.contains(playerPos);
+		if (nowInZone && !zone.entered)
 		{
-			bool nowInZone = zone.bounds.contains(playerPos);
-			if (nowInZone && !zone.entered)
+			zone.entered = true;
+			zoneID = zone.zoneId;
+			if (zone.onEnter)
 			{
-				zone.entered = true; 
-				zoneID = zone.zoneId; 
-				if (zone.onEnter)
-				{
-					zone.onEnter();
-					SpawnInteractableObject(zone.bounds);
-					SpawnFlowers(zone.bounds);
-					JumpWall* wall = new JumpWall();
-					wall->SetBounds(185, 560, 100, 100);
-					AddGameObject(wall);
-					interactables.push_back(wall);
-					wall->Reset();
-				}
-			}
-			else if (!nowInZone && zone.entered)
-			{
-				zone.entered = false;
-				if (zone.onExit) zone.onExit();
-				DeleteInteractables();
-				for (auto f : flowers)
-				{
-					RemoveGameObject(f);
-				}
-				flowers.clear();
+				zone.onEnter();
+				SpawnInteractableObject(zone.bounds);
+				SpawnFlowers(zone.bounds);
+				JumpWall* wall = new JumpWall();
+				wall->SetBounds(185, 560, 100, 100);
+				AddGameObject(wall);
+				interactables.push_back(wall);
+				wall->Reset();
 			}
 		}
+		else if (!nowInZone && zone.entered)
+		{
+			zone.entered = false;
+			if (zone.onExit) zone.onExit();
+			DeleteInteractables();
+			for (auto f : flowers)
+			{
+				RemoveGameObject(f);
+			}
+			flowers.clear();
+		}
+	}
 }
 
 void SceneGame::UpdateBehaviorZone()
 {
 	switch (zoneID)
 	{//player 기준
-		case 1:
-		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128,384);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
-			worldView.setCenter({ x, y });
-		}
-			break;
-		case 2:
-		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, -384, -128);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
-			worldView.setCenter({ x, y });
-		}
-			break;
-		case 3:
-		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -250, 100);
-			worldView.setCenter({ x, y });
-		}
-			break;
-		case 4:
-		{
-			float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-			float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -750, -400);
-			worldView.setCenter({ x, y });
-		}
-		break;
+	case 1:
+	{
+		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
+		worldView.setCenter({ x, y });
+	}
+	break;
+	case 2:
+	{
+		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, -384, -128);
+		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
+		worldView.setCenter({ x, y });
+	}
+	break;
+	case 3:
+	{
+		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -250, 100);
+		worldView.setCenter({ x, y });
+	}
+	break;
+	case 4:
+	{
+		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
+		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -750, -400);
+		worldView.setCenter({ x, y });
+	}
+	break;
 	}
 }
 
@@ -239,7 +239,7 @@ void SceneGame::SpawnFlowers(sf::FloatRect zone)
 			flower->Init();
 
 			flower->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
-			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 }); 
+			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 });
 
 			flower->SetActive(flowerBool);
 			flower->SetOrigin(Origins::TL);
@@ -314,7 +314,6 @@ void SceneGame::CheckCollison()
 							heart->Reset();
 							AddGameObject(heart);
 							interactables.push_back(heart);
-
 							break;
 						}
 
@@ -330,34 +329,28 @@ void SceneGame::CheckCollison()
 				if (obj->GetType() == Interactable::Type::Item)
 				{
 					obj->OnInteract();
-
 					continue;
 				}
 				player->SetPosition(player->GetPos());
 				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
 				{
-
 					obj->OnInteract();
 				}
-				
-
 			}
 		}
-		}
-		
+	}
 }
-
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
-{	
+{
 	//layer 1 : bush
 	int layer1Gid[] = { 24670, 24590 };
 	for (int id : layer1Gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
 		for (const auto& pos : positions)
-		{	
-			if((pos.x>=zone.left && pos.x<=(zone.left+zone.width))&&(pos.y>=zone.top&&pos.y<=zone.top+zone.height))
+		{
+			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{//bush
 				auto bush = new Bush;
 				AddGameObject(bush);
@@ -375,11 +368,11 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			}
 		}
 	}
-	
+
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
-	{	
+	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(2, id);
 		for (const auto& pos : positions)
 		{//npc
@@ -394,8 +387,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				npc->SetPosition(pos);
 			}
 		}
-	}	
-	
+	}
 	//layer3: collision
 	/*int gid[] = { 25075,25067,24699,25068,24592 };
 	for (int id : gid)
@@ -432,9 +424,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		}
 	}*/
 }
-
-
-
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
 {
@@ -466,12 +455,12 @@ void SceneGame::Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
 	AddGameObject(new HUD());
-	
+
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 
 	InitZones();
-	
+
 	endPos = tileMapGame->getPosition(4, 24590);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
@@ -490,7 +479,7 @@ void SceneGame::Exit()
 
 void SceneGame::Enter()
 {
-    player->Reset();
+	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
@@ -505,7 +494,7 @@ void SceneGame::Enter()
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
-	
+
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();

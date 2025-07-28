@@ -96,10 +96,8 @@ public:
 		return body.getLocalBounds();
 	}
 
-	sf::FloatRect GetGlobalBounds() const override
-	{
-		return body.getGlobalBounds();
-	}
+	sf::FloatRect GetGlobalBounds() const override;
+
 
 	void Init() override;
 	void Release() override;
@@ -114,9 +112,5 @@ public:
 	void UpdateFixedHitBox();
 	void HandleMovement(float dt);
 
-	sf::Vector2f GetPosition() const override
-	{
-		return body.getPosition();
-	}
 	bool IsAttacking() const;
 };
