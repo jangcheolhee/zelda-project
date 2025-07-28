@@ -335,30 +335,27 @@ void SceneGame::CheckCollison()
 	}
 }
 
-void SceneGame::squareHitBox()
-{//layer6
-	int squareGid[] = { 24592,24593,24594,24595 }; //1,2,3,4 정점, 시계방향
-	sf::Vector2f square1 = tileMapGame->getPosition(6, 24592);
-	sf::Vector2f square2 = tileMapGame->getPosition(6, 24593);
-	sf::Vector2f square3 = tileMapGame->getPosition(6, 24594);
-	sf::Vector2f square4 = tileMapGame->getPosition(6, 24595);
-	
-	sf::FloatRect square;
-	square = sf::FloatRect(square1.x, square1.y, square2.x - square1.x, square3.y - square1.y);
-	sf::RectangleShape collisionBox;
-	collision.UpdateTransform(collisionBox, square);
+void SceneGame::SpawnSquareHitBox()
+{//layer6 , (1,2,3,4) 정점, 시계방향
+	int squareGid[] = { 24592, 24593, 24594, 24595 };
 
-		//24665, 24577, width,height 64x64 8x8
-		//tileMapGame->getPosition(6,)
-		//floatRect(24665pos(x,y)_left, 24665pos_top,   24577pos(x) - 24665(x), 24577(y)-24577(y)) 
-		//
-		//while(4개 순회) 끝나면 !bool
+	for (int i = 0; i < 4; i++)
+	{
+		sf::Vector2f point = tileMapGame->getPosition(6, squareGid[i]);
+		collisions.push_back(point);
+	}
 
-	/*	sf::Vertex quad[4];
-		quad[0].position= tileMapGame->getPosition(6, 24592);
-		quad[1].position = tileMapGame->getPosition(6, 24592);
-		quad[2].position = tileMapGame->getPosition(6, 24592);
-		quad[3].position = tileMapGame->getPosition(6, 24592);*/
+	if (collisions.size() >= 4)
+	{
+		float left = std::min({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
+		float top = std::min({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
+		float right = std::max({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
+		float bottom = std::max({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
+
+		sf::FloatRect square(left, top, right - left, bottom - top);
+
+		collision.UpdateTransform(collisionBox, square);
+	}
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
@@ -522,7 +519,7 @@ void SceneGame::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone();
 	FlowerBreath(dt);
-	squareHitBox();
+	SpawnSquareHitBox();
 
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
@@ -544,6 +541,9 @@ void SceneGame::Update(float dt)
 	}
 }
 
-void Draw(sf::RenderWindow& window)
+void SceneGame::Draw(sf::RenderWindow& window)
 {
+	Scene::Draw(window);
+	window.setView(worldView);
+	collision.Draw(window);
 }

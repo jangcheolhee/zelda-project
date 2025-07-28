@@ -29,7 +29,7 @@ class SceneGame : public Scene
 protected:
 	Player* player;
 	TileMap* tileMapGame;
-	HitBox collision;
+
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
@@ -44,6 +44,12 @@ protected:
 	float flowerTimer;
 	bool flowerBool;
 	float flowerRate = 0.3;
+
+	HitBox collision;
+	std::vector<sf::Vector2f> collisions;
+	sf::RectangleShape collisionBox;
+	bool squareToggle = 0;
+	
 
 public:
 	SceneGame();
@@ -66,7 +72,7 @@ public:
 	void SpawnInteractableObject(sf::FloatRect zone);
 	void CheckCollison();
 
-	void squareHitBox();
+	void SpawnSquareHitBox();
 
 	void Init() override;
 	void Exit() override;
