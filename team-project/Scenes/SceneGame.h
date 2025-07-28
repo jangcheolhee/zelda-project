@@ -46,6 +46,7 @@ protected:
 public:
 	SceneGame();
 
+
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();

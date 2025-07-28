@@ -4,9 +4,10 @@ enum class BushState { OnGround, Held, Thrown };
 class Bush : public Interactable
 {
 protected:
-	float life = 0.f;
-	sf::Vector2f gravity = { 0.f, 50.f };
+	float lifeTime = 0.f;
+	sf::Vector2f gravity = { 0.f, 150.f };
 	BushState state = BushState::OnGround;
+	sf::Vector2f velocity;
 public:
 	// Interactable을(를) 통해 상속됨
 	void OnInteract() override;

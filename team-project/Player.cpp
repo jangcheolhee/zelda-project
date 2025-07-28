@@ -417,11 +417,11 @@ void Player::OnDamage(int damage)
 
 void Player::UpdateFixedHitBox()
 {
-	sf::Vector2f fixedSize = { 6.f, 10.f };              // 원하는 히트박스 크기
+	sf::Vector2f fixedSize = { 8.f, 10.f };              // 원하는 히트박스 크기
 	hitBox.rect.setSize(fixedSize);
 	hitBox.rect.setOrigin(fixedSize * 0.5f);
 
-	sf::Vector2f offset(5.f, 10.f);
+	sf::Vector2f offset(8.f, 10.f);
 	hitBox.rect.setPosition(GetPosition() + offset);
 }
 

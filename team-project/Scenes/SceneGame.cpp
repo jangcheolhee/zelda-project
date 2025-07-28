@@ -103,11 +103,11 @@ void SceneGame::UpdateZones()
 				zone.onEnter();
 				SpawnInteractableObject(zone.bounds);
 				SpawnFlowers(zone.bounds);
-				JumpWall* wall = new JumpWall();
+				/*JumpWall* wall = new JumpWall();
 				wall->SetBounds(185, 560, 100, 100);
 				AddGameObject(wall);
 				interactables.push_back(wall);
-				wall->Reset();
+				wall->Reset();*/
 			}
 		}
 		else if (!nowInZone && zone.entered)
@@ -286,7 +286,7 @@ void SceneGame::CheckCollison()
 
 		if (obj->GetActive())
 		{
-			if (obj->GetType() == Interactable::Type::Throw || obj->GetType() == Interactable::Type::Chest)
+			if (obj->GetType() == Interactable::Type::Throw)
 			{
 				if (rect.intersects(obj->GetGlobalBounds()))
 				{
@@ -316,12 +316,12 @@ void SceneGame::CheckCollison()
 							interactables.push_back(heart);
 							break;
 						}
-
 						}
 						obj->OnInteract();
+						continue;
 					}
-
 				}
+
 			}
 
 			if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
@@ -389,7 +389,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		}
 	}
 	//layer3: collision
-	/*int gid[] = { 25075,25067,24699,25068,24592 };
+	int gid[] = { 25075,25067,24699,25068,24592 };
 	for (int id : gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(3, id);
@@ -422,7 +422,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				inter->SetPosition(pos);
 			}
 		}
-	}*/
+	}
 }
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
