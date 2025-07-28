@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Scene.h"
 #include "SpriteGo.h"
 #include "Enemy.h"

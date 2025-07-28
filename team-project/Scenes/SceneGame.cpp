@@ -19,7 +19,6 @@ SceneGame::SceneGame()
 
 void SceneGame::InitZones()
 {
-	std::cerr << "field error" << std::endl;
 	mapZones.clear();
 
 	mapZones.push_back({
@@ -34,6 +33,8 @@ void SceneGame::InitZones()
 	  [this]()
 		{
 			std::cout << "Zone 1 Exit" << std::endl;
+			sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
+			SpawnEnemy(enemyPos, Enemy::Types::Basic);
 			DeleteInteractables();
 
 		},
