@@ -202,8 +202,9 @@ void SceneGame::RecycleEnemy(Enemy* enemy)
 void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 {
 	Enemy* enemy = CreateOrReuseEnemy(type);
-	enemy->SetInitPosition(pos);
 
+	enemy->Init();
+	enemy->SetInitPosition(pos);
 	enemy->Reset();
 	enemy->SetActive(true);
 
@@ -262,9 +263,9 @@ void SceneGame::CheckCollison()
 {
 	for (auto& enemy : enemyList)
 	{
+		player->OnCollide(enemy);
 		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 		{
-			player->OnCollide(enemy);
 			enemy->OnCollide(player);
 		}
 	}

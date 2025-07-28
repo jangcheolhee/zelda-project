@@ -12,8 +12,8 @@ Game::Game():Scene(SceneIds::Title)
 
 void Game::Init()
 {
-    ANI_CLIP_MGR.Load("animations/LinkMovementFrames.csv");
-    sheetTex.loadFromFile("graphics/Link.png"); // 실제 경로
+    //ANI_CLIP_MGR.Load("animations/LinkMovementFrames.csv");
+    //sheetTex.loadFromFile("graphics/Sord_ani.png"); // 실제 경로
     editorUI.SetSpriteSheetTexture(&sheetTex);
     // Scene 초기화
     SCENE_MGR.ChangeScene(SceneIds::Title);  // 예시

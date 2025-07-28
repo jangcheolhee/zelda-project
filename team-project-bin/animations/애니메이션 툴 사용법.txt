@@ -1,7 +1,7 @@
 
 1.AnimationApp.cpp에서 
  currentClip.name = "shield_clip";<-파일 이름 변경가능
-texture.loadFromFile("graphics/Link.png");<-불러올 이미지파일 변경
+texture.loadFromFile("graphics/Link.png");<-불러올 이미지파일 변경/이것만 수정해도 파일 불러오기 ok
 
 1-2.Game.cpp에서 창뷰에 불러올 스프라이트 변경
  sheetTex.loadFromFile("graphics/Link.png"); <-불러올 이미지파일 변경

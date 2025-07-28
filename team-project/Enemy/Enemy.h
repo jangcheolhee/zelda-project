@@ -14,6 +14,9 @@ public:
 		Count,
 	};
 protected:
+	float hitCooldown = 0.5f;     // 피격 간 최소 시간 (초)
+	float LastHit = 0.f; // 마지막 피격 이후 시간
+
 	sf::Sprite body;
 	Animator animator;
 	SceneGame* sceneGame = nullptr;
@@ -26,9 +29,9 @@ protected:
 	HitBox hitBox;
 
 	int maxHp = 0;
-	int hp = 0;
+	int hp = 3;
 	float speed = 0.f;
-
+	bool isHitThisFrame = false;
 	Types type = Types::Basic;
 	
 	float skillInetrval = 0.f;
@@ -74,5 +77,8 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 
 	virtual void UpdateBehavior(float dt) = 0; 
+	virtual void OnCollideBySword();
+	virtual void OnHit(int damage);
+	
 };
 

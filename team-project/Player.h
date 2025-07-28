@@ -3,27 +3,52 @@
 #include "HitBox.h"
 #include "Defines.h"
 #include "Enemy.h"
+enum class PlayerState
+{
+	Idle,
+	Move,
+	Attack,
+};
 
 class Player :  public GameObject
 {
-
-
 protected:
-	int rupee = 0;
 	
+
+	int rupee = 0;
+	sf::Texture* swordTexture = nullptr;
+	PlayerState state = PlayerState::Idle;
+	std::vector<sf::IntRect> attackFrames;
+	float attackElapsed = 0.f;
+	int attackFrameIndex = 0;
+	bool isAttacking = false;
+
 	size_t currentFrame = 0;
-	float frameTime = 0.2f;    // ������ ��ȯ �ð�
+	float frameTime = 0.2f;   
 	float elapsedTime = 0.f;
-	float speed = 50.f;        // �̵� �ӵ�
+	float speed = 50.f;        
+	float attackFrameTime = 1.f / 20.f;
+
 	sf::Vector2f velocity = { 0.f, 0.f };
 	std::map<Direction, std::vector<sf::IntRect>> animations;
+	std::map<Direction, std::vector<sf::IntRect>> attackAnimations;
 
 	sf::Sprite body;
 	sf::Texture* texture = nullptr;
 	
 	HitBox hitBox;
 	int hp = 0;
-	int maxHp = 0;
+	int maxHp = 10;
+
+	bool isInvincible = false;
+	float invincibleTime = 1.0f;        // 무적 지속 시간 (초)
+	float invincibleElapsed = 0.0f;     // 무적 상태 경과 시간
+
+	HitBox swordHitBox;
+	bool swordHitBoxActive = false;
+
+	float timeSinceLastDamage = 0.f;
+	float damageCooldown = 0.5f;
 
 	bool movable = true;
 	bool isInteract = false;
@@ -36,6 +61,7 @@ protected:
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
 public:
+
 	Player(const std::string& name = "");
 	virtual ~Player() = default;
 
@@ -76,6 +102,16 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+
 	bool checkCollision(const HitBox& other);
 	sf::Sprite& GetBody() { return body; } // getter
+	void TakeDamageIfPossible(int damage);
+	void OnDamage(int damage);
+	void UpdateFixedHitBox();
+
+	sf::Vector2f GetPosition() const override
+	{
+		return body.getPosition();
+	}
+	bool IsAttacking() const;
 };

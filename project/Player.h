@@ -9,7 +9,7 @@ class Player :
     public Character
 {
 private:
-    std::string currentDirection = "Down";
+    std::string currentDirection = "";
    
 public:
     void Init(const std::string& texturePath, sf::Vector2f startPos) override

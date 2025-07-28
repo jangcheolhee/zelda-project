@@ -56,6 +56,14 @@ void Enemy::OnDamage(int damage)
 
 void Enemy::Init()
 {
+	// 히트박스를 작게 설정
+	sf::FloatRect bodyBounds = body.getLocalBounds();
+	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
+	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
+
+	hitBox.rect.setSize(hitBoxSize);
+	hitBox.rect.setOrigin(hitBoxSize / 2.f);
+	hitBox.rect.setPosition(body.getPosition() + hitBoxOffset);
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = -1;
 	animator.SetTarget(&body);
@@ -88,12 +96,15 @@ void Enemy::Reset()
 
 void Enemy::Update(float dt)
 {
+	LastHit += dt;
+	// 매 프레임마다 피격 가능 상태로 초기화
+	isHitThisFrame = false;
+
 	animator.Update(dt);
 	UpdateBehavior(dt);
-	if (player->GetGlobalBounds().intersects(GetGlobalBounds()))
+	if (!player->IsAttacking() && player->checkCollision(hitBox))
 	{
-		// Player한테 데미지 주는 곳 
-		// ex) player->OnDamage(damage);
+		player->TakeDamageIfPossible(1);
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
@@ -102,5 +113,25 @@ void Enemy::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
+}
+
+void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
+{
+	if (LastHit < hitCooldown)
+		return;//공격 쿨타임이 남아 있으면 리턴
+		
+	std::cout << "[Enemy] sword -1 damage" << std::endl;
+	OnHit(1);//데미지 처리
+	LastHit = 0.f;
+	
+}
+
+void Enemy::OnHit(int damage)
+{
+	hp -= damage;
+	if (hp <= 0)
+	{
+		SetActive(false);
+	}
 }
 

@@ -51,18 +51,8 @@ public:
 	void SetTarget(sf::Sprite* target) { sprite = target; }
 	void AddEvent(const std::string& id, int frame, std::function<void()> action);
 	void ClearEvent() { events.clear(); }
-
-	//void AddEvent(const AnimationEvent& ev)
-	//{ 
-	//	if (events.find(ev) != events.end())
-	//	{
-	//		// Error
-	//		return;
-	//	}
-	//	events.insert(ev);
-	//}
-
 	void Update(float dt);
+
 	
 	bool IsPlaying() const { return isPlaying; }
 	void SetSpeed(float speed) 

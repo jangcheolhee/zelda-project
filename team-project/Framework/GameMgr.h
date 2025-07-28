@@ -28,7 +28,7 @@ public:
 	void SaveGame(const std::string& filename);
 	void LoadGame(const std::string& filename);
 	PlayerData& GetPlayerData() { return playerData; }
-	void SetPlayerData(int hp, sf::Vector2f pos);
+	void SetPlayerData(int hp, const sf::Vector2f& pos);
 
 };
 
