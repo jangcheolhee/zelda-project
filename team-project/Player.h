@@ -56,10 +56,11 @@ protected:
 	
 	Direction currentDirection = Direction::Down;
 	Direction heldDirection = Direction::None;
-	bool isHoldingDirection = false;
+	
 	bool isMovingLeft = false;
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
+	
 public:
 
 	Player(const std::string& name = "");
@@ -108,6 +109,7 @@ public:
 	void TakeDamageIfPossible(int damage);
 	void OnDamage(int damage);
 	void UpdateFixedHitBox();
+	void HandleMovement(float dt);
 
 	sf::Vector2f GetPosition() const override
 	{

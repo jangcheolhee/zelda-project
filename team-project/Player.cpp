@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "AnimationClip.h"
 
+
 Player::Player(const std::string& name)
 	: GameObject(name)
 {
@@ -61,8 +62,7 @@ void Player::Init()
 	sf::FloatRect bounds = body.getLocalBounds();
 	body.setOrigin(bounds.width / 2.f, bounds.height);
 
-	hp = maxHp; // 명확히 초기화
-	/*GAME_MGR.SetPlayerData(hp, GetPosition());*/
+	hp = maxHp; 
 
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
@@ -155,6 +155,7 @@ void Player::Reset()
 }
 void Player::Update(float dt)
 {
+	sf::Vector2f previousPosition = GetPosition();
 	timeSinceLastDamage += dt;
 	// 깜빡임 무적 처리
 	if (isInvincible)
@@ -183,21 +184,19 @@ void Player::Update(float dt)
 		if (swordTexture)
 			body.setTexture(*swordTexture);
 
-		auto& attackVec = attackAnimations
-			[currentDirection == Direction::Left ? Direction::Right
-			: currentDirection];
+		auto& attackVec = attackAnimations[currentDirection];
 
-		if (!attackVec.empty())
+		if (!attackVec.empty() && attackFrameIndex < attackVec.size())
 		{
 			sf::IntRect rect = attackVec[attackFrameIndex];
+
 			if (currentDirection == Direction::Left)
 			{
 				rect.left += rect.width;
 				rect.width = -rect.width;
 			}
+
 			body.setTextureRect(rect);
-
-
 		}
 
 	}
@@ -289,62 +288,37 @@ void Player::Update(float dt)
 
 	sf::Vector2f movement(0.f, 0.f);
 	bool moving = false;
-	bool isMovingLeft = false;
+	//bool isMovingLeft = false;
 	// 방향 키 입력 시 방향 결정
-	if (!isHoldingDirection)
-	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-			currentDirection = Direction::Up;
-			isHoldingDirection = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			currentDirection = Direction::Down;
-			isHoldingDirection = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-			currentDirection = Direction::Left;
-			isHoldingDirection = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-			currentDirection = Direction::Right;
-			isHoldingDirection = true;
-		}
-
-		if (isHoldingDirection) {
-			currentFrame = 0;
-			elapsedTime = 0.f;
-		}
-	}
+	
 
 
 	// 2. 이동 방향은 3개까지 입력 가능 (움직임만)
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
+	{
+		currentDirection = Direction::Left;
 		movement.x -= speed * dt;
 		moving = true;
-		if (currentDirection == Direction::Left)
-			isMovingLeft = true;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
+	{
+		currentDirection = Direction::Right;
 		movement.x += speed * dt;
 		moving = true;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
+	{
+		currentDirection = Direction::Up;
 		movement.y -= speed * dt;
 		moving = true;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) 
+	{
+		currentDirection = Direction::Down;
 		movement.y += speed * dt;
 		moving = true;
 	}
 
-	// 키가 모두 떨어졌는지 체크
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		isHoldingDirection = false;
-
-	}
 
 	// ================== 이동 애니메이션 프레임 처리 ==================
 	auto& vec = animations[currentDirection];
@@ -365,43 +339,27 @@ void Player::Update(float dt)
 			currentFrame = 0;
 		}
 
-		sf::IntRect rect = vec[currentFrame];
-		if (currentDirection == Direction::Left)
+		if (currentFrame < vec.size()) // ✅ 체크 추가
 		{
-			rect.left += rect.width;
-			rect.width = -rect.width;
+			sf::IntRect rect = vec[currentFrame];
+			if (currentDirection == Direction::Left)
+			{
+				rect.left += rect.width;
+				rect.width = -rect.width;
+			}
+			body.setTextureRect(rect);
 		}
-		body.setTextureRect(rect);
 	}
 	
 	// 애니메이션 데이터 없으면 이동만 처리
 	if (movable)
 	{
-
-		body.move(movement);
-		SetPosition(body.getPosition());
+		sf::Vector2f newPos = body.getPosition() + movement;
+		SetPosition(newPos);
 	}
 	else
 	{
-		switch (currentDirection)
-		{
-		case Direction::None:
-			break;
-		case Direction::Down:
-			SetPosition({ GetPosition().x , GetPosition().y - 0.1f });
-			break;
-		case Direction::Left:
-			SetPosition({ GetPosition().x + 0.1f, GetPosition().y });
-			break;
-		case Direction::Right:
-			SetPosition({ GetPosition().x - 0.1f , GetPosition().y });
-			break;
-		case Direction::Up:
-			SetPosition({ GetPosition().x , GetPosition().y + 0.1f });
-			break;
-		default:
-			break;
-		}
+		
 		movable = true;
 	}
 	
@@ -422,6 +380,7 @@ void Player::Update(float dt)
 	}
 
 	SetPosition(body.getPosition());
+
 }
 
 
@@ -434,6 +393,7 @@ void Player::Draw(sf::RenderWindow& window)
 	{
 		swordHitBox.Draw(window);
 	}
+
 }
 
 bool Player::checkCollision(const HitBox& other)
@@ -472,12 +432,12 @@ void Player::OnDamage(int damage)
 
 void Player::UpdateFixedHitBox()
 {
-	sf::Vector2f fixedSize = { 3.f, 6.f };              // 원하는 히트박스 크기
+	sf::Vector2f fixedSize = { 6.f, 10.f };              // 원하는 히트박스 크기
 	hitBox.rect.setSize(fixedSize);
 	hitBox.rect.setOrigin(fixedSize * 0.5f);
-	sf::FloatRect bounds = body.getGlobalBounds();
-	sf::Vector2f center = { bounds.left + bounds.width * 0.5f, bounds.top + bounds.height * 0.5f };
-	hitBox.rect.setPosition(center);
+
+	sf::Vector2f offset(5.f, 10.f);
+	hitBox.rect.setPosition(GetPosition() + offset);
 }
 
 bool Player::IsAttacking() const
