@@ -62,7 +62,7 @@ void Player::Init()
 	body.setOrigin(bounds.width / 2.f, bounds.height);
 
 	hp = maxHp; // 명확히 초기화
-	GAME_MGR.SetPlayerData(hp, GetPosition());
+	/*GAME_MGR.SetPlayerData(hp, GetPosition());*/
 
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;

@@ -67,7 +67,7 @@ public:
 	void CheckCollison();
 
 	void Init() override;
-	void Release() override;
+	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
 

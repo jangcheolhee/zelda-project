@@ -472,11 +472,11 @@ void SceneGame::Init()
 	Scene::Init();
 }
 
-void SceneGame::Release()
+void SceneGame::Exit()
 {
 	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
 	GAME_MGR.SaveGame("data/data.json");
-	Scene::Release();
+	Scene::Exit();
 }
 
 void SceneGame::Enter()
