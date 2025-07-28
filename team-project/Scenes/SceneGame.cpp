@@ -19,7 +19,6 @@ SceneGame::SceneGame()
 
 void SceneGame::InitZones()
 {
-	std::cerr << "field error" << std::endl;
 	mapZones.clear();
 
 	mapZones.push_back({
@@ -519,4 +518,3 @@ void SceneGame::Update(float dt)
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
 }
-
