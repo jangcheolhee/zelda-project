@@ -43,8 +43,6 @@ void JumpWall::Reset()
 	body.setFillColor(sf::Color(0, 255, 0, 80));
 	body.setOutlineColor(sf::Color::Green);
 	body.setOutlineThickness(1.f);
-	
-	
 
 }
 
@@ -52,8 +50,6 @@ void JumpWall::SetBounds(float x, float y, float width, float height)
 {
 	body.setSize({ width,height });
 	body.setPosition({ x,y });
-	
-	
 }
 
 void JumpWall::Draw(sf::RenderWindow& window)
