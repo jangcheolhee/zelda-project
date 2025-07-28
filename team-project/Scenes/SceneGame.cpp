@@ -279,63 +279,67 @@ void SceneGame::CheckCollison()
 	for (auto& obj : interactables)
 	{
 
-		if (obj->GetType() == Interactable::Type::Throw || obj->GetType() == Interactable::Type::Chest)
+		if (obj->GetActive())
 		{
-			if (rect.intersects(obj->GetGlobalBounds()))
+			if (obj->GetType() == Interactable::Type::Throw || obj->GetType() == Interactable::Type::Chest)
 			{
-				if (player->WantsToInteract() && !player->IsInteract())
+				if (rect.intersects(obj->GetGlobalBounds()))
 				{
-					int r = Utils::RandomRange(0, 3);
-					
-					switch (r)
+					if (player->WantsToInteract() && !player->IsInteract())
 					{
-					case 0:
-					{
-						Rupee* rupee = new Rupee();
-						rupee->SetPosition(obj->GetPosition());
-						rupee->Reset();
-						AddGameObject(rupee);
-						interactables.push_back(rupee);
+						int r = Utils::RandomRange(0, 3);
 
-						break;
+						switch (r)
+						{
+						case 0:
+						{
+							Rupee* rupee = new Rupee();
+							rupee->SetPosition(obj->GetPosition());
+							rupee->Reset();
+							AddGameObject(rupee);
+							interactables.push_back(rupee);
+
+							break;
+						}
+
+						case 1:
+						{
+							Heart* heart = new Heart();
+							heart->SetPosition(obj->GetPosition());
+							heart->Reset();
+							AddGameObject(heart);
+							interactables.push_back(heart);
+
+							break;
+						}
+
+						}
+						obj->OnInteract();
 					}
 
-					case 1:
-					{
-						Heart* heart = new Heart();
-						heart->SetPosition(obj->GetPosition());
-						heart->Reset();
-						AddGameObject(heart);
-						interactables.push_back(heart);
+				}
+			}
 
-						break;
-					}
+			if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+			{
+				if (obj->GetType() == Interactable::Type::Item)
+				{
+					obj->OnInteract();
 
-					}
+					continue;
+				}
+				player->SetMovable(false);
+				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
+				{
+
 					obj->OnInteract();
 				}
 
+
 			}
 		}
-
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
-		{
-			if (obj->GetType() == Interactable::Type::Item)
-			{
-				obj->OnInteract();
-
-				continue;
-			}
-			player->SetMovable(false);
-			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
-			{
-
-				obj->OnInteract();
-			}
-
-
 		}
-	}
+		
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요

@@ -373,9 +373,38 @@ void Player::Update(float dt)
 		}
 		body.setTextureRect(rect);
 	}
+	
 	// 애니메이션 데이터 없으면 이동만 처리
-	body.move(movement);
-	UpdateFixedHitBox();
+	if (movable)
+	{
+
+		body.move(movement);
+		SetPosition(body.getPosition());
+	}
+	else
+	{
+		switch (currentDirection)
+		{
+		case Direction::None:
+			break;
+		case Direction::Down:
+			SetPosition({ GetPosition().x , GetPosition().y - 0.1f });
+			break;
+		case Direction::Left:
+			SetPosition({ GetPosition().x + 0.1f, GetPosition().y });
+			break;
+		case Direction::Right:
+			SetPosition({ GetPosition().x - 0.1f , GetPosition().y });
+			break;
+		case Direction::Up:
+			SetPosition({ GetPosition().x , GetPosition().y + 0.1f });
+			break;
+		default:
+			break;
+		}
+		movable = true;
+	}
+	
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
