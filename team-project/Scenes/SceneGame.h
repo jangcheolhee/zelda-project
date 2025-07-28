@@ -70,5 +70,4 @@ public:
 	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
-
 };

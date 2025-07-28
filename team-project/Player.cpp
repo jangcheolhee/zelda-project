@@ -11,11 +11,11 @@ void Player::OnCollide(Enemy* enemy)
 {
 	// 칼 히트박스가 활성화되어 있고,
 		// 현재 적의 바운딩박스와 충돌한다면
-		if (swordHitBoxActive &&
-			swordHitBox.rect.getGlobalBounds().intersects(enemy->GetHitBox().rect.getGlobalBounds()))
-		{
-			enemy->OnCollideBySword(); // 적 피격 처리
-		}
+	if (swordHitBoxActive &&
+		swordHitBox.rect.getGlobalBounds().intersects(enemy->GetHitBox().rect.getGlobalBounds()))
+	{
+		enemy->OnCollideBySword(); // 적 피격 처리
+	}
 }
 
 void Player::SetPosition(const sf::Vector2f& pos)
@@ -66,7 +66,7 @@ void Player::Init()
 
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
-	
+
 	std::string texPath = "graphics/Link.png";
 	if (!TEXTURE_MGR.Exists(texPath))
 	{
@@ -108,8 +108,8 @@ void Player::Init()
 
 	// Down
 	animations[Direction::Down] = AnimationIO::loadFromCSV("animations/Link_down.csv");
-	
-	
+
+
 	// Right
 	animations[Direction::Right] = AnimationIO::loadFromCSV("animations/Link_right.csv");
 	// Left
@@ -131,9 +131,9 @@ void Player::Init()
 			<< "\n";
 	}
 
-	
+
 	body.setScale(1.0f, 1.0f); // ũ�� ����
-	
+
 	// ��Ʈ�ڽ� �ʱ�ȭ
 	//hitBox.UpdateTransform(body, body.getLocalBounds());
 }
@@ -152,7 +152,6 @@ void Player::Reset()
 	bool isMovingLeft = false;
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
-
 }
 void Player::Update(float dt)
 {
@@ -185,7 +184,7 @@ void Player::Update(float dt)
 			body.setTexture(*swordTexture);
 
 		auto& attackVec = attackAnimations
-			[currentDirection == Direction::Left? Direction::Right
+			[currentDirection == Direction::Left ? Direction::Right
 			: currentDirection];
 
 		if (!attackVec.empty())
@@ -198,10 +197,10 @@ void Player::Update(float dt)
 			}
 			body.setTextureRect(rect);
 
-			
+
 		}
-		
-	}	
+
+	}
 
 	if (state == PlayerState::Attack)
 	{
@@ -279,43 +278,43 @@ void Player::Update(float dt)
 				}
 			}
 		}
-		
 
-	
+
+
 		body.move(sf::Vector2f(0.f, 0.f)); // 공격 중엔 이동 없음
 		UpdateFixedHitBox();
 		return; // 공격 중에는 나머지 처리 스킵
-			
-		}
+
+	}
 
 	sf::Vector2f movement(0.f, 0.f);
 	bool moving = false;
 	bool isMovingLeft = false;
 	// 방향 키 입력 시 방향 결정
-		if (!isHoldingDirection)
-		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				currentDirection = Direction::Up;
-				isHoldingDirection = true;
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-				currentDirection = Direction::Down;
-				isHoldingDirection = true;
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-				currentDirection = Direction::Left;
-				isHoldingDirection = true;
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-				currentDirection = Direction::Right;
-				isHoldingDirection = true;
-			}
-
-			if (isHoldingDirection) {
-				currentFrame = 0;
-				elapsedTime = 0.f;
-			}
+	if (!isHoldingDirection)
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			currentDirection = Direction::Up;
+			isHoldingDirection = true;
 		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			currentDirection = Direction::Down;
+			isHoldingDirection = true;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+			currentDirection = Direction::Left;
+			isHoldingDirection = true;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			currentDirection = Direction::Right;
+			isHoldingDirection = true;
+		}
+
+		if (isHoldingDirection) {
+			currentFrame = 0;
+			elapsedTime = 0.f;
+		}
+	}
 
 
 	// 2. 이동 방향은 3개까지 입력 가능 (움직임만)
@@ -349,35 +348,35 @@ void Player::Update(float dt)
 
 	// ================== 이동 애니메이션 프레임 처리 ==================
 	auto& vec = animations[currentDirection];
-	
-		if (!vec.empty())
-		{
-			if (moving)
-			{
-				elapsedTime += dt;
-				if (elapsedTime >= frameTime)
-				{
-					elapsedTime = 0.f;
-					currentFrame = (currentFrame + 1) % vec.size();
-				}
-			}
-			else
-			{
-				currentFrame = 0;
-			}
 
-			sf::IntRect rect = vec[currentFrame];
-			if (currentDirection == Direction::Left)
+	if (!vec.empty())
+	{
+		if (moving)
+		{
+			elapsedTime += dt;
+			if (elapsedTime >= frameTime)
 			{
-				rect.left += rect.width;
-				rect.width = -rect.width;
+				elapsedTime = 0.f;
+				currentFrame = (currentFrame + 1) % vec.size();
 			}
-			body.setTextureRect(rect);
 		}
-		// 애니메이션 데이터 없으면 이동만 처리
-		body.move(movement);
-		UpdateFixedHitBox();
-		
+		else
+		{
+			currentFrame = 0;
+		}
+
+		sf::IntRect rect = vec[currentFrame];
+		if (currentDirection == Direction::Left)
+		{
+			rect.left += rect.width;
+			rect.width = -rect.width;
+		}
+		body.setTextureRect(rect);
+	}
+	// 애니메이션 데이터 없으면 이동만 처리
+	body.move(movement);
+	UpdateFixedHitBox();
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
@@ -392,10 +391,10 @@ void Player::Update(float dt)
 	{
 		wantsToInteract = false;
 	}
-	
+
 	SetPosition(body.getPosition());
-	}
-	
+}
+
 
 
 void Player::Draw(sf::RenderWindow& window)
@@ -456,5 +455,3 @@ bool Player::IsAttacking() const
 {
 	return isAttacking;
 }
-
-

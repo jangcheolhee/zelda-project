@@ -520,4 +520,3 @@ void SceneGame::Update(float dt)
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
 }
-
