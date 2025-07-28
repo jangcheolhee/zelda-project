@@ -5,7 +5,7 @@
 
 void SceneMgr::Init()
 {
-
+	scenes.push_back(new SceneTest());
 	scenes.push_back(new SceneGame());
 	scenes.push_back(new SceneHidden());
 

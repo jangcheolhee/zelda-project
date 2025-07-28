@@ -217,6 +217,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="Interact\Heart.cpp" />
     <ClCompile Include="Interact\Chest.cpp" />
     <ClCompile Include="Interact\Bush.cpp" />
     <ClCompile Include="Enemy\BasicEnemy.cpp" />
@@ -245,6 +248,7 @@
     <ClCompile Include="Scenes\SceneGame.cpp" />
     <ClCompile Include="Framework\SceneMgr.cpp" />
     <ClCompile Include="Framework\SoundMgr.cpp" />
+    <ClCompile Include="Scenes\SceneTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='team-project-bin|x64'">Create</PrecompiledHeader>
@@ -255,6 +259,9 @@
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="HUD.h" />
+    <ClInclude Include="Interact\Heart.h" />
     <ClInclude Include="Interact\Chest.h" />
     <ClInclude Include="Interact\Bush.h" />
     <ClInclude Include="Enemy\BasicEnemy.h" />
@@ -287,6 +294,7 @@
     <ClInclude Include="Scenes\SceneGame.h" />
     <ClInclude Include="Framework\SceneMgr.h" />
     <ClInclude Include="Framework\SoundMgr.h" />
+    <ClInclude Include="Scenes\SceneTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Framework\TextGo.h" />
     <ClInclude Include="Framework\Utils.h" />

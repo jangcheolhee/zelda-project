@@ -49,6 +49,7 @@ public:
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();
+	void DeleteInteractables();
 
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
@@ -61,11 +62,12 @@ public:
 
 	//존으로 변경
 	void SpawnInteractableObject(sf::FloatRect zone);
-	void DeleteInteractables();
+	
 
 	void CheckCollison();
 
 	void Init() override;
+	void Release() override;
 	void Enter() override;
 	void Update(float dt) override;
 

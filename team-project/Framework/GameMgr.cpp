@@ -10,7 +10,7 @@ void GameMgr::Release()
 void GameMgr::SaveGame(const std::string& filename)
 {
 	
-	playerData.name = "Link"; // 또는 입력값
+	playerData.name = "Link"; 
 
 	json j;
 
@@ -23,7 +23,7 @@ void GameMgr::SaveGame(const std::string& filename)
 	std::ofstream file(filename);
 	if (file.is_open())
 	{
-		file << j.dump(4); // 예쁘게 출력
+		file << j.dump(4); 
 		file.close();
 	}
 }
@@ -48,7 +48,7 @@ void GameMgr::LoadGame(const std::string& filename)
 	playerData.position.y = j["player"]["position"]["y"];
 }
 
-void GameMgr::SetPlayerData(int hp, sf::Vector2f& pos)
+void GameMgr::SetPlayerData(int hp, sf::Vector2f pos)
 {
 	playerData.hp = hp;
 	playerData.position = pos;

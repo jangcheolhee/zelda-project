@@ -8,6 +8,8 @@
 #include "Chest.h"
 #include "Rupee.h"
 #include "JumpWall.h"
+#include "Heart.h"
+#include "HUD.h"
 #include <istream>
 
 SceneGame::SceneGame()
@@ -27,10 +29,13 @@ void SceneGame::InitZones()
 	  [this]()
 		{
 			std::cout << "Zone 1 Enter" << std::endl;
+
 		},
 	  [this]()
 		{
 			std::cout << "Zone 1 Exit" << std::endl;
+			DeleteInteractables();
+
 		},
 	  false
 		});
@@ -148,6 +153,18 @@ void SceneGame::UpdateBehaviorZone()
 	}
 }
 
+void SceneGame::DeleteInteractables()
+{
+	auto it = interactables.begin();
+	while (it != interactables.end())
+	{
+		RemoveGameObject(*it);
+		it = interactables.erase(it);
+	}
+	interactables.clear();
+
+}
+
 Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
 {
 	auto& pool = enemyPools[type];
@@ -252,27 +269,70 @@ void SceneGame::CheckCollison()
 		}
 	}
 
+	sf::FloatRect rect = player->GetGlobalBounds();
+	rect.left -= 2.f;
+	rect.top -= 2.f;
+	rect.width += 4.f;
+	rect.height += 4.f;
 	for (auto& obj : interactables)
 	{
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+
+		if (obj->GetType() == Interactable::Type::Throw || obj->GetType() == Interactable::Type::Chest)
 		{
-			player->SetMovable(false);
-			// 플레이어가 obj가 충돌한 방향으로는 움직일 수 없게 하기
-			switch (obj->GetType())
+			if (rect.intersects(obj->GetGlobalBounds()))
 			{
-			case Interactable::Type::Throw: case Interactable::Type::Chest:
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
+					int r = Utils::RandomRange(0, 3);
+					
+					switch (r)
+					{
+					case 0:
+					{
+						Rupee* rupee = new Rupee();
+						rupee->SetPosition(obj->GetPosition());
+						rupee->Reset();
+						AddGameObject(rupee);
+						interactables.push_back(rupee);
+
+						break;
+					}
+
+					case 1:
+					{
+						Heart* heart = new Heart();
+						heart->SetPosition(obj->GetPosition());
+						heart->Reset();
+						AddGameObject(heart);
+						interactables.push_back(heart);
+
+						break;
+					}
+
+					}
 					obj->OnInteract();
 				}
-				break;
 
-			case Interactable::Type::Item: case Interactable::Type::JumpWall:
+			}
+		}
+
+		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		{
+			if (obj->GetType() == Interactable::Type::Item)
+			{
+				obj->OnInteract();
+
+				continue;
+			}
+			player->SetMovable(false);
+			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
+			{
 
 				obj->OnInteract();
-				break;
 			}
-		}player->SetMovable(true);
+
+
+		}
 	}
 }
 
@@ -363,16 +423,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	}
 }
 
-void SceneGame::DeleteInteractables()
-{
-	auto it = interactables.begin();
-	while (it != interactables.end())
-	{
-		RemoveGameObject(*it);
-		it = interactables.erase(it);
-	}
-	interactables.clear();
-}
+
 
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
@@ -392,6 +443,8 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Overworld.png");
 	texIds.push_back("graphics/npc.png");
 	texIds.push_back("graphics/Enemy_sheet.png");
+	texIds.push_back("graphics/Items.png");
+	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
@@ -402,7 +455,7 @@ void SceneGame::Init()
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
-
+	AddGameObject(new HUD());
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 
@@ -417,6 +470,13 @@ void SceneGame::Init()
 	Scene::Init();
 }
 
+void SceneGame::Release()
+{
+	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
+	GAME_MGR.SaveGame("data/data.json");
+	Scene::Release();
+}
+
 void SceneGame::Enter()
 {
     player->Reset();
@@ -428,7 +488,7 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
 	Scene::Enter();
-	player->SetPosition(startPos);
+
 }
 
 void SceneGame::Update(float dt)
