@@ -20,7 +20,9 @@ enum class Origins
 enum class SceneIds
 {
 	None = -1,
+	//Test,
 	Game,
+	Hidden,
 	Count,
 };
 
@@ -35,9 +37,10 @@ enum class Sides
 
 enum class Direction
 {
-	None,
+	None = -1,
 	Down, 
 	Left,
 	Right, 
-	Up 
+	Up,
+
 };

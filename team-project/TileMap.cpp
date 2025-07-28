@@ -3,17 +3,17 @@
 #include "SceneGame.h"
 #include <fstream>
 
-TileMap::TileMap(const std::string& name) : GameObject(name)
+TileMap::TileMap(const std::string& name, const std::string& tilePath) : GameObject(name)
 {
+    this->tilePath = tilePath;
 }
 
-bool TileMap::LoadTileMap()
+bool TileMap::LoadTileMap(const std::string& tilePath)
 {
-    tileMap = "data/originalMap.tmj";
+    tileMap = tilePath;
     std::ifstream tmFile(tileMap);
     if (!tmFile.is_open())
     {
-        std::cerr << "Failed to load tile map: " << tileMap << std::endl;
         return false;
     }
     tmFile >> tmJ;
@@ -47,7 +47,6 @@ bool TileMap::LoadTileMap()
         std::string imagePath = tsDirectory + imageFile;
 
         if (!tileset.texture.loadFromFile(imagePath)) {
-            std::cerr << "Failed to load tileset image: " << imagePath << std::endl;
             return false;
         }
         tileset.columns = tsJ["columns"];
@@ -68,7 +67,7 @@ bool TileMap::LoadTileMap()
                 if (gid == 0) continue;
 
                 int tsIndex = -1;
-                for(int i=(int)tilesets.size()-1;i>=0; --i)
+                for (int i = (int)tilesets.size() - 1; i >= 0; --i)
                 {
                     if (gid >= tilesets[i].firstgid)
                     {
@@ -77,17 +76,17 @@ bool TileMap::LoadTileMap()
                     }
                 }
                 if (tsIndex == -1) continue;
-                
+
                 Tileset& ts = tilesets[tsIndex];
                 int localId = gid - ts.firstgid;
                 int tu = localId % ts.columns;
                 int tv = localId / ts.columns;
-                
+
                 //VertexArray
                 sf::Vertex quad[4];
-                sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y};
+                sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
 
-                quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight)+origin;
+                quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight) + origin;
                 quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight) + origin;
                 quad[2].position = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight) + origin;
                 quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight) + origin;
@@ -97,7 +96,7 @@ bool TileMap::LoadTileMap()
                 quad[2].texCoords = sf::Vector2f((tu + 1) * tileWidth, (tv + 1) * tileHeight);
                 quad[3].texCoords = sf::Vector2f(tu * tileWidth, (tv + 1) * tileHeight);
 
-                for (int i = 0; i < 4; ++i) 
+                for (int i = 0; i < 4; ++i)
                     ts.va.append(quad[i]);
             }
         }
@@ -114,7 +113,7 @@ sf::Vector2f TileMap::getPosition(int layerIndex, int targetGid)
     int width = layer["width"];
     int heihgt = layer["height"];
 
-    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
+    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, - cellSize.y * 0.5f * cellCount.y };
 
     for (int i = 0; i < (int)data.size(); ++i)
     {
@@ -161,7 +160,7 @@ void TileMap::Init()
 {
     sortingLayer = SortingLayers::Background;
     sortingOrder = 0;
-    LoadTileMap();
+    LoadTileMap(tilePath);
 }
 
 void TileMap::Release()
@@ -173,7 +172,7 @@ void TileMap::Release()
 void TileMap::Reset()
 {
     Release();
-    LoadTileMap();
+    LoadTileMap(tilePath);
 }
 
 void TileMap::Update(float dt)

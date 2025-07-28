@@ -1,10 +1,12 @@
 #pragma once
 #include "Interactable.h"
+enum class BushState { OnGround, Held, Thrown };
 class Bush : public Interactable
 {
 protected:
-	float shootTimer = 0.f;
-	bool isShoot = false;
+	float life = 0.f;
+
+	BushState state = BushState::OnGround;
 public:
 	// Interactable을(를) 통해 상속됨
 	void OnInteract() override;

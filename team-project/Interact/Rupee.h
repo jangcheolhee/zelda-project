@@ -3,7 +3,8 @@
 class Rupee : public Interactable
 {
 protected:
-	int value;
+	int value = 0;
+	float life = 0;
 public:
 
 	
@@ -12,5 +13,6 @@ public:
 
 	// Interactable을(를) 통해 상속됨
 	void OnInteract() override;
+	void UpdateBeHavior(float dt) override;
 };
 

@@ -10,11 +10,11 @@ void GameMgr::Release()
 void GameMgr::SaveGame(const std::string& filename)
 {
 	
-	playerData.name = "Link"; // ¶Ç´Â ÀÔ·Â°ª
+	playerData.name = "Link"; 
 
 	json j;
 
-	// PlayerData ÀúÀå
+	// PlayerData ï¿½ï¿½ï¿½ï¿½
 	j["player"]["name"] = playerData.name;
 	j["player"]["hp"] = playerData.hp;
 	j["player"]["position"]["x"] = playerData.position.x;
@@ -23,7 +23,7 @@ void GameMgr::SaveGame(const std::string& filename)
 	std::ofstream file(filename);
 	if (file.is_open())
 	{
-		file << j.dump(4); // ¿¹»Ú°Ô Ãâ·Â
+		file << j.dump(4); 
 		file.close();
 	}
 }
@@ -41,14 +41,14 @@ void GameMgr::LoadGame(const std::string& filename)
 	file >> j;
 	file.close();
 
-	// PlayerData ºÒ·¯¿À±â
+	// PlayerData ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
 	playerData.name = j["player"]["name"];
 	playerData.hp = j["player"]["hp"];
 	playerData.position.x = j["player"]["position"]["x"];
 	playerData.position.y = j["player"]["position"]["y"];
 }
 
-void GameMgr::SetPlayerData(int hp, const sf::Vector2f& pos)
+void GameMgr::SetPlayerData(int hp, sf::Vector2f pos)
 {
 	playerData.hp = hp;
 	playerData.position = pos;

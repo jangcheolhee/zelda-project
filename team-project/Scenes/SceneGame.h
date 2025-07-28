@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "SpriteGo.h"
 #include "Enemy.h"
 #include "Interactable.h"
 class Player;
@@ -26,7 +27,7 @@ class SceneGame : public Scene
 {
 protected:
 	Player* player;
-	TileMap* tileMap;
+	TileMap* tileMapGame;
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
@@ -34,25 +35,40 @@ protected:
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
 
+	sf::Vector2f endPos;
+	sf::FloatRect endHole;
+
+	std::vector<SpriteGo*> flowers;
+	float flowerTimer;
+	bool flowerBool;
+	float flowerRate = 0.3;
+
 public:
 	SceneGame();
 
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();
+	void DeleteInteractables();
 
 	Enemy* CreateOrReuseEnemy(Enemy::Types type);
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
-	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type); //�� ���� ����(Ȱ��)
-	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type); //�ϰ� ����
-	void SpawnBushesAtTile(int layerIndex, int targetGid, std::string="");
-	void SpawnJumpAtTile(int layerIndex, int targetGid);
-	void SpawnNpcAtTile(int layerIndex, int targetGid);
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
+	
+	void SpawnFlowers(sf::FloatRect zone);
+	void FlowerBreath(float dt);
+
+	//존으로 변경
+	void SpawnInteractableObject(sf::FloatRect zone);
+	
 
 	void CheckCollison();
 
 	void Init() override;
+	void Release() override;
 	void Enter() override;
 	void Update(float dt) override;
+
 };
