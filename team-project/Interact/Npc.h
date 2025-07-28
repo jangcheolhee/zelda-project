@@ -9,6 +9,7 @@ protected:
 	Direction currentDirection;
 
 public:
+
 	Npc(const std::string& name = "");
 	~Npc() = default;
 

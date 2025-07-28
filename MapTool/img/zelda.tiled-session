@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj",
+    "activeFile": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj",
     "expandedProjectPaths": [
         "."
     ],
@@ -32,6 +32,9 @@
         "C:/KMJ/zelda-link-to-the-past_TeamProject/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/MapTool/img/zelda_house.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1
+        },
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/HiddenPathToGarden.tsj": {
+            "scaleInDock": 2
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_44_1024-1024.tsj": {
             "scaleInDock": 0.25,
@@ -65,6 +68,14 @@
                 "y": 81.99999999999997
             }
         },
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj": {
+            "scale": 1.669921875,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 239.53216374269005,
+                "y": 256.00000000000006
+            }
+        },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/home_background.tsj": {
             "scaleInDock": 2,
             "scaleInEditor": 1
@@ -74,12 +85,20 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj": {
+            "scale": 1.5,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 640,
+                "y": 1224.6666666666665
+            }
+        },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj": {
             "scale": 1,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 542,
-                "y": 717
+                "x": 512,
+                "y": 768.5
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/zelda_house_outdoor.tsj": {
@@ -162,7 +181,9 @@
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/home_background.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_44_1024-1024.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_64_512-512.tsj",
-        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj"
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj",
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj",
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj"
     ],
     "project": "zelda.tiled-project",
     "recentFiles": [
@@ -172,12 +193,12 @@
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_44_1024-1024.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_64_512-512.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj",
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj",
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/field.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/house.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/filed_20250722.tmj",
-        "7651.tsx",
-        "zelda_house-removebg-preview.tsx",
-        "zelda_house.tsx"
+        "7651.tsx"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {

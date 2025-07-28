@@ -191,6 +191,11 @@ void SceneHidden::Init()
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
+	auto dad = new SpriteGo();
+	dad->Init();
+	dad->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
+	//dad->GetSprite().getTextureRect({220,103,30,30});
+	//dad->SetActive
 
 	AddGameObject(player);
 	AddGameObject(tileMapHidden);

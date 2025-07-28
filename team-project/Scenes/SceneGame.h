@@ -5,6 +5,7 @@
 #include "Interactable.h"
 class Player;
 class TileMap;
+class HitBox;
 
 struct MapZone
 {
@@ -28,6 +29,7 @@ class SceneGame : public Scene
 protected:
 	Player* player;
 	TileMap* tileMapGame;
+	HitBox collision;
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
@@ -62,12 +64,13 @@ public:
 
 	//존으로 변경
 	void SpawnInteractableObject(sf::FloatRect zone);
-	
-
 	void CheckCollison();
+
+	void squareHitBox();
 
 	void Init() override;
 	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
+	void Draw(sf::RenderWindow& window) override;
 };

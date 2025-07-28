@@ -314,7 +314,6 @@ void SceneGame::CheckCollison()
 					}
 					obj->OnInteract();
 				}
-
 			}
 		}
 
@@ -332,17 +331,41 @@ void SceneGame::CheckCollison()
 
 				obj->OnInteract();
 			}
-
-
 		}
 	}
+}
+
+void SceneGame::squareHitBox()
+{//layer6
+	int squareGid[] = { 24592,24593,24594,24595 }; //1,2,3,4 정점, 시계방향
+	sf::Vector2f square1 = tileMapGame->getPosition(6, 24592);
+	sf::Vector2f square2 = tileMapGame->getPosition(6, 24593);
+	sf::Vector2f square3 = tileMapGame->getPosition(6, 24594);
+	sf::Vector2f square4 = tileMapGame->getPosition(6, 24595);
+	
+	sf::FloatRect square;
+	square = sf::FloatRect(square1.x, square1.y, square2.x - square1.x, square3.y - square1.y);
+	sf::RectangleShape collisionBox;
+	collision.UpdateTransform(collisionBox, square);
+
+		//24665, 24577, width,height 64x64 8x8
+		//tileMapGame->getPosition(6,)
+		//floatRect(24665pos(x,y)_left, 24665pos_top,   24577pos(x) - 24665(x), 24577(y)-24577(y)) 
+		//
+		//while(4개 순회) 끝나면 !bool
+
+	/*	sf::Vertex quad[4];
+		quad[0].position= tileMapGame->getPosition(6, 24592);
+		quad[1].position = tileMapGame->getPosition(6, 24592);
+		quad[2].position = tileMapGame->getPosition(6, 24592);
+		quad[3].position = tileMapGame->getPosition(6, 24592);*/
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {	
 	//layer 1 : bush
-	int layer1Gid[] = { 24670, 24590 };
+	int layer1Gid[] = { 24670, 24590};
 	for (int id : layer1Gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
@@ -425,8 +448,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	}
 }
 
-
-
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
 {
@@ -501,6 +522,8 @@ void SceneGame::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone();
 	FlowerBreath(dt);
+	squareHitBox();
+
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Hidden" << std::endl;
@@ -519,4 +542,8 @@ void SceneGame::Update(float dt)
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
+}
+
+void Draw(sf::RenderWindow& window)
+{
 }
