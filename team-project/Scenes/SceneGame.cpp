@@ -103,6 +103,11 @@ void SceneGame::UpdateZones()
 					zone.onEnter();
 					SpawnInteractableObject(zone.bounds);
 					SpawnFlowers(zone.bounds);
+					JumpWall* wall = new JumpWall();
+					wall->SetBounds(185, 560, 100, 100);
+					AddGameObject(wall);
+					interactables.push_back(wall);
+					wall->Reset();
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -334,7 +339,7 @@ void SceneGame::CheckCollison()
 
 					obj->OnInteract();
 				}
-
+				
 
 			}
 		}
@@ -350,7 +355,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	for (int id : layer1Gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
-
 		for (const auto& pos : positions)
 		{	
 			if((pos.x>=zone.left && pos.x<=(zone.left+zone.width))&&(pos.y>=zone.top&&pos.y<=zone.top+zone.height))
@@ -393,7 +397,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	}	
 	
 	//layer3: collision
-	int gid[] = { 25075,25067,24699,25068,24592 };
+	/*int gid[] = { 25075,25067,24699,25068,24592 };
 	for (int id : gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(3, id);
@@ -426,7 +430,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				inter->SetPosition(pos);
 			}
 		}
-	}
+	}*/
 }
 
 
@@ -462,6 +466,7 @@ void SceneGame::Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
 	AddGameObject(new HUD());
+	
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 

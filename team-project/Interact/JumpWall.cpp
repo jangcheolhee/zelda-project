@@ -38,13 +38,25 @@ void JumpWall::Reset()
 {
 	Interactable::Reset();
 	type = Type::JumpWall;
-
-	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
-	body.setTextureRect({ 304,57,8,8 });
-	sf::Color color = body.getColor();
-	color.a = 0;
-	body.setColor(color);
-
 	dir = { 0.f,0.f };
+	direction = Direction::None;
+	body.setFillColor(sf::Color(0, 255, 0, 80));
+	body.setOutlineColor(sf::Color::Green);
+	body.setOutlineThickness(1.f);
+	
+	
 
+}
+
+void JumpWall::SetBounds(float x, float y, float width, float height)
+{
+	body.setSize({ width,height });
+	body.setPosition({ x,y });
+	
+	
+}
+
+void JumpWall::Draw(sf::RenderWindow& window)
+{
+	window.draw(body);
 }
