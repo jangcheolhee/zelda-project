@@ -20,7 +20,7 @@ enum class Origins
 enum class SceneIds
 {
 	None = -1,
-	Test,
+	//Test,
 	Game,
 	Hidden,
 	Count,
