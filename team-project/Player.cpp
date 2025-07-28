@@ -393,7 +393,7 @@ void Player::Update(float dt)
 		wantsToInteract = false;
 	}
 	
-	
+	SetPosition(body.getPosition());
 	}
 	
 
@@ -447,8 +447,9 @@ void Player::UpdateFixedHitBox()
 	sf::Vector2f fixedSize = { 3.f, 6.f };              // 원하는 히트박스 크기
 	hitBox.rect.setSize(fixedSize);
 	hitBox.rect.setOrigin(fixedSize * 0.5f);
-
-	hitBox.rect.setPosition(body.getPosition() + sf::Vector2f(0.f, -15.f));
+	sf::FloatRect bounds = body.getGlobalBounds();
+	sf::Vector2f center = { bounds.left + bounds.width * 0.5f, bounds.top + bounds.height * 0.5f };
+	hitBox.rect.setPosition(center);
 }
 
 bool Player::IsAttacking() const
