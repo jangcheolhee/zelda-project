@@ -27,6 +27,9 @@ struct MapZone
 class SceneGame : public Scene
 {
 protected:
+	
+	bool changeZone = false;
+
 	Player* player;
 	TileMap* tileMapGame;
 
@@ -59,7 +62,7 @@ public:
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();
-	void UpdateBehaviorZone();
+	void UpdateBehaviorZone(float dt);
 	void DeleteInteractables();
 
 	

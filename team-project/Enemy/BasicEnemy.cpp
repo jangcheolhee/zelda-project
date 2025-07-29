@@ -15,10 +15,14 @@ void BasicEnemy::Reset()
 {
 	
 	// 여기서 sprite texture 변경하기
+	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
 	direction = (Direction) Utils::RandomRange(0, 4);
 	ChangeSprite();
-	Enemy::Reset();
+	maxHp = 5;
+	hp = maxHp;
+	
+	
 }
 
 void BasicEnemy::UpdateBehavior(float dt)
@@ -38,6 +42,7 @@ void BasicEnemy::UpdateBehavior(float dt)
 	}
 	position += dir * speed * dt;
 	SetPosition(position);
+	
 }
 
 void BasicEnemy::ChangeSprite()

@@ -28,7 +28,7 @@ protected:
 
 	HitBox hitBox;
 
-	int maxHp = 0;
+	int maxHp = 10;
 	int hp = 3;
 	float speed = 0.f;
 	bool isHitThisFrame = false;
@@ -81,6 +81,8 @@ public:
 	virtual void UpdateBehavior(float dt) = 0; 
 	virtual void OnCollideBySword();
 	virtual void OnHit(int damage);
+
+	void DeathAnimation();
 	
 };
 

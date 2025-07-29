@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "HitBox.h"
+#include "Animator.h"
 class SceneGame;
 class Player;
 class Interactable :  public GameObject
@@ -17,6 +18,7 @@ public:
 		Npc
 	};
 protected:
+	Animator animator;
 	sf::Sprite body;
 	HitBox hitBox;
 	Player* player;

@@ -3,6 +3,11 @@
 #include "Player.h"
 #include "SceneGame.h"
 
+void Bush::ChangeAnimation()
+{
+	animator.Play("animations/bush2.csv");
+}
+
 void Bush::OnInteract()
 {
 	switch (state)
@@ -24,7 +29,13 @@ void Bush::OnInteract()
 void Bush::Init()
 {
 	Interactable::Init();
-
+	animator.AddEvent("Crush", 7,
+		[this]()
+		{
+			std::cout << "!!" << std::endl;
+			SetActive(false);
+		}
+	);
 
 }
 
@@ -84,10 +95,12 @@ void Bush::UpdateBeHavior(float dt)
 		if (lifeTime > 0.5 || isHit)
 		{
 			player->SetIsInteract(false);
-			SetActive(false);        
+			state = BushState::Crush;
+			ChangeAnimation();
 		}
 		break;
 	}
+	
 }
 void Bush::Shoot()
 {

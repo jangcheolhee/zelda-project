@@ -1,0 +1,11 @@
+ID,FPS,"LoopType (0: Single, 1: Loop)",,,
+Death,5,1,,,
+,,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT,"FLIPX (0:Fale, 1:True)"
+graphics/Death.png,4,4,24,24,0
+graphics/Death.png,30,4,24,24,
+graphics/Death.png,55,4,24,24,
+graphics/Death.png,80,4,24,24,
+graphics/Death.png,105,4,24,24,
+graphics/Death.png,131,4,24,24,
+graphics/Death.png,156,4,24,24,

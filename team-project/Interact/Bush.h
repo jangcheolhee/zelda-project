@@ -1,7 +1,7 @@
 #pragma once
 #include "Interactable.h"
 class Enemy;
-enum class BushState { OnGround, Held, Thrown };
+enum class BushState { OnGround, Held, Thrown, Crush };
 class Bush : public Interactable
 {
 protected:
@@ -12,6 +12,7 @@ protected:
 	std::list<Enemy*> enemyList;
 	bool isHit = false;
 public:
+	void ChangeAnimation();
 	// Interactable을(를) 통해 상속됨
 	void OnInteract() override;
 	void Init() override;

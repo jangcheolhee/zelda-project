@@ -52,7 +52,7 @@ void Enemy::OnDamage(int damage)
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 	if (hp == 0)
 	{
-		SetActive(false);
+		DeathAnimation();
 	}
 }
 
@@ -70,6 +70,14 @@ void Enemy::Init()
 	sortingOrder = -1;
 	animator.SetTarget(&body);
 	SetOrigin(Origins::BC);
+	
+	animator.AddEvent("Death", 6,
+		[this]()
+		{
+			std::cout << "!!" << std::endl;
+			SetActive(false);
+		}
+	);
 }
 
 void Enemy::Release()
@@ -99,6 +107,7 @@ void Enemy::Reset()
 
 void Enemy::Update(float dt)
 {
+	animator.Update(dt);
 	LastHit += dt;
 	// 매 프레임마다 피격 가능 상태로 초기화
 	isHitThisFrame = false;
@@ -111,6 +120,7 @@ void Enemy::Update(float dt)
 	}
 	
 	hitBox.UpdateTransform(body, GetLocalBounds());
+	
 }
 
 void Enemy::Draw(sf::RenderWindow& window)
@@ -137,5 +147,10 @@ void Enemy::OnHit(int damage)
 	{
 		SetActive(false);
 	}
+}
+
+void Enemy::DeathAnimation()
+{
+	animator.Play("animations/EnemyDeath.csv");
 }
 

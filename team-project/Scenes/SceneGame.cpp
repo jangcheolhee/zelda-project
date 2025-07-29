@@ -23,7 +23,7 @@ void SceneGame::InitZones()
 
 	mapZones.push_back({
 		//zone1 origin
-		sf::FloatRect(0, 200, 512, 550), //zone 1_confirm
+		sf::FloatRect(0, 260, 511, 499), //zone 1_confirm
 		1,
 		[this]()
 		  {
@@ -43,7 +43,7 @@ void SceneGame::InitZones()
 		});
 	// Zone 2 origin_left1
 	mapZones.push_back({
-		sf::FloatRect(-512, 200, 512, 550),
+		sf::FloatRect(-512, 260, 511,499),
 		2,
 		[this]()
 		{
@@ -58,7 +58,7 @@ void SceneGame::InitZones()
 		});
 	// Zone 3 origin_up1
 	mapZones.push_back({
-		sf::FloatRect(0, -350, 512, 550),
+		sf::FloatRect(0, -240, 511, 499),
 		3,
 		[this]()
 		{
@@ -73,7 +73,7 @@ void SceneGame::InitZones()
 		});
 	// Zone 4 origin_up2
 	mapZones.push_back({
-		sf::FloatRect(0, -900, 512, 550),
+		sf::FloatRect(0, -740, 511, 499),
 		4,
 		[this]()
 		{
@@ -100,26 +100,34 @@ void SceneGame::UpdateZones()
 		{
 			zone.entered = true;
 			zoneID = zone.zoneId;
+
 			if (zone.onEnter)
 			{
 				zone.entered = true;
 				zoneID = zone.zoneId;
-				if (zone.onEnter)
-				{
-					zone.onEnter();
-					SpawnInteractableObject(zone.bounds);
-					SpawnFlowers(zone.bounds);
-					SpawnSquareHitBox();
 
+				changeZone = true;
+				zone.onEnter();
 
-				}
+				SpawnInteractableObject(zone.bounds);
+				SpawnFlowers(zone.bounds);
+				SpawnSquareHitBox();
+
 			}
 		}
 		else if (!nowInZone && zone.entered)
 		{
 			zone.entered = false;
-			if (zone.onExit) zone.onExit();
+
+
+
+			
+			if (zone.onExit)
+			{
+				zone.onExit();
+			}
 			DeleteInteractables();
+
 			for (auto f : flowers)
 			{
 				RemoveGameObject(f);
@@ -131,39 +139,32 @@ void SceneGame::UpdateZones()
 		}
 	}
 }
-void SceneGame::UpdateBehaviorZone()
+void SceneGame::UpdateBehaviorZone(float dt)
 {
-	switch (zoneID)
-	{//player 기준
-	case 1:
+	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, mapZones[zoneID - 1].bounds.left + worldView.getSize().x / 2, mapZones[zoneID - 1].bounds.left + mapZones[0].bounds.width - worldView.getSize().x / 2);
+	float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, mapZones[zoneID - 1].bounds.top + worldView.getSize().y / 2, mapZones[zoneID - 1].bounds.top + mapZones[0].bounds.height - worldView.getSize().y / 2);
+	if (changeZone)
 	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
+
+		worldView.setCenter(Utils::Lerp(worldView.getCenter(), { x,y }, dt * 2));
+		
+		if (Utils::Distance(worldView.getCenter(), { x,y }) > 1 && Utils::Distance(worldView.getCenter(), { x,y }) < 5)
+		{
+			std::cout << Utils::Distance(worldView.getCenter(), { x,y }) << std::endl;
+			changeZone = false;
+		}
+
+	}
+	else
+	{
 		worldView.setCenter({ x, y });
 	}
-	break;
-	case 2:
-	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, -384, -128);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 384, 566);
-		worldView.setCenter({ x, y });
-	}
-	break;
-	case 3:
-	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -250, 100);
-		worldView.setCenter({ x, y });
-	}
-	break;
-	case 4:
-	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -750, -400);
-		worldView.setCenter({ x, y });
-	}
-	break;
-	}
+	//switch (zoneID)
+	//{//player 기준
+	//case 1:
+	//break;
+	//}
+	
 }
 
 void SceneGame::DeleteInteractables()
@@ -202,7 +203,6 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 		{
 		case Enemy::Types::Basic:
 			enemy = (Enemy*)AddGameObject(new BasicEnemy());
-
 			break;
 		case Enemy::Types::Count:
 			break;
@@ -211,8 +211,8 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 		}
 		enemy->Init();
 	}
-	enemy->SetPosition(pos);
 	enemy->Reset();
+	enemy->SetPosition(pos);
 	enemy->SetActive(true);
 
 	enemyList.push_back(enemy);
@@ -454,9 +454,9 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{//bush
-				
+
 				SpawnInteractable(pos, Interactable::Type::Throw);
-		
+
 			}
 		}
 	}
@@ -471,13 +471,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
 				SpawnInteractable(pos, Interactable::Type::Npc);
-				/*auto npc = new Npc();
-				npc->SetPlayer(player);
-				AddGameObject(npc);
-				interactables.push_back(npc);
-				npc->SetScale({ 0.5f, 0.5f });
-				npc->Reset();
-				npc->SetPosition(pos);*/
+
 			}
 		}
 	}
@@ -538,8 +532,11 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Items.png");
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
+	texIds.push_back("graphics/Effects.png");
+	texIds.push_back("graphics/Death.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
-	//ANI_CLIP_MGR.Load("animations/idle.csv");
+	ANI_CLIP_MGR.Load("animations/bush2.csv");
+	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
@@ -591,8 +588,9 @@ void SceneGame::Enter()
 
 void SceneGame::Update(float dt)
 {
-	Scene::Update(dt);
 
+	Scene::Update(dt);
+	//std::cout << player->GetPosition().x << " : " << player->GetPosition().y << std::endl;
 	auto it = enemyList.begin();
 	while (it != enemyList.end())
 	{
@@ -611,7 +609,7 @@ void SceneGame::Update(float dt)
 	{
 		if (!(*it1)->GetActive())
 		{
-			(*it1) ->SetActive(false);
+			(*it1)->SetActive(false);
 			interactPool[(*it1)->GetType()].push_back(*it1);
 			it1 = interactList.erase(it1);
 		}
@@ -622,7 +620,7 @@ void SceneGame::Update(float dt)
 	}
 	CheckCollison();
 	UpdateZones();
-	UpdateBehaviorZone();
+	UpdateBehaviorZone(dt);
 	FlowerBreath(dt);
 
 

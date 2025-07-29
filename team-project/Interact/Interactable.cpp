@@ -45,6 +45,7 @@ void Interactable::Init()
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
 	SetOrigin(Origins::BR);
+	animator.SetTarget(&body);
 }
 
 void Interactable::Release()
@@ -67,6 +68,7 @@ void Interactable::Reset()
 
 void Interactable::Update(float dt)
 {
+	animator.Update(dt);
 	if (!GetActive())
 		return;
 
