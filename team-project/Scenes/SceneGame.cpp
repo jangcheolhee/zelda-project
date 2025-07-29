@@ -88,6 +88,7 @@ void SceneGame::InitZones()
 		});
 }
 
+
 void SceneGame::UpdateZones()
 {
 
@@ -101,15 +102,15 @@ void SceneGame::UpdateZones()
 			zoneID = zone.zoneId;
 			if (zone.onEnter)
 			{
-				zone.entered = true; 
-				zoneID = zone.zoneId; 
+				zone.entered = true;
+				zoneID = zone.zoneId;
 				if (zone.onEnter)
 				{
 					zone.onEnter();
 					SpawnInteractableObject(zone.bounds);
 					SpawnFlowers(zone.bounds);
 					SpawnSquareHitBox();
-					
+
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -122,9 +123,11 @@ void SceneGame::UpdateZones()
 					RemoveGameObject(f);
 				}
 				flowers.clear();
-		
-}
 
+			}
+		}
+	}
+}
 void SceneGame::UpdateBehaviorZone()
 {
 	switch (zoneID)
@@ -289,7 +292,7 @@ void SceneGame::CheckCollison()
 		{
 			for (auto& enemy : enemyList)
 			{
-				
+
 				if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 				{
 					enemy->SetPosition(enemy->GetPos());
@@ -308,7 +311,7 @@ void SceneGame::CheckCollison()
 						case 0:
 						{
 							Rupee* rupee = new Rupee();
-							rupee->SetPosition(obj->GetPosition() + sf::Vector2f({3,-16}));
+							rupee->SetPosition(obj->GetPosition() + sf::Vector2f({ 3,-16 }));
 							rupee->Reset();
 							AddGameObject(rupee);
 							interactables.push_back(rupee);
@@ -329,7 +332,7 @@ void SceneGame::CheckCollison()
 						obj->OnInteract();
 						continue;
 					}
-					
+
 				}
 			}
 
@@ -401,7 +404,7 @@ void SceneGame::SpawnSquareHitBox()
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {
 	//layer 1 : bush
-	int layer1Gid[] = { 24670, 24590};
+	int layer1Gid[] = { 24670, 24590 };
 	for (int id : layer1Gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
