@@ -114,19 +114,20 @@ void SceneGame::UpdateZones()
 
 				}
 			}
-			else if (!nowInZone && zone.entered)
+		}
+		else if (!nowInZone && zone.entered)
+		{
+			zone.entered = false;
+			if (zone.onExit) zone.onExit();
+			DeleteInteractables();
+			for (auto f : flowers)
 			{
-				zone.entered = false;
-				if (zone.onExit) zone.onExit();
-				DeleteInteractables();
-				for (auto f : flowers)
-				{
-					RemoveGameObject(f);
-				}
-				flowers.clear();
-
-
+				RemoveGameObject(f);
 			}
+			flowers.clear();
+
+
+
 		}
 	}
 }
@@ -388,11 +389,19 @@ void SceneGame::SpawnSquareHitBox()
 		sf::Vector2f p3 = square3s[i]; // 좌하단
 		sf::Vector2f p4 = square4s[i]; // 우하단
 
+
 		// left-top 기준, width/height 계산
 		float left = std::min(p2.x, p3.x); // 좌측 상단 기준
 		float top = std::min(p2.y, p1.y);
 		float width = std::abs(p1.x - p2.x);
 		float height = std::abs(p2.y - p3.y);
+		auto inter = new JumpWall();
+		AddGameObject(inter);
+		interactables.push_back(inter);
+		inter->SetOrigin(Origins::TC);
+		inter->Reset();
+
+		inter->SetBounds(left, top, width, height);
 
 		sf::FloatRect rect(left, top, width, height);
 
