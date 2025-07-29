@@ -55,7 +55,7 @@ bool TileMap::LoadTileMap(const std::string& tilePath)
     //Ÿ�� �׸���
     for (const auto& layer : tmJ["layers"])
     {
-        if (layer["type"] != "tilelayer") continue;
+        if (layer["name"] == "Tile Layer 10: Test3") continue;
         //data
         const std::vector<int>& data = layer["data"];
         for (int y = 0; y < mapHeight; ++y)
@@ -156,49 +156,56 @@ std::vector<sf::Vector2f> TileMap::getPositions(int layerIndex, int targetGid)
     return pos;
 }
 
-int TileMap::getWidth(int layerIndex, int targetGid)
+bool TileMap::LoadHitboxLayer(HitboxCorners& outCorners)
 {
-    std::vector<sf::Vector2f> pos;
-
-    const auto& layer = tmJ["layers"][layerIndex];
-    const auto& data = layer["data"];
-    int width = layer["width"];
-    int height = layer["height"];
-
+    const auto& layers = tmJ["layers"];
+    const int mapWidth = tmJ["width"];
+    const int mapHeight = tmJ["height"];
+    const int tileWidth = tmJ["tilewidth"];
+    const int tileHeight = tmJ["tileheight"];
     sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
 
-    for (int i = 0; i < (int)data.size(); ++i)
+    for (const auto& layer : layers)
     {
-        int gid = data[i];
-        if (gid == targetGid)
+        if (layer["type"] != "tilelayer") continue;
+        if (layer["name"] != "Tile Layer 10: Test3") continue;
+
+        const std::vector<int>& data = layer["data"];
+
+        for (int y = 0; y < mapHeight; ++y)
         {
-            width = i % width;
+            for (int x = 0; x < mapWidth; ++x)
+            {
+                int index = y * mapWidth + x;
+                int gid = data[index];
+                if (gid == 0) continue;
+
+                sf::Vector2f position = sf::Vector2f(x * tileWidth, y * tileHeight) + origin;
+
+                switch (gid)
+                {
+                case 24590: // 좌상단
+                    outCorners.topLefts.push_back(position);
+                    break;
+                case 24591: // 우상단
+                    outCorners.topRights.push_back(position);
+                    break;
+                case 24618: // 좌하단
+                    outCorners.bottomLefts.push_back(position);
+                    break;
+                case 24619: // 우하단
+                    outCorners.bottomRights.push_back(position);
+                    break;
+                default:
+                    break;
+                }
+            }
         }
+        return true; // 목표 레이어 하나만 찾으면 바로 종료
     }
-    return width;
+    return false; // 못 찾은 경우
 }
 
-int TileMap::getHeight(int layerIndex, int targetGid)
-{
-    std::vector<sf::Vector2f> pos;
-
-    const auto& layer = tmJ["layers"][layerIndex];
-    const auto& data = layer["data"];
-    int width = layer["width"];
-    int height = layer["height"];
-
-    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
-
-    for (int i = 0; i < (int)data.size(); ++i)
-    {
-        int gid = data[i];
-        if (gid == targetGid)
-        {
-            height = i % width;
-        }
-    }
-    return height;
-}
 
 void TileMap::Init()
 {
