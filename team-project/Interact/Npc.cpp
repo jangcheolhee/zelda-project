@@ -75,10 +75,14 @@ Direction Npc::GetDirectionToPlayer()
 
 void Npc::OnInteract()
 {
-    if (GetGlobalBounds().contains(player->GetGlobalBounds().getPosition()))
+    if (player)
     {
-        std::cout << "HI" << std::endl;
+        if (GetGlobalBounds().contains(player->GetGlobalBounds().getPosition()))
+        {
+            std::cout << "HI" << std::endl;
+        }
     }
+   
 }
 
 void Npc::Init()
@@ -88,9 +92,10 @@ void Npc::Init()
 
 void Npc::Reset()
 {
+    Interactable::Reset();
     currentDirection = Direction::Down;
     DirectionSprite(currentDirection);
-    Interactable::Reset();
+    type = Type::Npc;
 }
 
 void Npc::Update(float dt)

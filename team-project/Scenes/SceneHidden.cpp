@@ -166,7 +166,7 @@ void SceneHidden::CheckCollison()
 				}
 				break;
 
-			case Interactable::Type::Item: case Interactable::Type::JumpWall:
+			case Interactable::Type::Heart: case Interactable::Type::JumpWall: case Interactable::Type::Rupee:
 
 				obj->OnInteract();
 				break;

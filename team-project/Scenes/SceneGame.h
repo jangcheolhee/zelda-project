@@ -30,9 +30,12 @@ protected:
 	Player* player;
 	TileMap* tileMapGame;
 
-	std::vector<Interactable*> interactables;
-	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
+	//std::vector<Interactable*> interactables;
+	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
 	std::list<Enemy*> enemyList;
+
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
+	std::list<Interactable*>interactList;
 
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
@@ -59,10 +62,11 @@ public:
 	void UpdateBehaviorZone();
 	void DeleteInteractables();
 
-	Enemy* CreateOrReuseEnemy(Enemy::Types type);
+	
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void SpawnInteractable(sf::Vector2f pos, Interactable::Type type);
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
 	
 	void SpawnFlowers(sf::FloatRect zone);

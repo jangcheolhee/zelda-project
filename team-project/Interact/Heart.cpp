@@ -14,7 +14,7 @@ void Heart::Reset()
 	body.setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
 	body.setTextureRect({ 104,280,8,8 });
 	SetOrigin(Origins::BL);
-	type = Type::Item;
+	type = Type::Heart;
 	
 }
 

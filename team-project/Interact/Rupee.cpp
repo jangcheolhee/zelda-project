@@ -12,7 +12,7 @@ void Rupee::Reset()
 	body.setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
 	body.setTextureRect({ 51,249,10,14 });
 
-	type = Type::Item;
+	type = Type::Rupee;
 	value = 1;
 }
 

@@ -6,7 +6,7 @@ void BasicEnemy::Init()
 	Enemy::Init();
 	type = Types::Basic;
 	speed = 40.f;
-	hp = 40;
+	hp = 10;
 
 	
 }

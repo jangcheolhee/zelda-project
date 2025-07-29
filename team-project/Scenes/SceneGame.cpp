@@ -168,61 +168,99 @@ void SceneGame::UpdateBehaviorZone()
 
 void SceneGame::DeleteInteractables()
 {
-	auto it = interactables.begin();
-	while (it != interactables.end())
+	for (Interactable* inter : interactList)
 	{
-		RemoveGameObject(*it);
-		it = interactables.erase(it);
+		inter->SetActive(false);
+		interactPool[inter->GetType()].push_back(inter);
 	}
-	interactables.clear();
+	interactList.clear();
+
 
 }
-
-Enemy* SceneGame::CreateOrReuseEnemy(Enemy::Types type)
-{
-	auto& pool = enemyPools[type];
-	if (!pool.empty())
-	{
-		Enemy* reused = pool.front().release();
-		pool.pop_front();
-		return reused;
-	}
-
-	Enemy* newEnemy = nullptr;
-	switch (type)
-	{
-	case Enemy::Types::Basic:
-		newEnemy = new BasicEnemy();
-		break;
-	default:
-		break;
-	}
-
-	if (newEnemy != nullptr) newEnemy->Init();
-
-	return newEnemy;
-}
-
 void SceneGame::RecycleEnemy(Enemy* enemy)
 {
 	if (enemy)
 	{
 		enemy->SetActive(false);
-		enemyPools[enemy->GetType()].push_back(std::unique_ptr<Enemy>(enemy));
+		enemyPools[enemy->GetType()].push_back(enemy);
 	}
 }
 
 void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 {
-	Enemy* enemy = CreateOrReuseEnemy(type);
+	Enemy* enemy = nullptr;
 
-	enemy->Init();
-	enemy->SetInitPosition(pos);
+	auto& pool = enemyPools[type];
+	if (!pool.empty())
+	{
+		enemy = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		switch (type)
+		{
+		case Enemy::Types::Basic:
+			enemy = (Enemy*)AddGameObject(new BasicEnemy());
+
+			break;
+		case Enemy::Types::Count:
+			break;
+		default:
+			break;
+		}
+		enemy->Init();
+	}
+	enemy->SetPosition(pos);
 	enemy->Reset();
 	enemy->SetActive(true);
 
-	AddGameObject(enemy);
 	enemyList.push_back(enemy);
+}
+
+void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
+{
+	Interactable* inter = nullptr;
+	auto& pool = interactPool[type];
+	if (!pool.empty())
+	{
+		inter = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		switch (type)
+		{
+		case Interactable::Type::None:
+			break;
+		case Interactable::Type::Throw:
+			inter = (Interactable*)AddGameObject(new Bush());
+			break;
+		case Interactable::Type::Chest:
+			break;
+		case Interactable::Type::JumpWall:
+			inter = (Interactable*)AddGameObject(new JumpWall());
+			break;
+		case Interactable::Type::Heart:
+			inter = (Interactable*)AddGameObject(new Heart());
+			break;
+		case Interactable::Type::Rupee:
+			inter = (Interactable*)AddGameObject(new Rupee());
+			break;
+		case Interactable::Type::Npc:
+			inter = (Interactable*)AddGameObject(new Npc());
+			break;
+		default:
+			break;
+		}
+		inter->Init();
+
+	}
+	inter->Reset();
+	inter->SetActive(true);
+	inter->SetPosition(pos);
+	interactList.push_back(inter);
+
 }
 
 void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
@@ -288,75 +326,67 @@ void SceneGame::CheckCollison()
 	rect.top -= 2.f;
 	rect.width += 4.f;
 	rect.height += 4.f;
-	for (auto& obj : interactables)
+	for (auto& obj : interactList)
 	{
 
-		if (obj->GetActive())
+		for (auto& enemy : enemyList)
 		{
-			for (auto& enemy : enemyList)
-			{
 
-				if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-				{
-					enemy->SetPosition(enemy->GetPos());
-				}
+			if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+			{
+				enemy->SetPosition(enemy->GetPos());
 			}
-			if (obj->GetType() == Interactable::Type::Throw)
+		}
+		if (obj->GetType() == Interactable::Type::Throw)
+		{
+			if (rect.intersects(obj->GetGlobalBounds()))
 			{
-				if (rect.intersects(obj->GetGlobalBounds()))
+				if (player->WantsToInteract() && !player->IsInteract())
 				{
-					if (player->WantsToInteract() && !player->IsInteract())
+					int r = Utils::RandomRange(0, 3);
+
+					switch (r)
 					{
-						int r = Utils::RandomRange(0, 3);
+					case 0:
+					{
 
-						switch (r)
-						{
-						case 0:
-						{
-							Rupee* rupee = new Rupee();
-							rupee->SetPosition(obj->GetPosition() + sf::Vector2f({ 3,-16 }));
-							rupee->Reset();
-							AddGameObject(rupee);
-							interactables.push_back(rupee);
+						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 3,-16 }), Interactable::Type::Rupee);
 
-							break;
-						}
-
-						case 1:
-						{
-							Heart* heart = new Heart();
-							heart->SetPosition(obj->GetPosition() + sf::Vector2f({ 4,-4 }));
-							heart->Reset();
-							AddGameObject(heart);
-							interactables.push_back(heart);
-							break;
-						}
-						}
-						obj->OnInteract();
-						continue;
+						break;
 					}
 
-				}
-			}
+					case 1:
+					{
 
-			if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
-			{
-				if (obj->GetType() == Interactable::Type::Item)
-				{
+						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 4,-4 }), Interactable::Type::Heart);
+						break;
+					}
+					}
 					obj->OnInteract();
 					continue;
 				}
-				player->SetPosition(player->GetPos());
-				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
-				{
-					obj->OnInteract();
-				}
+
 			}
 		}
 
 		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
 		{
-			if (obj->GetType() == Interactable::Type::Item)
+			if (obj->GetType() == Interactable::Type::Heart || obj->GetType() == Interactable::Type::Rupee)
+			{
+				obj->OnInteract();
+				continue;
+			}
+			player->SetPosition(player->GetPos());
+			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
+			{
+				obj->OnInteract();
+			}
+
+		}
+
+		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		{
+			if (obj->GetType() == Interactable::Type::Rupee || obj->GetType() == Interactable::Type::Heart)
 			{
 				obj->OnInteract();
 
@@ -369,9 +399,9 @@ void SceneGame::CheckCollison()
 				obj->OnInteract();
 			}
 		}
+
 	}
 }
-
 void SceneGame::SpawnSquareHitBox()
 {
 	std::vector<sf::Vector2f> square1s = tileMapGame->getPositions(7, 24721); // 우상단
@@ -395,13 +425,14 @@ void SceneGame::SpawnSquareHitBox()
 		float top = std::min(p2.y, p1.y);
 		float width = std::abs(p1.x - p2.x);
 		float height = std::abs(p2.y - p3.y);
-		auto inter = new JumpWall();
-		AddGameObject(inter);
-		interactables.push_back(inter);
-		inter->SetOrigin(Origins::TC);
-		inter->Reset();
 
-		inter->SetBounds(left, top, width, height);
+		//auto inter = new JumpWall();
+		//AddGameObject(inter);
+		//interactables.push_back(inter);
+		//inter->SetOrigin(Origins::TC);
+		//inter->Reset();
+
+		//inter->SetBounds(left, top, width, height);
 
 		sf::FloatRect rect(left, top, width, height);
 
@@ -423,19 +454,9 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{//bush
-				auto bush = new Bush;
-				AddGameObject(bush);
-				interactables.push_back(bush);
-				bush->Reset();
-				bush->SetPosition(pos);
-				if (id == 24670)
-				{
-					bush->SetOrigin(Origins::ML);
-				}
-				else if (id == 24590) //hole
-				{
-					bush->SetOrigin(Origins::TL);
-				}
+				
+				SpawnInteractable(pos, Interactable::Type::Throw);
+		
 			}
 		}
 	}
@@ -449,13 +470,14 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{//npc
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-				auto npc = new Npc();
+				SpawnInteractable(pos, Interactable::Type::Npc);
+				/*auto npc = new Npc();
 				npc->SetPlayer(player);
 				AddGameObject(npc);
 				interactables.push_back(npc);
 				npc->SetScale({ 0.5f, 0.5f });
 				npc->Reset();
-				npc->SetPosition(pos);
+				npc->SetPosition(pos);*/
 			}
 		}
 	}
@@ -468,7 +490,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-				auto inter = new JumpWall();
+				/*auto inter = new JumpWall();
 				switch (id)
 				{
 				case 25075:
@@ -490,7 +512,8 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				interactables.push_back(inter);
 				inter->SetOrigin(Origins::TC);
 				inter->Reset();
-				inter->SetPosition(pos);
+				inter->SetPosition(pos);*/
+
 			}
 		}
 	}
@@ -525,7 +548,6 @@ void SceneGame::Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
 	AddGameObject(new HUD());
-
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 
@@ -544,12 +566,18 @@ void SceneGame::Exit()
 {
 	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
 	//GAME_MGR.SaveGame("data/data.json");
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->SetActive(false);
+		enemyPools[enemy->GetType()].push_back(enemy);
+	}
+	enemyList.clear();
 	Scene::Exit();
 }
 
 void SceneGame::Enter()
 {
-	player->Reset();
+
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
@@ -565,6 +593,33 @@ void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
 
+	auto it = enemyList.begin();
+	while (it != enemyList.end())
+	{
+		if (!(*it)->GetActive())
+		{
+			RecycleEnemy(*it);
+			it = enemyList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+	auto it1 = interactList.begin();
+	while (it1 != interactList.end())
+	{
+		if (!(*it1)->GetActive())
+		{
+			(*it1) ->SetActive(false);
+			interactPool[(*it1)->GetType()].push_back(*it1);
+			it1 = interactList.erase(it1);
+		}
+		else
+		{
+			++it1;
+		}
+	}
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();

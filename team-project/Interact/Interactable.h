@@ -12,7 +12,9 @@ public:
 		Throw,
 		Chest,
 		JumpWall,
-		Item,
+		Heart,
+		Rupee,
+		Npc
 	};
 protected:
 	sf::Sprite body;
