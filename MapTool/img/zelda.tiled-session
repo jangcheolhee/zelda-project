@@ -72,7 +72,7 @@
             "scale": 1.669921875,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 239.53216374269005,
+                "x": 256.2994152046783,
                 "y": 256.00000000000006
             }
         },
@@ -87,10 +87,10 @@
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj": {
             "scale": 1.5,
-            "selectedLayer": 3,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 640,
-                "y": 1224.6666666666665
+                "x": 832,
+                "y": 1353.6666666666665
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj": {

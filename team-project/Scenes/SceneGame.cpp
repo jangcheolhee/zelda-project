@@ -103,7 +103,7 @@ void SceneGame::UpdateZones()
 					zone.onEnter();
 					SpawnInteractableObject(zone.bounds);
 					SpawnFlowers(zone.bounds);
-					SquareHitBox();
+					SpawnSquareHitBox();
 					
 				}
 			}
@@ -337,36 +337,35 @@ void SceneGame::CheckCollison()
 	}
 }
 
-void SceneGame::SquareHitBox()
-{//layer6 , (1,2,3,4) 정점, 시계방향
-	int squareGid[] = { 24721, 24722, 24723, 24724 };
+void SceneGame::SpawnSquareHitBox()
+{
+	std::vector<sf::Vector2f> square1s = tileMapGame->getPositions(7, 24721); // 우상단
+	std::vector<sf::Vector2f> square2s = tileMapGame->getPositions(7, 24722); // 좌상단
+	std::vector<sf::Vector2f> square3s = tileMapGame->getPositions(7, 24723); // 좌하단
+	std::vector<sf::Vector2f> square4s = tileMapGame->getPositions(7, 24724); // 우하단
 
-	sf::Vector2f square1 = tileMapGame->getPosition(7, 24721);
-	sf::Vector2f square2 = tileMapGame->getPosition(7, 24722);
-	sf::Vector2f square3 = tileMapGame->getPosition(7, 24723);
-	sf::Vector2f square4 = tileMapGame->getPosition(7, 24724);
+	// 정점 개수 확인
+	size_t count = std::min({ square1s.size(), square2s.size(), square3s.size(), square4s.size() });
 
-	sf::FloatRect square;
-	square = sf::FloatRect(square1.x, square1.y, square2.x - square1.x, square3.y - square1.y);
-	collision.UpdateTransformCollision(collisionBox,square,square1);
-	
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	sf::Vector2f point = tileMapGame->getPosition(7, squareGid[i]);
-	//	collisions.push_back(point);
-	//}
+	for (size_t i = 0; i < count; ++i)
+	{
+		sf::Vector2f p1 = square1s[i]; // 우상단
+		sf::Vector2f p2 = square2s[i]; // 좌상단
+		sf::Vector2f p3 = square3s[i]; // 좌하단
+		sf::Vector2f p4 = square4s[i]; // 우하단
 
-	//if (collisions.size() >= 4)
-	//{
-	//	float left = std::min({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
-	//	float top = std::min({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
-	//	float right = std::max({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
-	//	float bottom = std::max({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
+		// left-top 기준, width/height 계산
+		float left = std::min(p2.x, p3.x); // 좌측 상단 기준
+		float top = std::min(p2.y, p1.y);
+		float width = std::abs(p1.x - p2.x);
+		float height = std::abs(p2.y - p3.y);
 
-	//	sf::FloatRect square(left, top, right - left, bottom - top);
+		sf::FloatRect rect(left, top, width, height);
 
-	//	collision.UpdateTransform(collisionBox, square);
-	//}
+		HitBox hitbox;
+		hitbox.UpdateTransformCollision(collisionBox, rect, { left, top });
+		collisions.push_back(hitbox);
+	}
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
@@ -556,5 +555,8 @@ void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
 	window.setView(worldView);
-	collision.Draw(window);
+	for (auto& col : collisions)
+	{
+		col.Draw(window);
+	}
 }

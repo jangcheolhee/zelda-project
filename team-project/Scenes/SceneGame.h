@@ -46,7 +46,7 @@ protected:
 	float flowerRate = 0.3;
 
 	HitBox collision;
-	std::vector<sf::Vector2f> collisions;
+	std::vector<HitBox> collisions;
 	sf::RectangleShape collisionBox;
 	bool squareToggle = 0;
 
@@ -70,7 +70,7 @@ public:
 	void SpawnInteractableObject(sf::FloatRect zone);
 	void CheckCollison();
 
-	void SquareHitBox();
+	void SpawnSquareHitBox();
 
 	void Init() override;
 	void Exit() override;
