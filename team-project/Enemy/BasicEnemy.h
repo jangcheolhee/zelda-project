@@ -1,5 +1,17 @@
 #pragma once
 #include "Enemy.h"
+enum class moveType
+{
+	Random,
+	Patrol,
+};
+enum class EnemyState
+{
+	None = -1,
+	Patrol,
+	Chase,
+	ReturnToPatrol
+};
 class BasicEnemy :  public Enemy
 {
 protected:

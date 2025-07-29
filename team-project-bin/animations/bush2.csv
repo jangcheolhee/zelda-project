@@ -1,5 +1,5 @@
 ID,FPS,"LoopType (0: Single, 1: Loop)",,,
-Crush,10,1,,,
+Crush,10,0,,,
 ,,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT,"FLIPX (0:Fale, 1:True)"
 graphics/Effects.png,8,17,29,43,0

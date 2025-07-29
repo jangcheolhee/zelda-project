@@ -56,6 +56,11 @@ protected:
 	sf::RectangleShape collisionBox;
 	bool squareToggle = 0;
 
+	float wallX =  0;
+	float wallY = 0;
+	float wallWithdh = 0;
+	float wallHeight = 0;
+
 public:
 	SceneGame();
 

@@ -33,7 +33,10 @@ void Bush::Init()
 		[this]()
 		{
 			std::cout << "!!" << std::endl;
+			state = BushState::OnGround;
+			animator.Stop();
 			SetActive(false);
+			
 		}
 	);
 

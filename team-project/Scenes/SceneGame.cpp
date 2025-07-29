@@ -234,21 +234,26 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 		case Interactable::Type::None:
 			break;
 		case Interactable::Type::Throw:
-			inter = (Interactable*)AddGameObject(new Bush());
+			inter = (Bush*)AddGameObject(new Bush());
 			break;
 		case Interactable::Type::Chest:
 			break;
 		case Interactable::Type::JumpWall:
-			inter = (Interactable*)AddGameObject(new JumpWall());
+		{
+			JumpWall* j = new JumpWall();
+			j->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+			inter = (Interactable*)AddGameObject(j);
 			break;
+
+		}
 		case Interactable::Type::Heart:
-			inter = (Interactable*)AddGameObject(new Heart());
+			inter = (Heart*)AddGameObject(new Heart());
 			break;
 		case Interactable::Type::Rupee:
-			inter = (Interactable*)AddGameObject(new Rupee());
+			inter = (Rupee*)AddGameObject(new Rupee());
 			break;
 		case Interactable::Type::Npc:
-			inter = (Interactable*)AddGameObject(new Npc());
+			inter = (Npc*)AddGameObject(new Npc());
 			break;
 		default:
 			break;
@@ -256,6 +261,7 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 		inter->Init();
 
 	}
+	
 	inter->Reset();
 	inter->SetActive(true);
 	inter->SetPosition(pos);
@@ -421,11 +427,17 @@ void SceneGame::SpawnSquareHitBox()
 
 
 		// left-top 기준, width/height 계산
-		float left = std::min(p2.x, p3.x); // 좌측 상단 기준
-		float top = std::min(p2.y, p1.y);
-		float width = std::abs(p1.x - p2.x);
-		float height = std::abs(p2.y - p3.y);
-
+		wallX = std::min(p2.x, p3.x); // 좌측 상단 기준
+		wallY = std::min(p2.y, p1.y);
+		wallWithdh = std::abs(p1.x - p2.x);
+		wallHeight = std::abs(p2.y - p3.y);
+		SpawnInteractable({ wallX, wallY }, Interactable::Type::JumpWall);
+		// 
+		//float left = std::min(p2.x, p3.x); // 좌측 상단 기준
+		//float top = std::min(p2.y, p1.y);
+		//float width = std::abs(p1.x - p2.x);
+		//float height = std::abs(p2.y - p3.y);
+		// 
 		//auto inter = new JumpWall();
 		//AddGameObject(inter);
 		//interactables.push_back(inter);
@@ -434,11 +446,11 @@ void SceneGame::SpawnSquareHitBox()
 
 		//inter->SetBounds(left, top, width, height);
 
-		sf::FloatRect rect(left, top, width, height);
+		//sf::FloatRect rect(left, top, width, height);
 
-		HitBox hitbox;
-		hitbox.UpdateTransformCollision(collisionBox, rect, { left, top });
-		collisions.push_back(hitbox);
+		//HitBox hitbox;
+		//hitbox.UpdateTransformCollision(collisionBox, rect, { left, top });
+		//collisions.push_back(hitbox);
 	}
 }
 

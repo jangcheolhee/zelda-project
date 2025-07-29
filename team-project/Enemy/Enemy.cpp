@@ -75,6 +75,7 @@ void Enemy::Init()
 		[this]()
 		{
 			std::cout << "!!" << std::endl;
+			animator.Stop();
 			SetActive(false);
 		}
 	);
