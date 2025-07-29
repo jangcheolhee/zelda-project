@@ -40,11 +40,13 @@ protected:
 	int attackInterval = 0.f;
 	sf::Vector2f dir = { 0.f, 0.f };
 	Direction direction = Direction::Down;
+	sf::Vector2f pastPosition;
 
 public:
 	Enemy(const std::string& name = "");
 	~Enemy() = default;
 
+	sf::Vector2f GetPos() { return pastPosition; }
 	Types GetType() { return type; }
 	void SetInitPosition(sf::Vector2f pos) { initPosition = pos; }
 	void SetPosition(const sf::Vector2f& pos) override;

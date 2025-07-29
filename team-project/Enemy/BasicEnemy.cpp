@@ -23,6 +23,7 @@ void BasicEnemy::Reset()
 
 void BasicEnemy::UpdateBehavior(float dt)
 {
+	pastPosition = GetPosition();
 	moveTimer += dt;
 	if (moveTimer > 2)
 	{

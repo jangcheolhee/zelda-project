@@ -270,9 +270,9 @@ void SceneGame::CheckCollison()
 {
 	for (auto& enemy : enemyList)
 	{
-		player->OnCollide(enemy);
 		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 		{
+			player->OnCollide(enemy);
 			enemy->OnCollide(player);
 		}
 	}
@@ -287,6 +287,14 @@ void SceneGame::CheckCollison()
 
 		if (obj->GetActive())
 		{
+			for (auto& enemy : enemyList)
+			{
+				
+				if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+				{
+					enemy->SetPosition(enemy->GetPos());
+				}
+			}
 			if (obj->GetType() == Interactable::Type::Throw)
 			{
 				if (rect.intersects(obj->GetGlobalBounds()))
@@ -321,8 +329,8 @@ void SceneGame::CheckCollison()
 						obj->OnInteract();
 						continue;
 					}
+					
 				}
-
 			}
 
 			if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Bush.h"
 #include "Player.h"
+#include "SceneGame.h"
 
 void Bush::OnInteract()
 {
@@ -36,6 +37,7 @@ void Bush::Reset()
 
 	lifeTime = 0.f;
 	state = BushState::OnGround;
+	isHit = false;
 
 }
 
@@ -68,18 +70,27 @@ void Bush::UpdateBeHavior(float dt)
 		position += velocity * dt;
 		SetPosition(position);
 
-		
-		if (lifeTime > 0.5)
+		for (auto& enemy : enemyList)
 		{
-			if (player) player->SetIsInteract(false);
+
+			if (GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+			{
+				isHit = true;
+				enemy->GetDamage();
+				break;
+			}
+		}
+		if (lifeTime > 0.5 || isHit)
+		{
+			player->SetIsInteract(false);
 			SetActive(false);        
-			state = BushState::OnGround;
 		}
 		break;
 	}
 }
 void Bush::Shoot()
 {
+	enemyList = sceneGame->GetEnemy();
 	state = BushState::Thrown;
 	lifeTime = 0.f;
 	switch (player->GetDirection())

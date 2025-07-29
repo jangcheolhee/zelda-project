@@ -12,7 +12,6 @@ public:
 	void Init() override;
 	void Reset() override;
 	void UpdateBehavior(float dt) override;
-
 	void ChangeSprite();
 };
 

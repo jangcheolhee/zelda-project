@@ -46,8 +46,8 @@ protected:
 public:
 	SceneGame();
 
-
-	void InitZones();
+	std::list<Enemy*> GetEnemy() { return enemyList; }
+ 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();
 	void DeleteInteractables();

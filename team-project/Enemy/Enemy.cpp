@@ -45,6 +45,8 @@ void Enemy::OnCollide(Player* player)
 	//std::cout << 1345;
 }
 
+
+
 void Enemy::OnDamage(int damage)
 {
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
@@ -67,6 +69,7 @@ void Enemy::Init()
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = -1;
 	animator.SetTarget(&body);
+	SetOrigin(Origins::BC);
 }
 
 void Enemy::Release()
@@ -106,6 +109,7 @@ void Enemy::Update(float dt)
 	{
 		player->TakeDamageIfPossible(1);
 	}
+	
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
