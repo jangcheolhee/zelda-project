@@ -36,6 +36,7 @@ void SceneGame::InitZones()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
 			  DeleteInteractables();
+			  DeleteEnemy();
 
 		  },
 		false
@@ -299,7 +300,7 @@ void SceneGame::CheckCollison()
 						case 0:
 						{
 							Rupee* rupee = new Rupee();
-							rupee->SetPosition(obj->GetPosition());
+							rupee->SetPosition(obj->GetPosition() + sf::Vector2f({3,-16}));
 							rupee->Reset();
 							AddGameObject(rupee);
 							interactables.push_back(rupee);
@@ -310,7 +311,7 @@ void SceneGame::CheckCollison()
 						case 1:
 						{
 							Heart* heart = new Heart();
-							heart->SetPosition(obj->GetPosition());
+							heart->SetPosition(obj->GetPosition() + sf::Vector2f({ 4,-4 }));
 							heart->Reset();
 							AddGameObject(heart);
 							interactables.push_back(heart);
@@ -429,7 +430,6 @@ void SceneGame::DeleteEnemy()
 {
 	for (Enemy* e : enemyList)
 	{
-		RemoveGameObject(e);
 		RecycleEnemy(e);
 	}
 	enemyList.clear();
