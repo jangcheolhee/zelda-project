@@ -111,6 +111,7 @@ void SceneGame::UpdateZones()
 					SpawnFlowers(zone.bounds);
 					SpawnSquareHitBox();
 
+
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -123,6 +124,7 @@ void SceneGame::UpdateZones()
 					RemoveGameObject(f);
 				}
 				flowers.clear();
+
 
 			}
 		}
