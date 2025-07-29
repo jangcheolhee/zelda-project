@@ -37,7 +37,6 @@ void SceneGame::InitZones()
 			  std::cout << "Zone 1 Exit" << std::endl;
 			  DeleteInteractables();
 			  DeleteEnemy();
-
 		  },
 		false
 		});
@@ -88,10 +87,8 @@ void SceneGame::InitZones()
 		});
 }
 
-
 void SceneGame::UpdateZones()
 {
-
 	sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
 	for (auto& zone : mapZones)
 	{
@@ -110,8 +107,6 @@ void SceneGame::UpdateZones()
 					SpawnInteractableObject(zone.bounds);
 					SpawnFlowers(zone.bounds);
 					SpawnSquareHitBox();
-
-
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -124,8 +119,6 @@ void SceneGame::UpdateZones()
 					RemoveGameObject(f);
 				}
 				flowers.clear();
-
-
 			}
 		}
 	}
@@ -289,7 +282,6 @@ void SceneGame::CheckCollison()
 	rect.height += 4.f;
 	for (auto& obj : interactables)
 	{
-
 		if (obj->GetActive())
 		{
 			for (auto& enemy : enemyList)
@@ -334,7 +326,6 @@ void SceneGame::CheckCollison()
 						obj->OnInteract();
 						continue;
 					}
-
 				}
 			}
 
@@ -358,13 +349,11 @@ void SceneGame::CheckCollison()
 			if (obj->GetType() == Interactable::Type::Item)
 			{
 				obj->OnInteract();
-
 				continue;
 			}
 			player->SetMovable(false);
 			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
 			{
-
 				obj->OnInteract();
 			}
 		}
@@ -373,10 +362,10 @@ void SceneGame::CheckCollison()
 
 void SceneGame::SpawnSquareHitBox()
 {
-	std::vector<sf::Vector2f> square1s = tileMapGame->getPositions(7, 24721); // 우상단
-	std::vector<sf::Vector2f> square2s = tileMapGame->getPositions(7, 24722); // 좌상단
-	std::vector<sf::Vector2f> square3s = tileMapGame->getPositions(7, 24723); // 좌하단
-	std::vector<sf::Vector2f> square4s = tileMapGame->getPositions(7, 24724); // 우하단
+	std::vector<sf::Vector2f> square1s = tileMapGame->getPositions(9, 24721); // 우상단
+	std::vector<sf::Vector2f> square2s = tileMapGame->getPositions(9, 24722); // 좌상단
+	std::vector<sf::Vector2f> square3s = tileMapGame->getPositions(9, 24723); // 좌하단
+	std::vector<sf::Vector2f> square4s = tileMapGame->getPositions(9, 24724); // 우하단
 
 	// 정점 개수 확인
 	size_t count = std::min({ square1s.size(), square2s.size(), square3s.size(), square4s.size() });
@@ -389,8 +378,8 @@ void SceneGame::SpawnSquareHitBox()
 		sf::Vector2f p4 = square4s[i]; // 우하단
 
 		// left-top 기준, width/height 계산
-		float left = std::min(p2.x, p3.x); // 좌측 상단 기준
-		float top = std::min(p2.y, p1.y);
+		float left = std::min(p2.x+5, p3.x+5); // 좌측 상단 기준
+		float top = std::min(p2.y+5, p1.y+5);
 		float width = std::abs(p1.x - p2.x);
 		float height = std::abs(p2.y - p3.y);
 
@@ -398,6 +387,7 @@ void SceneGame::SpawnSquareHitBox()
 
 		HitBox hitbox;
 		hitbox.UpdateTransformCollision(collisionBox, rect, { left, top });
+		//hitbox.SetOrigin(Origins::TL);
 		collisions.push_back(hitbox);
 	}
 }
@@ -459,6 +449,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
+				std::cout << "jumpwall" << pos.x << std::endl;
 				auto inter = new JumpWall();
 				switch (id)
 				{

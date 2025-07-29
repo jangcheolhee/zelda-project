@@ -24,7 +24,6 @@ void Bush::OnInteract()
 void Bush::Init()
 {
 	Interactable::Init();
-
 }
 
 void Bush::Reset()
@@ -72,7 +71,6 @@ void Bush::UpdateBeHavior(float dt)
 
 		for (auto& enemy : enemyList)
 		{
-
 			if (GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 			{
 				isHit = true;
@@ -88,6 +86,7 @@ void Bush::UpdateBeHavior(float dt)
 		break;
 	}
 }
+
 void Bush::Shoot()
 {
 	enemyList = sceneGame->GetEnemy();
@@ -109,5 +108,4 @@ void Bush::Shoot()
 		break;
 	}
 	velocity = dir * speed;
-
 }

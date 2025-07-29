@@ -156,6 +156,50 @@ std::vector<sf::Vector2f> TileMap::getPositions(int layerIndex, int targetGid)
     return pos;
 }
 
+int TileMap::getWidth(int layerIndex, int targetGid)
+{
+    std::vector<sf::Vector2f> pos;
+
+    const auto& layer = tmJ["layers"][layerIndex];
+    const auto& data = layer["data"];
+    int width = layer["width"];
+    int height = layer["height"];
+
+    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
+
+    for (int i = 0; i < (int)data.size(); ++i)
+    {
+        int gid = data[i];
+        if (gid == targetGid)
+        {
+            width = i % width;
+        }
+    }
+    return width;
+}
+
+int TileMap::getHeight(int layerIndex, int targetGid)
+{
+    std::vector<sf::Vector2f> pos;
+
+    const auto& layer = tmJ["layers"][layerIndex];
+    const auto& data = layer["data"];
+    int width = layer["width"];
+    int height = layer["height"];
+
+    sf::Vector2f origin = { -cellSize.x * 0.5f * cellCount.x, -cellSize.y * 0.5f * cellCount.y };
+
+    for (int i = 0; i < (int)data.size(); ++i)
+    {
+        int gid = data[i];
+        if (gid == targetGid)
+        {
+            height = i % width;
+        }
+    }
+    return height;
+}
+
 void TileMap::Init()
 {
     sortingLayer = SortingLayers::Background;
