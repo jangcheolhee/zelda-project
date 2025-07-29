@@ -18,6 +18,17 @@ void HitBox::UpdateTransform(const sf::Transformable& tr, const sf::FloatRect& l
 	rect.setRotation(tr.getRotation());
 }
 
+void HitBox::UpdateTransformCollision(const sf::Transformable& tr, const sf::FloatRect& localBounds, const sf::Vector2f& pos)
+{
+	rect.setSize({ localBounds.width, localBounds.height });
+	rect.setOutlineColor(sf::Color::Green);
+	rect.setOrigin(tr.getOrigin());
+	rect.setPosition(pos);
+	rect.setScale(tr.getScale());
+	rect.setRotation(tr.getRotation());
+
+}
+
 void HitBox::Draw(sf::RenderWindow& window)
 {
 	if (Variables::isDrawHitBox)

@@ -49,7 +49,6 @@ protected:
 	std::vector<sf::Vector2f> collisions;
 	sf::RectangleShape collisionBox;
 	bool squareToggle = 0;
-	
 
 public:
 	SceneGame();
@@ -68,11 +67,10 @@ public:
 	void SpawnFlowers(sf::FloatRect zone);
 	void FlowerBreath(float dt);
 
-	//존으로 변경
 	void SpawnInteractableObject(sf::FloatRect zone);
 	void CheckCollison();
 
-	void SpawnSquareHitBox();
+	void SquareHitBox();
 
 	void Init() override;
 	void Exit() override;

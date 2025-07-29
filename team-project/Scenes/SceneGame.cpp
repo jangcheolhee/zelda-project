@@ -103,6 +103,8 @@ void SceneGame::UpdateZones()
 					zone.onEnter();
 					SpawnInteractableObject(zone.bounds);
 					SpawnFlowers(zone.bounds);
+					SquareHitBox();
+					
 				}
 			}
 			else if (!nowInZone && zone.entered)
@@ -335,27 +337,36 @@ void SceneGame::CheckCollison()
 	}
 }
 
-void SceneGame::SpawnSquareHitBox()
+void SceneGame::SquareHitBox()
 {//layer6 , (1,2,3,4) 정점, 시계방향
-	int squareGid[] = { 24592, 24593, 24594, 24595 };
+	int squareGid[] = { 24721, 24722, 24723, 24724 };
 
-	for (int i = 0; i < 4; i++)
-	{
-		sf::Vector2f point = tileMapGame->getPosition(6, squareGid[i]);
-		collisions.push_back(point);
-	}
+	sf::Vector2f square1 = tileMapGame->getPosition(7, 24721);
+	sf::Vector2f square2 = tileMapGame->getPosition(7, 24722);
+	sf::Vector2f square3 = tileMapGame->getPosition(7, 24723);
+	sf::Vector2f square4 = tileMapGame->getPosition(7, 24724);
 
-	if (collisions.size() >= 4)
-	{
-		float left = std::min({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
-		float top = std::min({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
-		float right = std::max({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
-		float bottom = std::max({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
+	sf::FloatRect square;
+	square = sf::FloatRect(square1.x, square1.y, square2.x - square1.x, square3.y - square1.y);
+	collision.UpdateTransformCollision(collisionBox,square,square1);
+	
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	sf::Vector2f point = tileMapGame->getPosition(7, squareGid[i]);
+	//	collisions.push_back(point);
+	//}
 
-		sf::FloatRect square(left, top, right - left, bottom - top);
+	//if (collisions.size() >= 4)
+	//{
+	//	float left = std::min({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
+	//	float top = std::min({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
+	//	float right = std::max({ collisions[0].x, collisions[1].x, collisions[2].x, collisions[3].x });
+	//	float bottom = std::max({ collisions[0].y, collisions[1].y, collisions[2].y, collisions[3].y });
 
-		collision.UpdateTransform(collisionBox, square);
-	}
+	//	sf::FloatRect square(left, top, right - left, bottom - top);
+
+	//	collision.UpdateTransform(collisionBox, square);
+	//}
 }
 
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
@@ -519,7 +530,7 @@ void SceneGame::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone();
 	FlowerBreath(dt);
-	SpawnSquareHitBox();
+
 
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{

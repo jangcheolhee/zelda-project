@@ -1,6 +1,6 @@
 {
     "player": {
-        "hp": 3,
+        "hp": 0,
         "name": "Link",
         "position": {
             "x": 192.0,
