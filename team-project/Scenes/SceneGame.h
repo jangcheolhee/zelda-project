@@ -5,6 +5,7 @@
 #include "Interactable.h"
 class Player;
 class TileMap;
+class HitBox;
 
 struct MapZone
 {
@@ -28,6 +29,7 @@ class SceneGame : public Scene
 protected:
 	Player* player;
 	TileMap* tileMapGame;
+
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
@@ -42,6 +44,11 @@ protected:
 	float flowerTimer;
 	bool flowerBool;
 	float flowerRate = 0.3;
+
+	HitBox collision;
+	std::vector<HitBox> collisions;
+	sf::RectangleShape collisionBox;
+	bool squareToggle = 0;
 
 public:
 	SceneGame();
@@ -61,14 +68,14 @@ public:
 	void SpawnFlowers(sf::FloatRect zone);
 	void FlowerBreath(float dt);
 
-	//존으로 변경
 	void SpawnInteractableObject(sf::FloatRect zone);
-	
-
 	void CheckCollison();
+
+	void SpawnSquareHitBox();
 
 	void Init() override;
 	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
+	void Draw(sf::RenderWindow& window) override;
 };

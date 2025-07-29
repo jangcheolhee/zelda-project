@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Enemy.h"
 #include "Interactable.h"
+#include "SpriteGo.h"
 class Player;
 class TileMap;
 
@@ -27,6 +28,8 @@ class SceneHidden : public Scene
 protected:	
 	Player* player;
 	TileMap* tileMapHidden;
+	SpriteGo* Dad;
+
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;

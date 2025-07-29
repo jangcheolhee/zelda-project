@@ -4,6 +4,8 @@
 #include "Player.h"
 #include <cmath>
 
+//npc 별로 스폰하기
+
 Npc::Npc(const std::string& name)
 {
 }
@@ -73,6 +75,10 @@ Direction Npc::GetDirectionToPlayer()
 
 void Npc::OnInteract()
 {
+    if (GetGlobalBounds().contains(player->GetGlobalBounds().getPosition()))
+    {
+        std::cout << "HI" << std::endl;
+    }
 }
 
 void Npc::Init()
@@ -100,4 +106,5 @@ void Npc::Update(float dt)
             DirectionSprite(currentDirection);
         }
     }
+    OnInteract();
 }

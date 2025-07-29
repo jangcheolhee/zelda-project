@@ -101,28 +101,28 @@ void SceneGame::UpdateZones()
 			zoneID = zone.zoneId;
 			if (zone.onEnter)
 			{
-				zone.onEnter();
-				SpawnInteractableObject(zone.bounds);
-				SpawnFlowers(zone.bounds);
-				/*JumpWall* wall = new JumpWall();
-				wall->SetBounds(185, 560, 100, 100);
-				AddGameObject(wall);
-				interactables.push_back(wall);
-				wall->Reset();*/
+				zone.entered = true; 
+				zoneID = zone.zoneId; 
+				if (zone.onEnter)
+				{
+					zone.onEnter();
+					SpawnInteractableObject(zone.bounds);
+					SpawnFlowers(zone.bounds);
+					SpawnSquareHitBox();
+					
+				}
 			}
-		}
-		else if (!nowInZone && zone.entered)
-		{
-			zone.entered = false;
-			if (zone.onExit) zone.onExit();
-			DeleteInteractables();
-			for (auto f : flowers)
+			else if (!nowInZone && zone.entered)
 			{
-				RemoveGameObject(f);
-			}
-			flowers.clear();
-		}
-	}
+				zone.entered = false;
+				if (zone.onExit) zone.onExit();
+				DeleteInteractables();
+				for (auto f : flowers)
+				{
+					RemoveGameObject(f);
+				}
+				flowers.clear();
+		
 }
 
 void SceneGame::UpdateBehaviorZone()
@@ -347,13 +347,61 @@ void SceneGame::CheckCollison()
 				}
 			}
 		}
+
+		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		{
+			if (obj->GetType() == Interactable::Type::Item)
+			{
+				obj->OnInteract();
+
+				continue;
+			}
+			player->SetMovable(false);
+			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
+			{
+
+				obj->OnInteract();
+			}
+		}
 	}
 }
+
+void SceneGame::SpawnSquareHitBox()
+{
+	std::vector<sf::Vector2f> square1s = tileMapGame->getPositions(7, 24721); // 우상단
+	std::vector<sf::Vector2f> square2s = tileMapGame->getPositions(7, 24722); // 좌상단
+	std::vector<sf::Vector2f> square3s = tileMapGame->getPositions(7, 24723); // 좌하단
+	std::vector<sf::Vector2f> square4s = tileMapGame->getPositions(7, 24724); // 우하단
+
+	// 정점 개수 확인
+	size_t count = std::min({ square1s.size(), square2s.size(), square3s.size(), square4s.size() });
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		sf::Vector2f p1 = square1s[i]; // 우상단
+		sf::Vector2f p2 = square2s[i]; // 좌상단
+		sf::Vector2f p3 = square3s[i]; // 좌하단
+		sf::Vector2f p4 = square4s[i]; // 우하단
+
+		// left-top 기준, width/height 계산
+		float left = std::min(p2.x, p3.x); // 좌측 상단 기준
+		float top = std::min(p2.y, p1.y);
+		float width = std::abs(p1.x - p2.x);
+		float height = std::abs(p2.y - p3.y);
+
+		sf::FloatRect rect(left, top, width, height);
+
+		HitBox hitbox;
+		hitbox.UpdateTransformCollision(collisionBox, rect, { left, top });
+		collisions.push_back(hitbox);
+	}
+}
+
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {
 	//layer 1 : bush
-	int layer1Gid[] = { 24670, 24590 };
+	int layer1Gid[] = { 24670, 24590};
 	for (int id : layer1Gid)
 	{
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
@@ -507,6 +555,8 @@ void SceneGame::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone();
 	FlowerBreath(dt);
+
+
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Hidden" << std::endl;
@@ -524,5 +574,15 @@ void SceneGame::Update(float dt)
 	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
+	}
+}
+
+void SceneGame::Draw(sf::RenderWindow& window)
+{
+	Scene::Draw(window);
+	window.setView(worldView);
+	for (auto& col : collisions)
+	{
+		col.Draw(window);
 	}
 }
