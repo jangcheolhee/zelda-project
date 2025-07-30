@@ -10,6 +10,7 @@
 #include "JumpWall.h"
 #include <istream>
 #include "SceneCastle.h"
+#include "HitboxGenerator.h"
 
 
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
@@ -177,6 +178,15 @@ void SceneHidden::CheckCollison()
 	}
 }
 
+void SceneHidden::SpawnSquareHitBox()
+{
+	HitboxGenerator::SpawnSquareHitBox(
+		tileMapHidden,
+		collisions,
+		collisionBox
+	);
+}
+
 void SceneHidden::DeleteInteractables()
 {
 	auto it = interactables.begin();
@@ -242,5 +252,15 @@ void SceneHidden::Update(float dt)
 	{
 		GAME_MGR.SetPlayerData(player->GetHp(), sf::Vector2f{0,0});
 		SCENE_MGR.ChangeScene(SceneIds::Game);
+	}
+}
+
+void SceneHidden::Draw(sf::RenderWindow& window)
+{
+	Scene::Draw(window);
+	window.setView(worldView);
+	for (auto& col : collisions)
+	{
+		col.Draw(window);
 	}
 }

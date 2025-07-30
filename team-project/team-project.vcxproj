@@ -219,6 +219,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="HitboxGenerator.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Interact\Heart.cpp" />
     <ClCompile Include="Interact\Chest.cpp" />
@@ -261,6 +262,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="HitboxGenerator.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Interact\Heart.h" />
     <ClInclude Include="Interact\Chest.h" />
