@@ -46,6 +46,11 @@ void Interactable::Init()
 	sortingOrder = 0;
 	SetOrigin(Origins::BR);
 	animator.SetTarget(&body);
+	hitBox.SetOrigin(Origins::BL);
+	hitBox.rect.setSize({ 8,8 });
+	boundBox.SetOrigin(Origins::MC);
+	boundBox.rect.setSize({ 16,16 });
+
 }
 
 void Interactable::Release()
@@ -71,23 +76,15 @@ void Interactable::Update(float dt)
 	animator.Update(dt);
 	if (!GetActive())
 		return;
-
-	switch (type)
-	{
-	case Interactable::Type::None:
-		break;
-	case Interactable::Type::Throw:
-		UpdateBeHavior(dt);
-		break;
-	case Interactable::Type::Chest:
-		break;
-	default:
-		break;
-	}
-	hitBox.UpdateTransform(body, GetLocalBounds());
+	hitBox.rect.setPosition(GetPosition());
+	boundBox.rect.setScale(GetScale());
+	boundBox.rect.setPosition(GetPosition());
+	
+	
 }
 void Interactable::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
+	boundBox.Draw(window);
 }

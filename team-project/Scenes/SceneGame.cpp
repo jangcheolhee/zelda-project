@@ -118,7 +118,7 @@ void SceneGame::UpdateZones()
 
 
 
-			
+
 			if (zone.onExit)
 			{
 				zone.onExit();
@@ -158,7 +158,7 @@ void SceneGame::UpdateBehaviorZone(float dt)
 	//case 1:
 	//break;
 	//}
-	
+
 }
 
 void SceneGame::DeleteInteractables()
@@ -234,8 +234,8 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 			break;
 		case Interactable::Type::JumpWall:
 		{
-			
-			inter = (Interactable*)AddGameObject(new JumpWall());
+
+			inter = (JumpWall*)AddGameObject(new JumpWall());
 			break;
 		}
 		case Interactable::Type::Heart:
@@ -322,43 +322,33 @@ void SceneGame::CheckCollison()
 		}
 	}
 
-	sf::FloatRect rect = player->GetGlobalBounds();
-	rect.left -= 2.f;
-	rect.top -= 2.f;
-	rect.width += 4.f;
-	rect.height += 4.f;
+
 	for (auto& obj : interactList)
 	{
-
 		for (auto& enemy : enemyList)
 		{
-
-			if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+			if (Utils::CheckCollision(obj->GetHitBox().rect, enemy->GetHitBox().rect))
 			{
 				enemy->SetPosition(enemy->GetPos());
+
 			}
 		}
-		if (obj->GetType() == Interactable::Type::Throw)
+		if (dynamic_cast<Bush*> (obj))
 		{
-			if (rect.intersects(obj->GetGlobalBounds()))
+			if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetBoundBox().rect))
 			{
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
 					int r = Utils::RandomRange(0, 3);
-
 					switch (r)
 					{
 					case 0:
 					{
-
 						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 3,-16 }), Interactable::Type::Rupee);
-
 						break;
 					}
-
 					case 1:
 					{
-
 						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 4,-4 }), Interactable::Type::Heart);
 						break;
 					}
@@ -369,8 +359,7 @@ void SceneGame::CheckCollison()
 
 			}
 		}
-
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
 		{
 			if (obj->GetType() == Interactable::Type::Heart || obj->GetType() == Interactable::Type::Rupee)
 			{
@@ -384,21 +373,6 @@ void SceneGame::CheckCollison()
 			}
 
 		}
-
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
-		{
-			if (obj->GetType() == Interactable::Type::Rupee || obj->GetType() == Interactable::Type::Heart)
-			{
-				obj->OnInteract();
-				continue;
-			}
-			player->SetMovable(false);
-			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
-			{
-				obj->OnInteract();
-			}
-		}
-
 	}
 }
 void SceneGame::SpawnSquareHitBox()
@@ -954,9 +928,9 @@ void SceneGame::Update(float dt)
 void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
-	window.setView(worldView);
-	for (auto& col : collisions)
-	{
-		col.Draw(window);
-	}
+	//window.setView(worldView);
+	//for (auto& col : collisions)
+	//{
+	//	col.Draw(window);
+	//}
 }

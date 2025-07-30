@@ -30,6 +30,9 @@ void JumpWall::OnInteract()
 void JumpWall::Init()
 {
 	Interactable::Init();
+	hitBox.SetOrigin(Origins::TL);
+	boundBox.rect.setSize({ 0,0 });
+	
 }
 
 void JumpWall::Reset()
@@ -38,18 +41,14 @@ void JumpWall::Reset()
 	type = Type::JumpWall;
 	dir = { 0.f,0.f };
 	direction = Direction::None;
-	body.setFillColor(sf::Color(0, 255, 0, 80));
-	body.setOutlineColor(sf::Color::Green);
-	body.setOutlineThickness(1.f);
+	
 }
 
 void JumpWall::SetBounds(float x, float y, float width, float height)
 {
-	body.setSize({ width,height });
-	body.setPosition({ x,y });
+	
+	SetPosition({ x,y });
+	hitBox.rect.setSize({ width, height });
+	hitBox.SetPosition({ x, y });
 }
 
-void JumpWall::Draw(sf::RenderWindow& window)
-{
-	//window.draw(body);
-}

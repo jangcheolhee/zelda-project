@@ -40,6 +40,8 @@ void Enemy::SetOrigin(Origins preset)
 	}
 }
 
+
+
 void Enemy::OnCollide(Player* player)
 {
 	//std::cout << 1345;
@@ -62,14 +64,18 @@ void Enemy::Init()
 	sf::FloatRect bodyBounds = body.getLocalBounds();
 	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
+	
+	
 
-	hitBox.rect.setSize(hitBoxSize);
-	hitBox.rect.setOrigin(hitBoxSize / 2.f);
-	hitBox.rect.setPosition(body.getPosition() + hitBoxOffset);
+
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = -1;
 	animator.SetTarget(&body);
-	SetOrigin(Origins::BC);
+	SetOrigin(Origins::TL);
+	boundBox.rect.setSize({ 16,24 });
+	boundBox.SetOrigin(Origins::TL);
+	hitBox.rect.setSize({8,12});
+	hitBox.SetOrigin(Origins::TL);
 	
 	animator.AddEvent("Death", 6,
 		[this]()
@@ -99,11 +105,6 @@ void Enemy::Reset()
 
 	SetActive(true);
 	SetPosition(initPosition);
-	SetScale({ 1.f,1.f });
-
-	SetOrigin(Origins::BC);
-
-
 }
 
 void Enemy::Update(float dt)
@@ -114,20 +115,25 @@ void Enemy::Update(float dt)
 	isHitThisFrame = false;
 
 	animator.Update(dt);
-	UpdateBehavior(dt);
+	
 	if (!player->IsAttacking() && player->checkCollision(hitBox))
 	{
 		player->TakeDamageIfPossible(1);
 	}
 	
-	hitBox.UpdateTransform(body, GetLocalBounds());
+
 	
+	hitBox.rect.setScale(GetScale());
+	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{4 * GetScale().x,6*GetScale().y});
+	boundBox.rect.setScale(GetScale());
+	boundBox.rect.setPosition(GetPosition());
 }
 
 void Enemy::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	hitBox.Draw(window);
+	boundBox.Draw(window);
 }
 
 void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용

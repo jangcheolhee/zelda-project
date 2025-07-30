@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BasicEnemy.h""
+#include "Player.h"
 
 void BasicEnemy::Init()
 {
@@ -23,30 +24,48 @@ void BasicEnemy::Reset()
 	hp = maxHp;
 	
 	
+	
 }
 
-void BasicEnemy::UpdateBehavior(float dt)
+void BasicEnemy::Update(float dt)
 {
+	Enemy::Update(dt);
 	pastPosition = GetPosition();
-	moveTimer += dt;
-	if (moveTimer > 2)
+	if (Utils::Distance(GetPosition(), player->GetPosition()) < 50)
 	{
-		dir = { 0.f,0.f };
-		if (moveTimer > 3)
-		{
-			direction = (Direction)Utils::RandomRange(0, 4);
-			moveTimer = 0;
-			ChangeSprite();
-		}
-		
+		state = EnemyState::Chase;
 	}
-	position += dir * speed * dt;
-	SetPosition(position);
-	
+	else
+	{
+		state = EnemyState::Patrol;
+	}
+	if (state == EnemyState::Patrol)
+	{
+		moveTimer += dt;
+		if (moveTimer > 2)
+		{
+			
+			if (moveTimer > 3)
+			{
+				direction = (Direction)Utils::RandomRange(0, 4);
+				moveTimer = 0;
+				ChangeSprite();
+			}
+		}
+	}
+	else if (state == EnemyState::Chase)
+	{
+		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+		moveTimer = 0;
+	}
+	velocity = dir * speed;
+	position += velocity * dt;
+;	SetPosition(position);
 }
 
 void BasicEnemy::ChangeSprite()
 {
+	velocity = { 0,0 };
 	switch (direction)
 	{
 	case  Direction::Up:
@@ -70,3 +89,4 @@ void BasicEnemy::ChangeSprite()
 		break;
 	}
 }
+

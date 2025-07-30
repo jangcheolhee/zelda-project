@@ -113,4 +113,5 @@ public:
 	void HandleMovement(float dt);
 
 	bool IsAttacking() const;
+	HitBox GetHitBox() { return hitBox; }
 };

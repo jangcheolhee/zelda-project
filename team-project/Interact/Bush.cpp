@@ -13,13 +13,13 @@ void Bush::OnInteract()
 	switch (state)
 	{
 	case BushState::OnGround:
-		
+
 		state = BushState::Held;
-		player->SetIsInteract(true);   
+		player->SetIsInteract(true);
 		break;
 
 	case BushState::Held:
-		
+
 		state = BushState::Thrown;
 		break;
 	}
@@ -36,9 +36,11 @@ void Bush::Init()
 			state = BushState::OnGround;
 			animator.Stop();
 			SetActive(false);
-			
+
 		}
 	);
+	hitBox.rect.setSize({ 10,10 });
+	hitBox.SetOrigin(Origins::MR);
 
 }
 
@@ -48,6 +50,7 @@ void Bush::Reset()
 	body.setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 	body.setTextureRect({ 304,57,16,16 });
 	SetOrigin(Origins::ML);
+
 	type = Type::Throw;
 
 	lifeTime = 0.f;
@@ -56,19 +59,20 @@ void Bush::Reset()
 
 }
 
-void Bush::UpdateBeHavior(float dt)
+void Bush::Update(float dt)
 {
+	Interactable::Update(dt);
 	switch (state)
 	{
 	case BushState::OnGround:
-		
+
 		break;
 
 	case BushState::Held:
 	{
-	
+
 		sf::Vector2f pos = player->GetGlobalBounds().getPosition();
-	
+
 		pos.y -= player->GetGlobalBounds().height + 1;
 		SetPosition(pos);
 
@@ -88,7 +92,7 @@ void Bush::UpdateBeHavior(float dt)
 		for (auto& enemy : enemyList)
 		{
 
-			if (GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+			if (Utils::CheckCollision(enemy->GetHitBox().rect, hitBox.rect))
 			{
 				isHit = true;
 				enemy->OnDamage(1);
@@ -103,7 +107,10 @@ void Bush::UpdateBeHavior(float dt)
 		}
 		break;
 	}
-	
+	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{ 3, - 6 });
+	boundBox.rect.setPosition(GetPosition() + sf::Vector2f{0,-8});
+
+
 }
 void Bush::Shoot()
 {

@@ -17,6 +17,7 @@ public:
 	void OnInteract() override;
 	void Init() override;
 	void Reset() override;
-	void UpdateBeHavior(float dt) override;
+	void Update(float dt) override;
+	
 	void Shoot();
 };
