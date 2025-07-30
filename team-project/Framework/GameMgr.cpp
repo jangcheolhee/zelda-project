@@ -1,10 +1,15 @@
 #include "stdafx.h"
 #include "GameMgr.h"
+#include "Inventory.h"
+#include "QuestMgr.h"
 
 void GameMgr::Release()
 {
-    delete inventory;
-    delete questMgr;
+	delete inventory;
+	inventory = nullptr;
+
+	delete questMgr;
+	questMgr = nullptr;
 }
 
 void GameMgr::SaveGame(const std::string& filename)
@@ -57,6 +62,7 @@ void GameMgr::SetPlayerData(int hp, sf::Vector2f pos)
 
 void GameMgr::Init()
 {
+	FONT_MGR.Load("fonts/Neo.ttf");
     inventory = new Inventory();
     questMgr = new QuestMgr();
 	LoadGame("data/data.json");

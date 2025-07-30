@@ -7,7 +7,7 @@ struct PlayerData
 {
 	std::string name;
 	int hp;
-	sf::Vector2f position;
+	sf::Vector2f position = { 0.f,0.f };
 };
 
 class GameMgr : public Singleton<GameMgr>

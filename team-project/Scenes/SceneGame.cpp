@@ -330,6 +330,17 @@ void SceneGame::CheckCollison()
 				if (obj->GetType() == Interactable::Type::Item)
 				{
 					obj->OnInteract();
+
+					Rupee* rupee = dynamic_cast<Rupee*>(obj);
+					if (rupee != nullptr)
+					{
+						HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD")); // 또는 멤버 변수로 접근 가능
+						if (hud != nullptr)
+						{
+							hud->AddRupee(1);  // 루피 1 증가
+						}
+					}
+
 					continue;
 				}
 				player->SetPosition(player->GetPos());
@@ -342,34 +353,34 @@ void SceneGame::CheckCollison()
 	}
 }
 // Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
-void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
-{
-	//layer 1 : bush
-	int layer1Gid[] = { 24670, 24590 };
-	for (int id : layer1Gid)
+	void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	{
-		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
-		for (const auto& pos : positions)
+		//layer 1 : bush
+		int layer1Gid[] = { 24670, 24590 };
+		for (int id : layer1Gid)
 		{
-			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
-			{//bush
-				auto bush = new Bush;
-				AddGameObject(bush);
-				interactables.push_back(bush);
-				bush->Reset();
-				bush->SetPosition(pos);
-				if (id == 24670)
-				{
-					bush->SetOrigin(Origins::ML);
-				}
-				else if (id == 24590) //hole
-				{
-					bush->SetOrigin(Origins::TL);
+			std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
+			for (const auto& pos : positions)
+			{
+				if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
+				{//bush
+					auto bush = new Bush;
+					AddGameObject(bush);
+					interactables.push_back(bush);
+					bush->Reset();
+					bush->SetPosition(pos);
+					if (id == 24670)
+					{
+						bush->SetOrigin(Origins::ML);
+					}
+					else if (id == 24590) //hole
+					{
+						bush->SetOrigin(Origins::TL);
+					}
 				}
 			}
 		}
-	}
-
+	
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
@@ -413,16 +424,13 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
-	//fontIds.push_back("fonts/DS-DIGIT.ttf");
-	//ANI_CLIP_MGR.Load("animations/idle.csv");
-	//ANI_CLIP_MGR.Load("animations/run.csv");
-	//ANI_CLIP_MGR.Load("animations/jump.csv");
-
+	
+	
 	player = new Player("Player");
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
-	AddGameObject(new HUD());
+	AddGameObject(new HUD("HUD"));
 
 	inventoryUI = new InventoryUI();
 	inventoryUI->Init();
@@ -503,6 +511,9 @@ void SceneGame::Update(float dt)
 void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
+
 	/*if (showInventory)
 		inventoryUI->Draw(window);*/
+	
+
 }

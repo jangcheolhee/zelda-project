@@ -42,6 +42,13 @@ void HUD::Init()
 {
 	sortingLayer = SortingLayers::UI;
 	sortingOrder = 0;
+
+	sf::Font& font = FONT_MGR.Get("fonts/Neo.ttf");
+	rupeeText.setFont(font);
+	rupeeText.setCharacterSize(18);
+	rupeeText.setFillColor(sf::Color::White);
+	rupeeText.setPosition(134.f, 43.f);
+	rupeeText.setString("0 0 0");
 }
 
 void HUD::Release()
@@ -62,4 +69,20 @@ void HUD::Update(float dt)
 void HUD::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
+	window.draw(rupeeText);  // 루피 텍스트 같이 그리기
+
+	if (showStatus)
+	{
+		window.draw(statusUI);
+	}
+	else
+	{
+		inventoryUI.Draw(window);
+	}
+}
+
+void HUD::AddRupee(int amount)
+{
+	rupeeCount += amount;
+	rupeeText.setString("0 0 " + std::to_string(rupeeCount));
 }

@@ -1,10 +1,17 @@
 #pragma once
 #include "GameObject.h"
+#include "InventoryUI.h"
 class HUD :
     public GameObject
 {
 protected:
 	sf::Sprite body;
+	int rupeeCount = 0;
+	sf::Text rupeeText;
+	sf::Sprite statusUI;
+	InventoryUI inventoryUI;
+	bool showStatus = true;
+
 public:
 	HUD(const std::string& name = "");
 	virtual ~HUD() = default;
@@ -20,5 +27,7 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+
+	void AddRupee(int amount);
 };
 
