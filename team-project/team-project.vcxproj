@@ -237,6 +237,7 @@
     <ClCompile Include="Framework\GameMgr.cpp" />
     <ClCompile Include="Interact\Interactable.cpp" />
     <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="InventoryUI.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Interact\JumpWall.cpp" />
     <ClCompile Include="main.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="Framework\GameMgr.h" />
     <ClInclude Include="Interact\Interactable.h" />
     <ClInclude Include="Inventory.h" />
+    <ClInclude Include="InventoryUI.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Interact\JumpWall.h" />

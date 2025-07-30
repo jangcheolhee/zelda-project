@@ -3,6 +3,7 @@
 #include "SpriteGo.h"
 #include "Enemy.h"
 #include "Interactable.h"
+#include "InventoryUI.h"
 class Player;
 class TileMap;
 
@@ -31,9 +32,10 @@ protected:
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
-
+	InventoryUI* inventoryUI;
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
+	bool showInventory=false;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
@@ -70,4 +72,5 @@ public:
 	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
+	void Draw(sf::RenderWindow& window)override;
 };

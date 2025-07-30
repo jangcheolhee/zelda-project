@@ -11,6 +11,7 @@
 #include "Heart.h"
 #include "HUD.h"
 #include <istream>
+#include "InventoryUI.h"
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -388,41 +389,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			}
 		}
 	}
-	//layer3: collision
-	/*int gid[] = { 25075,25067,24699,25068,24592 };
-	for (int id : gid)
-	{
-		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(3, id);
-		for (const auto& pos : positions)
-		{
-			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
-			{
-				auto inter = new JumpWall();
-				switch (id)
-				{
-				case 25075:
-					inter->SetDirection(Direction::Down);
-					break;
-				case 25067:
-					inter->SetDirection(Direction::Up);
-					break;
-				case 24699:
-					inter->SetDirection(Direction::Left);
-					break;
-				case 25068: case 24592:
-					inter->SetDirection(Direction::None);
-					break;
-				default:
-					break;
-				}
-				AddGameObject(inter);
-				interactables.push_back(inter);
-				inter->SetOrigin(Origins::TC);
-				inter->Reset();
-				inter->SetPosition(pos);
-			}
-		}
-	}*/
+	
 }
 // 🔸 Enemy 삭제 (→ 풀에 리사이클)
 void SceneGame::DeleteEnemy()
@@ -445,6 +412,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Items.png");
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
+	texIds.push_back("graphics/inventory.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	//ANI_CLIP_MGR.Load("animations/idle.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
@@ -455,6 +423,11 @@ void SceneGame::Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
 	AddGameObject(new HUD());
+
+	inventoryUI = new InventoryUI();
+	inventoryUI->Init();
+	inventoryUI->sortingLayer = SortingLayers::UI;
+	AddGameObject(inventoryUI);
 
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
@@ -491,6 +464,9 @@ void SceneGame::Enter()
 	player->SetPosition(startPos);
 }
 
+
+
+
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
@@ -503,6 +479,11 @@ void SceneGame::Update(float dt)
 	{
 		std::cout << "Hidden" << std::endl;
 		SCENE_MGR.ChangeScene(SceneIds::Hidden);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
+	{
+		bool toggle = !inventoryUI->IsVisible();
+		inventoryUI->SetActive(toggle);
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
 	{
@@ -517,4 +498,11 @@ void SceneGame::Update(float dt)
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
+}
+
+void SceneGame::Draw(sf::RenderWindow& window)
+{
+	Scene::Draw(window);
+	/*if (showInventory)
+		inventoryUI->Draw(window);*/
 }
