@@ -9,22 +9,21 @@ void BasicEnemy::Init()
 	speed = 40.f;
 	hp = 10;
 
-	
+
 }
 
 void BasicEnemy::Reset()
 {
-	
+
 	// 여기서 sprite texture 변경하기
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
-	direction = (Direction) Utils::RandomRange(0, 4);
+	direction = (Direction)Utils::RandomRange(0, 4);
 	ChangeSprite();
+
+	state = EnemyState::Patrol;
 	maxHp = 5;
 	hp = maxHp;
-	
-	
-	
 }
 
 void BasicEnemy::Update(float dt)
@@ -41,17 +40,17 @@ void BasicEnemy::Update(float dt)
 	}
 	if (state == EnemyState::Patrol)
 	{
-		moveTimer += dt;
-		if (moveTimer > 2)
+	moveTimer += dt;
+	if (moveTimer > 2)
+	{
+		if (moveTimer > 3)
 		{
-			
-			if (moveTimer > 3)
-			{
-				direction = (Direction)Utils::RandomRange(0, 4);
-				moveTimer = 0;
-				ChangeSprite();
-			}
+			direction = (Direction)Utils::RandomRange(0, 4);
+			moveTimer = 0;
+			ChangeSprite();
 		}
+	}
+	
 	}
 	else if (state == EnemyState::Chase)
 	{
@@ -59,17 +58,18 @@ void BasicEnemy::Update(float dt)
 		moveTimer = 0;
 	}
 	velocity = dir * speed;
-	position += velocity * dt;
-;	SetPosition(position);
+	position += velocity *dt;
+	SetPosition(position);
+	boundBox.rect.setPosition(GetPosition());
 }
 
 void BasicEnemy::ChangeSprite()
 {
 	velocity = { 0,0 };
+
 	switch (direction)
 	{
 	case  Direction::Up:
-		
 		body.setTextureRect({ 7,924,24,25 });
 		dir = { 0.f,-1.f };
 		break;
@@ -88,5 +88,6 @@ void BasicEnemy::ChangeSprite()
 		SetScale({ -1.f,1.f });
 		break;
 	}
+
 }
 

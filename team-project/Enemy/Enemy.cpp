@@ -113,15 +113,12 @@ void Enemy::Update(float dt)
 	LastHit += dt;
 	// 매 프레임마다 피격 가능 상태로 초기화
 	isHitThisFrame = false;
-
-	animator.Update(dt);
 	
 	if (!player->IsAttacking() && player->checkCollision(hitBox))
 	{
 		player->TakeDamageIfPossible(1);
 	}
 	
-
 	
 	hitBox.rect.setScale(GetScale());
 	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{4 * GetScale().x,6*GetScale().y});

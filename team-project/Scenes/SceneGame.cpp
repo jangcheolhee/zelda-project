@@ -102,10 +102,8 @@ void SceneGame::UpdateZones()
 			{
 				zone.entered = true;
 				zoneID = zone.zoneId;
-
 				changeZone = true;
 				zone.onEnter();
-
 				SpawnInteractableObject(zone.bounds);
 				SpawnFlowers(zone.bounds);
 				SpawnSquareHitBox();
@@ -115,10 +113,6 @@ void SceneGame::UpdateZones()
 		else if (!nowInZone && zone.entered)
 		{
 			zone.entered = false;
-
-
-
-
 			if (zone.onExit)
 			{
 				zone.onExit();
@@ -233,11 +227,8 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 		case Interactable::Type::Chest:
 			break;
 		case Interactable::Type::JumpWall:
-		{
-
 			inter = (JumpWall*)AddGameObject(new JumpWall());
 			break;
-		}
 		case Interactable::Type::Heart:
 			inter = (Heart*)AddGameObject(new Heart());
 			break;
@@ -327,10 +318,9 @@ void SceneGame::CheckCollison()
 	{
 		for (auto& enemy : enemyList)
 		{
-			if (Utils::CheckCollision(obj->GetHitBox().rect, enemy->GetHitBox().rect))
+			if (Utils::CheckCollision(obj->GetHitBox().rect, enemy->GetBoundBox().rect))
 			{
 				enemy->SetPosition(enemy->GetPos());
-
 			}
 		}
 		if (dynamic_cast<Bush*> (obj))
@@ -339,7 +329,7 @@ void SceneGame::CheckCollison()
 			{
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
-					int r = Utils::RandomRange(0, 3);
+					int r = Utils::RandomRange(0, 4);
 					switch (r)
 					{
 					case 0:
@@ -356,7 +346,6 @@ void SceneGame::CheckCollison()
 					obj->OnInteract();
 					continue;
 				}
-
 			}
 		}
 		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))

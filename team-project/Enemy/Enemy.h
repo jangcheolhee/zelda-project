@@ -85,6 +85,6 @@ public:
 
 	void DeathAnimation();
 	HitBox GetHitBox() { return hitBox; };
-	
+	HitBox GetBoundBox() { return boundBox; };
 };
 

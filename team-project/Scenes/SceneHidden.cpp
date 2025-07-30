@@ -10,7 +10,6 @@
 #include "JumpWall.h"
 #include <istream>
 
-
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
 	player = nullptr;
