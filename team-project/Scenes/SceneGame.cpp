@@ -145,15 +145,12 @@ void SceneGame::UpdateBehaviorZone(float dt)
 	float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, mapZones[zoneID - 1].bounds.top + worldView.getSize().y / 2, mapZones[zoneID - 1].bounds.top + mapZones[0].bounds.height - worldView.getSize().y / 2);
 	if (changeZone)
 	{
-
 		worldView.setCenter(Utils::Lerp(worldView.getCenter(), { x,y }, dt * 2));
-		
 		if (Utils::Distance(worldView.getCenter(), { x,y }) > 1 && Utils::Distance(worldView.getCenter(), { x,y }) < 5)
 		{
-			std::cout << Utils::Distance(worldView.getCenter(), { x,y }) << std::endl;
+			//std::cout << Utils::Distance(worldView.getCenter(), { x,y }) << std::endl;
 			changeZone = false;
 		}
-
 	}
 	else
 	{
@@ -244,7 +241,6 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 			j->SetBounds(wallX, wallY, wallWithdh, wallHeight);
 			inter = (Interactable*)AddGameObject(j);
 			break;
-
 		}
 		case Interactable::Type::Heart:
 			inter = (Heart*)AddGameObject(new Heart());
@@ -454,7 +450,6 @@ void SceneGame::SpawnSquareHitBox()
 	}
 }
 
-// Scene 종료시 Interatables 비우거나 pool로 변경하거나 하는 수정 필요
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {
 	//layer 1 : bush
@@ -466,9 +461,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{//bush
-
 				SpawnInteractable(pos, Interactable::Type::Throw);
-
 			}
 		}
 	}
@@ -483,7 +476,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
 				SpawnInteractable(pos, Interactable::Type::Npc);
-
 			}
 		}
 	}
@@ -524,7 +516,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		}
 	}
 }
-// 🔸 Enemy 삭제 (→ 풀에 리사이클)
+
 void SceneGame::DeleteEnemy()
 {
 	for (Enemy* e : enemyList)
@@ -602,7 +594,6 @@ void SceneGame::Update(float dt)
 {
 
 	Scene::Update(dt);
-	//std::cout << player->GetPosition().x << " : " << player->GetPosition().y << std::endl;
 	auto it = enemyList.begin();
 	while (it != enemyList.end())
 	{
