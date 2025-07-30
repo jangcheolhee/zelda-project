@@ -109,4 +109,6 @@ public:
 	void HandleMovement(float dt);
 
 	bool IsAttacking() const;
+
+	bool isNpcTalk = 0;
 };

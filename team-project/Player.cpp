@@ -158,6 +158,8 @@ void Player::Reset()
 }
 void Player::Update(float dt)
 {
+	if (isNpcTalk) return;
+
 	previousPosition = GetPosition();
 	timeSinceLastDamage += dt;
 	// 깜빡임 무적 처리

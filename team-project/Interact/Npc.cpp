@@ -79,10 +79,25 @@ void Npc::OnInteract()
     rect.width += 4.f;
     rect.height += 4.f;
 
-    if (rect.intersects(GetGlobalBounds())&&npcSay==0)
+    if (rect.intersects(GetGlobalBounds())&&npcSay==0&&sayCount<2)
     {
-        std::cout << "Don't Do That!" << std::endl;
-        npcSay = !npcSay;
+        player->isNpcTalk = 1;
+        if (sayCount == 0)
+        {
+            sayCount++;
+            std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+        }
+        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+        {
+            sayCount++;
+            std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+        }
+        if (sayCount == 2)
+        {
+            sayCount = 0;
+            npcSay = !npcSay;
+            player->isNpcTalk = 0;
+        }
     }
 }
 
