@@ -764,7 +764,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-				std::cout << "jumpwall" << pos.x << std::endl;
 				auto inter = new JumpWall();
 				switch (id)
 				{
