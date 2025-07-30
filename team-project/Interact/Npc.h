@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Interactable.h"
-
+class SpriteGo;
 class Npc : public Interactable
 {
 public:
@@ -17,14 +17,14 @@ protected:
 	bool npcSay=0;
 	int sayCount = 0;
 	
-	sf::Sprite talkUI;
+	SpriteGo* conversation;
 
 	Type type = Type::None;
 
 public:
 
 	Npc(const std::string& name = "");
-	~Npc() = default;
+	~Npc();
 
 	void SetPlayer(Player* p);
 	void DirectionSprite(Direction dir);
@@ -39,6 +39,5 @@ public:
 	void Init();
 	void Reset();
 	void Update(float dt);
-	
-	//void Draw(sf::RenderWindow& window) override;
+	void Draw(sf::RenderWindow& window) override;
 };

@@ -7,6 +7,16 @@
 
 Npc::Npc(const std::string& name)
 {
+    conversation = nullptr;
+}
+
+Npc::~Npc()
+{
+    if (conversation != nullptr)
+    {
+        delete conversation;
+        conversation = nullptr;
+    }
 }
 
 void Npc::SetPlayer(Player* p)
@@ -98,13 +108,15 @@ void Npc::OnInteract()
         {
             player->isNpcTalk = 1;
 
-            auto conversation = new SpriteGo();
-            conversation->SetName("Conversation");
-            conversation->Init();
-            conversation->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/conversation.png"));
-            conversation->SetActive(1);
-            conversation->SetOrigin(Origins::MC);
-            conversation->SetPosition({ 100.f,100.f });
+            if (conversation == nullptr)
+            {
+                conversation = new SpriteGo("graphics/conversation.png", "Conversation");
+                conversation->Init();
+                conversation->Reset();
+                conversation->SetActive(1);  
+                conversation->SetOrigin(Origins::MC);
+                conversation->SetPosition({ 100.f, 100.f });
+            }
 
             if (sayCount == 0)
             {
@@ -121,6 +133,12 @@ void Npc::OnInteract()
             }
             if (sayCount == 2)
             {
+                if (conversation != nullptr)
+                {
+                    delete conversation;
+                    conversation = nullptr;
+                }
+
                 conversation->SetActive(0);
                 sayCount = 0;
                 npcSay = !npcSay;
@@ -149,6 +167,12 @@ void Npc::Reset()
     Interactable::Reset();
     currentDirection = Direction::Down;
     DirectionSprite(currentDirection);
+
+    if (conversation != nullptr)
+    {
+        delete conversation;
+        conversation = nullptr;
+    }
 }
 
 void Npc::Update(float dt)
@@ -165,10 +189,18 @@ void Npc::Update(float dt)
         }
     }
     OnInteract();
+
+    if (conversation != nullptr)
+    {
+        conversation->Update(dt);
+    }
 }
 
-//void Npc::Draw(sf::RenderWindow& window)
-//{
-//    Interactable::Draw(window);
-//    conversation->Draw(window);
-//}
+void Npc::Draw(sf::RenderWindow& window)
+{
+    Interactable::Draw(window);
+    if (conversation != nullptr)
+    {
+        conversation->Draw(window);
+    }
+}
