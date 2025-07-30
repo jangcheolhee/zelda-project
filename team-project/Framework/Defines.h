@@ -23,6 +23,7 @@ enum class SceneIds
 	//Test,
 	Game,
 	Hidden,
+	Castle,
 	Count,
 };
 

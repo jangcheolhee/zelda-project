@@ -225,7 +225,6 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 			break;
 		case Interactable::Type::JumpWall:
 		{
-			
 			inter = (Interactable*)AddGameObject(new JumpWall());
 			break;
 		}
@@ -283,7 +282,6 @@ void SceneGame::SpawnFlowers(sf::FloatRect zone)
 			flower->SetPosition(pos);
 			AddGameObject(flower);
 			flowers.push_back(flower);
-
 		}
 	}
 }
@@ -352,7 +350,6 @@ void SceneGame::CheckCollison()
 					obj->OnInteract();
 					continue;
 				}
-
 			}
 		}
 
@@ -779,7 +776,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-				/*auto inter = new JumpWall();
+				auto inter = new JumpWall();
 				switch (id)
 				{
 				case 25075:
@@ -798,11 +795,15 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 					break;
 				}
 				AddGameObject(inter);
-				interactables.push_back(inter);
+				interactList.push_back(inter);
 				inter->SetOrigin(Origins::TC);
 				inter->Reset();
-				inter->SetPosition(pos);*/
+				inter->SetPosition(pos);
 
+				/*HitBox hitbox;
+				sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
+				hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
+				collisions.push_back(hitbox);*/
 			}
 		}
 	}
@@ -829,6 +830,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
+	texIds.push_back("graphics/conversation.png");
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
@@ -869,7 +871,6 @@ void SceneGame::Exit()
 
 void SceneGame::Enter()
 {
-
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
@@ -883,7 +884,6 @@ void SceneGame::Enter()
 
 void SceneGame::Update(float dt)
 {
-
 	Scene::Update(dt);
 	auto it = enemyList.begin();
 	while (it != enemyList.end())

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Defines.h"
 #include "Npc.h"
+#include "SpriteGo.h"
 #include "Player.h"
 #include <cmath>
 
@@ -80,20 +81,33 @@ void Npc::OnInteract()
     rect.height += 4.f;
 
     if (rect.intersects(GetGlobalBounds())&&npcSay==0&&sayCount<2)
-    {
+    {          
         player->isNpcTalk = 1;
+        
+        auto conversation = new SpriteGo();
+        conversation->SetName("Conversation");
+        conversation->Init();
+        conversation->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/conversation.png"));
+        conversation->SetActive(1);
+        conversation->SetOrigin(Origins::MC);
+        conversation->SetPosition({ 100.f,100.f });
+
         if (sayCount == 0)
         {
             sayCount++;
+
+            //textGo ¶ç¿ì±â
             std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
             sayCount++;
+            //textGo ¶ç¿ì±â
             std::cout << "You Can Do It! Bye." << sayCount << std::endl;
         }
         if (sayCount == 2)
         {
+            conversation->SetActive(0);
             sayCount = 0;
             npcSay = !npcSay;
             player->isNpcTalk = 0;
@@ -128,3 +142,9 @@ void Npc::Update(float dt)
     }
     OnInteract();
 }
+
+//void Npc::Draw(sf::RenderWindow& window)
+//{
+//    Interactable::Draw(window);
+//    conversation->Draw(window);
+//}

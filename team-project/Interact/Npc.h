@@ -1,14 +1,17 @@
 ﻿#pragma once
 #include "Interactable.h"
+#include "SpriteGo.h"
 
 class Npc : public Interactable
 {
 protected:
 	Direction currentDirection;
 	HitBox hitbox;
+
 	bool npcSay=0;
 	int sayCount = 0;
 
+	SpriteGo* conversation;
 public:
 
 	Npc(const std::string& name = "");
@@ -23,4 +26,6 @@ public:
 	void Init();
 	void Reset();
 	void Update(float dt);
+	
+	//void Draw(sf::RenderWindow& window) override;
 };

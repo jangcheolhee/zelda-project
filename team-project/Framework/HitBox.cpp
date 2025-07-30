@@ -25,7 +25,6 @@ void HitBox::UpdateTransformCollision(const sf::Transformable& tr, const sf::Flo
 	rect.setPosition(pos);
 	rect.setScale(tr.getScale());
 	rect.setRotation(tr.getRotation());
-
 }
 
 void HitBox::Draw(sf::RenderWindow& window)
