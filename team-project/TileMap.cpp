@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TileMap.h"
 #include "SceneGame.h"
 #include <fstream>
@@ -55,7 +55,7 @@ bool TileMap::LoadTileMap(const std::string& tilePath)
     //Ÿ�� �׸���
     for (const auto& layer : tmJ["layers"])
     {
-        if (layer["name"] == "Tile Layer 10: Test3") continue;
+        if (layer["name"] == "Collision") continue;
         //data
         const std::vector<int>& data = layer["data"];
         for (int y = 0; y < mapHeight; ++y)
@@ -168,7 +168,7 @@ bool TileMap::LoadHitboxLayer(HitboxCorners& outCorners)
     for (const auto& layer : layers)
     {
         if (layer["type"] != "tilelayer") continue;
-        if (layer["name"] != "Tile Layer 10: Test3") continue;
+        if (layer["name"] != "Collision") continue;
 
         const std::vector<int>& data = layer["data"];
 

@@ -1,17 +1,26 @@
 ﻿#pragma once
 #include "Interactable.h"
-#include "SpriteGo.h"
 
 class Npc : public Interactable
 {
+public:
+	enum class Type
+	{
+		None = -1,
+		Guard,
+		Daddy,
+	};
 protected:
 	Direction currentDirection;
 	HitBox hitbox;
 
 	bool npcSay=0;
 	int sayCount = 0;
+	
+	sf::Sprite talkUI;
 
-	SpriteGo* conversation;
+	Type type = Type::None;
+
 public:
 
 	Npc(const std::string& name = "");
@@ -20,6 +29,10 @@ public:
 	void SetPlayer(Player* p);
 	void DirectionSprite(Direction dir);
 	Direction GetDirectionToPlayer();
+
+	void DaddySprite();
+
+	Type GetType() const { return type; }
 
 	// Interactable
 	void OnInteract() override;

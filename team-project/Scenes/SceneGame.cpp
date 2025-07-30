@@ -724,14 +724,14 @@ void SceneGame::SpawnSquareHitBox()
 		{
 			HitBox hitbox;
 			hitbox.UpdateTransformCollision(collisionBox, candidate.rect,
-				sf::Vector2f(candidate.rect.left, candidate.rect.top));
+				sf::Vector2f(candidate.rect.left+4, candidate.rect.top+4));
 			collisions.push_back(hitbox);
 			createdRects.push_back(candidate.rect);
 			processedTopLefts.insert(tlKey);
 
 			SpawnInteractable(sf::Vector2f{ wallX, wallY }, Interactable::Type::JumpWall);
-			wallX = candidate.rect.left;
-			wallY = candidate.rect.top;
+			wallX = candidate.rect.left+4;
+			wallY = candidate.rect.top+4;
 			wallWithdh = candidate.rect.width;
 			wallHeight = candidate.rect.height;
 		}
@@ -800,10 +800,10 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				inter->Reset();
 				inter->SetPosition(pos);
 
-				/*HitBox hitbox;
+				HitBox hitbox;
 				sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
 				hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
-				collisions.push_back(hitbox);*/
+				collisions.push_back(hitbox);
 			}
 		}
 	}
