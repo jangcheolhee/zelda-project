@@ -312,15 +312,63 @@ void SceneGame::CheckCollison()
 			enemy->OnCollide(player);
 		}
 	}
-
-
 	for (auto& obj : interactList)
 	{
 		for (auto& enemy : enemyList)
 		{
 			if (Utils::CheckCollision(obj->GetHitBox().rect, enemy->GetBoundBox().rect))
 			{
-				enemy->SetPosition(enemy->GetPos());
+				//enemy->SetPosition(enemy->GetPos());
+
+				sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
+				sf::FloatRect enemyRect = enemy->GetBoundBox().rect.getGlobalBounds();
+
+				float objX = objRect.left + objRect.width / 2.f;
+				float objY = objRect.top + objRect.height / 2.f;
+
+				float enemyX = enemyRect.left + enemyRect.width / 2.f;
+				float enemyY = enemyRect.top + enemyRect.height / 2.f;
+				
+				float dx = objX - enemyX;
+				float dy = objY - enemyY;
+
+				float combinedHalfWidth = (objRect.width + enemyRect.width) / 2.f;
+				float combinedHalfHeight = (objRect.height + enemyRect.height) / 2.f;
+
+				float overlapX = combinedHalfWidth - std::abs(dx);
+				float overlapY = combinedHalfHeight - std::abs(dy);
+
+				if (overlapX < overlapY)
+				{
+					
+					if (dx < 0)
+					{
+						//왼쪽
+						enemy->OnCollide(Direction::Left);
+					}
+						
+					else
+					{
+						enemy->OnCollide(Direction::Right);
+						//오른쪽
+					}
+						
+				}
+				else
+				{
+					if (dy < 0)
+					{
+						enemy->OnCollide(Direction::Up);
+						//위
+					}
+						
+					else
+					{
+						enemy->OnCollide(Direction::Down);
+						//아래
+					}
+						
+				}
 			}
 		}
 		if (dynamic_cast<Bush*> (obj))

@@ -42,6 +42,25 @@ void Enemy::SetOrigin(Origins preset)
 
 
 
+void Enemy::OnCollide(Direction direction)
+{
+	switch (direction)
+	{
+	case Direction::Left : 
+		position.x += 0.5;
+		break;
+	case Direction::Right:
+		position.x -= 0.5;
+		break;
+	case Direction::Up: 
+		position.y += 0.5;
+		break;
+	case Direction::Down:
+		position.y -= 0.5;
+		break;
+	}
+}
+
 void Enemy::OnCollide(Player* player)
 {
 	//std::cout << 1345;

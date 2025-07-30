@@ -40,16 +40,14 @@ void BasicEnemy::Update(float dt)
 	}
 	if (state == EnemyState::Patrol)
 	{
-	moveTimer += dt;
-	if (moveTimer > 2)
-	{
+		moveTimer += dt;
+	
 		if (moveTimer > 3)
 		{
 			direction = (Direction)Utils::RandomRange(0, 4);
 			moveTimer = 0;
 			ChangeSprite();
 		}
-	}
 	
 	}
 	else if (state == EnemyState::Chase)

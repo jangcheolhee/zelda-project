@@ -66,7 +66,7 @@ public:
 	{
 		return body.getGlobalBounds();
 	}
-
+	virtual void OnCollide(Direction direction);
 	void OnCollide(Player* player);
 	int GetDamage() { return damage; }
 

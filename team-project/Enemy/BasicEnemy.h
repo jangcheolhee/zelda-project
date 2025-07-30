@@ -28,6 +28,5 @@ public:
 	void Update(float dt) override;
 	void ChangeSprite();
 
-	
 };
 
