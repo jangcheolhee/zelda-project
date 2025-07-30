@@ -51,5 +51,5 @@ void JumpWall::SetBounds(float x, float y, float width, float height)
 
 void JumpWall::Draw(sf::RenderWindow& window)
 {
-	window.draw(body);
+	//window.draw(body);
 }

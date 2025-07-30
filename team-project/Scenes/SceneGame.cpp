@@ -234,9 +234,8 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 			break;
 		case Interactable::Type::JumpWall:
 		{
-			JumpWall* j = new JumpWall();
-			j->SetBounds(wallX, wallY, wallWithdh, wallHeight);
-			inter = (Interactable*)AddGameObject(j);
+			
+			inter = (Interactable*)AddGameObject(new JumpWall());
 			break;
 		}
 		case Interactable::Type::Heart:
@@ -254,7 +253,10 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 		inter->Init();
 
 	}
-	
+	if (dynamic_cast<JumpWall*>(inter))
+	{
+		dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+	}
 	inter->Reset();
 	inter->SetActive(true);
 	inter->SetPosition(pos);
@@ -743,6 +745,11 @@ void SceneGame::SpawnSquareHitBox()
 			collisions.push_back(hitbox);
 			createdRects.push_back(candidate.rect);
 			processedTopLefts.insert(tlKey);
+			SpawnInteractable(sf::Vector2f{ wallX, wallY }, Interactable::Type::JumpWall);
+			wallX = candidate.rect.left;
+			wallY = candidate.rect.top;
+			wallWithdh = candidate.rect.width;
+			wallHeight = candidate.rect.height;
 		}
 	}
 }
