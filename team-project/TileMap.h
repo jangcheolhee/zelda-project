@@ -1,7 +1,15 @@
-#pragma once
+﻿#pragma once
 #include "stdafx.h"
 #include "GameObject.h"
 #include "Enemy.h"
+
+struct HitboxCorners
+{
+    std::vector<sf::Vector2f> topLefts;
+    std::vector<sf::Vector2f> topRights;
+    std::vector<sf::Vector2f> bottomRights;
+    std::vector<sf::Vector2f> bottomLefts;
+};
 
 struct Tileset
 {
@@ -33,6 +41,7 @@ public:
     bool LoadTileMap(const std::string& tilePath);
     sf::Vector2f getPosition(int layerIndex, int targetGid); //return pos
     std::vector<sf::Vector2f> getPositions(int layerIndex, int targetGid); //return <vector>positions
+    bool LoadHitboxLayer(HitboxCorners& outCorners);
 
     void Init() override;
     void Release() override;

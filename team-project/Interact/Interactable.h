@@ -53,7 +53,6 @@ public:
 
 	sf::FloatRect GetGlobalBounds() const override
 	{
-
 		sf::FloatRect rect = body.getGlobalBounds();
 		rect.left -= 2.f;
 		rect.top -= 2.f;

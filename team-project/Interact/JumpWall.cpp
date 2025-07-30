@@ -3,7 +3,6 @@
 #include "Player.h"
 void JumpWall::OnInteract()
 {
-
 	if (direction == player->GetDirection())
 	{
 		switch (direction)
@@ -26,7 +25,6 @@ void JumpWall::OnInteract()
 		}
 		player->SetPosition(player->GetGlobalBounds().getPosition() + dir * GetLocalBounds().width);
 	}
-
 }
 
 void JumpWall::Init()
@@ -43,7 +41,6 @@ void JumpWall::Reset()
 	body.setFillColor(sf::Color(0, 255, 0, 80));
 	body.setOutlineColor(sf::Color::Green);
 	body.setOutlineThickness(1.f);
-
 }
 
 void JumpWall::SetBounds(float x, float y, float width, float height)
