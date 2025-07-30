@@ -4,8 +4,6 @@
 #include "Player.h"
 #include <cmath>
 
-//npc 별로 스폰하기
-
 Npc::Npc(const std::string& name)
 {
 }
@@ -75,14 +73,17 @@ Direction Npc::GetDirectionToPlayer()
 
 void Npc::OnInteract()
 {
-    if (player)
+    sf::FloatRect rect = player->GetGlobalBounds();
+    rect.left -= 2.f;
+    rect.top -= 2.f;
+    rect.width += 4.f;
+    rect.height += 4.f;
+
+    if (rect.intersects(GetGlobalBounds())&&npcSay==0)
     {
-        if (GetGlobalBounds().contains(player->GetGlobalBounds().getPosition()))
-        {
-            std::cout << "HI" << std::endl;
-        }
+        std::cout << "Don't Do That!" << std::endl;
+        npcSay = !npcSay;
     }
-   
 }
 
 void Npc::Init()
@@ -95,7 +96,6 @@ void Npc::Reset()
     Interactable::Reset();
     currentDirection = Direction::Down;
     DirectionSprite(currentDirection);
-    type = Type::Npc;
 }
 
 void Npc::Update(float dt)

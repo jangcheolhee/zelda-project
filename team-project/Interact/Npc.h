@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include "Interactable.h"
-class Player;
 
 class Npc : public Interactable
 {
 protected:
-	Player* player;
 	Direction currentDirection;
+	HitBox hitbox;
+	bool npcSay=0;
+	int sayCount = 0;
 
 public:
 
@@ -17,7 +18,7 @@ public:
 	void DirectionSprite(Direction dir);
 	Direction GetDirectionToPlayer();
 
-	// Interactable��(��) ���� ��ӵ�
+	// Interactable
 	void OnInteract() override;
 	void Init();
 	void Reset();

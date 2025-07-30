@@ -116,9 +116,6 @@ void SceneGame::UpdateZones()
 		{
 			zone.entered = false;
 
-
-
-			
 			if (zone.onExit)
 			{
 				zone.onExit();
@@ -130,9 +127,6 @@ void SceneGame::UpdateZones()
 				RemoveGameObject(f);
 			}
 			flowers.clear();
-
-
-
 		}
 	}
 }
@@ -158,7 +152,6 @@ void SceneGame::UpdateBehaviorZone(float dt)
 	//case 1:
 	//break;
 	//}
-	
 }
 
 void SceneGame::DeleteInteractables()
@@ -169,8 +162,6 @@ void SceneGame::DeleteInteractables()
 		interactPool[inter->GetType()].push_back(inter);
 	}
 	interactList.clear();
-
-
 }
 void SceneGame::RecycleEnemy(Enemy* enemy)
 {
@@ -329,10 +320,8 @@ void SceneGame::CheckCollison()
 	rect.height += 4.f;
 	for (auto& obj : interactList)
 	{
-
 		for (auto& enemy : enemyList)
 		{
-
 			if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 			{
 				enemy->SetPosition(enemy->GetPos());
@@ -350,15 +339,12 @@ void SceneGame::CheckCollison()
 					{
 					case 0:
 					{
-
 						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 3,-16 }), Interactable::Type::Rupee);
-
 						break;
 					}
 
 					case 1:
 					{
-
 						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 4,-4 }), Interactable::Type::Heart);
 						break;
 					}
@@ -745,6 +731,7 @@ void SceneGame::SpawnSquareHitBox()
 			collisions.push_back(hitbox);
 			createdRects.push_back(candidate.rect);
 			processedTopLefts.insert(tlKey);
+
 			SpawnInteractable(sf::Vector2f{ wallX, wallY }, Interactable::Type::JumpWall);
 			wallX = candidate.rect.left;
 			wallY = candidate.rect.top;

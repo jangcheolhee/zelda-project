@@ -114,7 +114,6 @@ void Player::Init()
 	// Down
 	animations[Direction::Down] = AnimationIO::loadFromCSV("animations/Link_down.csv");
 
-
 	// Right
 	animations[Direction::Right] = AnimationIO::loadFromCSV("animations/Link_right.csv");
 	// Left
@@ -135,7 +134,6 @@ void Player::Init()
 			<< static_cast<int>(currentDirection)
 			<< "\n";
 	}
-
 
 	body.setScale(1.0f, 1.0f); // ũ�� ����
 

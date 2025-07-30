@@ -63,14 +63,12 @@ void Interactable::Reset()
 		sceneGame = nullptr;
 	}
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
-	
 }
 
 void Interactable::Update(float dt)
 {
 	animator.Update(dt);
-	if (!GetActive())
-		return;
+	if (!GetActive()) return;
 
 	switch (type)
 	{
