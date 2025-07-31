@@ -12,6 +12,8 @@
 #include "HUD.h"
 #include "HitboxGenerator.h"
 #include <istream>
+#include "InventoryUI.h"
+
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -350,18 +352,35 @@ void SceneGame::CheckCollison()
 				}
 				else
 				{
-					if (dy < 0)
+					obj->OnInteract();
+
+					Rupee* rupee = dynamic_cast<Rupee*>(obj);
+					if (rupee != nullptr)
 					{
-						enemy->OnCollide(Direction::Up);
-						//위
+						HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD")); // 또는 멤버 변수로 접근 가능
+						if (hud != nullptr)
+						{
+							hud->AddRupee(1);  // 루피 1 증가
+						}
 					}
-						
-					else
+
+					continue;
+				}
+				Heart* heart = dynamic_cast<Heart*>(obj);
+				if (heart != nullptr)
+				{
+					if (player != nullptr)
 					{
-						enemy->OnCollide(Direction::Down);
-						//아래
+						player->Heal(1); // ❤️ Player가 체력 회복
 					}
-						
+
+					obj->OnInteract(); // 아이템 제거
+					continue;
+				}
+				player->SetPosition(player->GetPos());
+				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
+				{
+					obj->OnInteract();
 				}
 			}
 		}
@@ -433,16 +452,16 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	int layer1Gid[] = { 24670, 24590 };
 	for (int id : layer1Gid)
 	{
-		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
-		for (const auto& pos : positions)
+		//layer 1 : bush
+		int layer1Gid[] = { 24670, 24590 };
+		for (int id : layer1Gid)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{//bush
 				SpawnInteractable(pos, Interactable::Type::Throw);
 			}
 		}
-	}
-
+	
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
@@ -517,6 +536,8 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Items.png");
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
+	texIds.push_back("graphics/inventory.png");
+	//texIds.push_back("graphics/Heart.png");
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
@@ -527,11 +548,21 @@ void SceneGame::Init()
 	//ANI_CLIP_MGR.Load("animations/run.csv");
 	//ANI_CLIP_MGR.Load("animations/jump.csv");
 
+	hud = new HUD("HUD");
+	AddGameObject(hud);
 	player = new Player("Player");
+	player->SetHUD(hud);
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
-	AddGameObject(new HUD());
+	TEXTURE_MGR.Load("graphics/Heart.png");
+	TEXTURE_MGR.Load("graphics/Heart_empty.png");
+	
+	inventoryUI = new InventoryUI();
+	inventoryUI->Init();
+	inventoryUI->sortingLayer = SortingLayers::UI;
+	inventoryUI->sortingOrder = 10;//우선순위높음
+	AddGameObject(inventoryUI);
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 
@@ -578,6 +609,9 @@ void SceneGame::Enter()
 	player->SetPosition(startPos);
 }
 
+
+
+
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
@@ -619,6 +653,11 @@ void SceneGame::Update(float dt)
 		std::cout << "Hidden" << std::endl;
 		SCENE_MGR.ChangeScene(SceneIds::Hidden);
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
+	{
+		bool toggle = !inventoryUI->IsVisible();
+		inventoryUI->SetActive(toggle);
+	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
 	{
 		std::cout << "Hidden" << std::endl;
@@ -636,10 +675,16 @@ void SceneGame::Update(float dt)
 
 void SceneGame::Draw(sf::RenderWindow& window)
 {
+	window.setView(window.getDefaultView());
+	hud->Draw(window);
+	// 💡 UI는 기본 뷰로 바꿔서 그리기
+	if (inventoryUI->IsActive()) 
+	{
+		inventoryUI->Draw(window);
+	}
+	sf::View prev = window.getView();
+	window.setView(prev); // 원래 뷰로 복구
 	Scene::Draw(window);
-	//window.setView(worldView);
-	//for (auto& col : collisions)
-	//{
-	//	col.Draw(window);
-	//}
+	
+
 }

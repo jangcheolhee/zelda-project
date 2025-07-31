@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Player.h"
 #include "AnimationClip.h"
+#include "HUD.h"
 
 
 Player::Player(const std::string& name)
@@ -396,11 +397,16 @@ void Player::TakeDamageIfPossible(int damage)
 }
 void Player::OnDamage(int damage)
 {
-	if (isInvincible) return;
+	//if (isInvincible) return;
 
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 
 	std::cout << "[Player] damage! " << damage << " ▶ HP: " << hp << "\n";
+	if (hud != nullptr)
+	{
+		// 💡 하트 개수 = hp / 2 (2 체력 = 1 하트)
+		hud->SetHeartCount(hp);  // ❤️ 하트 동기화
+	}
 
 	if (hp <= 0)
 	{
@@ -429,3 +435,14 @@ bool Player::IsAttacking() const
 {
 	return isAttacking;
 }
+
+void Player::Heal(int amount)
+{
+	hp = Utils::Clamp(hp + amount, 0, maxHp);
+	if (hud != nullptr)
+	{
+		hud->SetHeartCount(hp);
+
+	}
+}
+

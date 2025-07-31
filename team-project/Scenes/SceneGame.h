@@ -3,7 +3,10 @@
 #include "SpriteGo.h"
 #include "Enemy.h"
 #include "Interactable.h"
+#include "InventoryUI.h"
+#include "HUD.h"
 class Player;
+
 class TileMap;
 class HitBox;
 
@@ -31,6 +34,7 @@ protected:
 	bool changeZone = false;
 
 	Player* player;
+	HUD* hud;
 	TileMap* tileMapGame;
 
 	//std::vector<Interactable*> interactables;
@@ -42,6 +46,7 @@ protected:
 
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
+	bool showInventory=false;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
@@ -89,5 +94,7 @@ public:
 	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
-	void Draw(sf::RenderWindow& window) override;
+	void Draw(sf::RenderWindow& window)override;
+	Player* GetPlayer() const { return player; }
+	HUD* GetHUD() const { return hud; }
 };
