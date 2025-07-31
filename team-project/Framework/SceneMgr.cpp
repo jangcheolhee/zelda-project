@@ -3,12 +3,14 @@
 #include "SceneGame.h"
 #include "SceneHidden.h"
 #include "SceneSelect.h"
+#include "SceneCastle.h"
 
 void SceneMgr::Init()
 {
 	scenes.push_back(new SceneSelect());
 	scenes.push_back(new SceneGame());
 	scenes.push_back(new SceneHidden());
+	scenes.push_back(new SceneCastle());
 
 	for (auto scene : scenes)
 	{

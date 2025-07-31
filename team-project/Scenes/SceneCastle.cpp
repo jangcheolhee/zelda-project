@@ -180,35 +180,40 @@ void SceneCastle::SpawnFloorCovers()
 	AddGameObject(floor2DoorPathCover);
 
 	//second floor
-	//left Bridge
-	sf::Vector2f LeftBridgePos = tileMapCastle->getPosition(3, 8354);
+	if (!LeftBridge)
+	{
+		//left Bridge
+		sf::Vector2f LeftBridgePos = tileMapCastle->getPosition(3, 8354);
 
-	auto LeftBridge = new SpriteGo();
-	LeftBridge->SetName("LeftBridge");
-	LeftBridge->Init();
+		LeftBridge = new SpriteGo();
+		LeftBridge->SetName("LeftBridge");
+		LeftBridge->Init();
 
-	LeftBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
-	LeftBridge->GetSprite().setTextureRect({ 88, 88, 41, 64 });
+		LeftBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
+		LeftBridge->GetSprite().setTextureRect({ 88, 88, 41, 64 });
 
-	LeftBridge->SetActive(!isSecondFloor);
-	LeftBridge->SetOrigin(Origins::TL);
-	LeftBridge->SetPosition(LeftBridgePos);
-	AddGameObject(LeftBridge);
-
+		LeftBridge->SetActive(!isSecondFloor);
+		LeftBridge->SetOrigin(Origins::TL);
+		LeftBridge->SetPosition(LeftBridgePos);
+		AddGameObject(LeftBridge);
+	}
 	//right Bridge
-	sf::Vector2f RightBridgePos = tileMapCastle->getPosition(3, 8329);
+	if (!RightBridge)
+	{
+		sf::Vector2f RightBridgePos = tileMapCastle->getPosition(3, 8329);
 
-	auto RightBridge = new SpriteGo();
-	RightBridge->SetName("RightBridge");
-	RightBridge->Init();
+		RightBridge = new SpriteGo();
+		RightBridge->SetName("RightBridge");
+		RightBridge->Init();
 
-	RightBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
-	RightBridge->GetSprite().setTextureRect({ 928, 120, 64, 152 });
+		RightBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
+		RightBridge->GetSprite().setTextureRect({ 928, 120, 64, 152 });
 
-	RightBridge->SetActive(!isSecondFloor);
-	RightBridge->SetOrigin(Origins::TL);
-	RightBridge->SetPosition(RightBridgePos);
-	AddGameObject(RightBridge);
+		RightBridge->SetActive(!isSecondFloor);
+		RightBridge->SetOrigin(Origins::TL);
+		RightBridge->SetPosition(RightBridgePos);
+		AddGameObject(RightBridge);
+	}
 }
 
 void SceneCastle::DeleteInteractables()
@@ -286,6 +291,8 @@ void SceneCastle::Update(float dt)
 		{
 			std::cout << "1 Floor" << std::endl;
 			isSecondFloor = 0;
+			LeftBridge->SetActive(1);
+			RightBridge->SetActive(1);
 		}
 	}
 	for (const auto& sB : secondBounds)
@@ -294,6 +301,8 @@ void SceneCastle::Update(float dt)
 		{
 			std::cout << "2 Floor" << std::endl;
 			isSecondFloor = 1;
+			if (LeftBridge) LeftBridge->SetActive(0);
+			if (RightBridge) RightBridge->SetActive(0);
 		}
 	}
 	//if (endHole.contains(player->GetGlobalBounds().getPosition()))

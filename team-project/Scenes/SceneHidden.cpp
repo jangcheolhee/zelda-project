@@ -360,6 +360,10 @@ void SceneHidden::Update(float dt)
 		std::cout << "Hidden" << std::endl;
 		SCENE_MGR.ChangeScene(SceneIds::Hidden);
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Castle);
+	}
 }
 
 void SceneHidden::Draw(sf::RenderWindow& window)
