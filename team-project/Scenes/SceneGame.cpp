@@ -298,6 +298,7 @@ void SceneGame::FlowerBreath(float dt)
 	}
 }
 
+
 void SceneGame::CheckCollison()
 {
 	for (auto& enemy : enemyList)
@@ -308,6 +309,8 @@ void SceneGame::CheckCollison()
 			enemy->OnCollide(player);
 		}
 	}
+
+
 	for (auto& obj : interactList)
 	{
 		for (auto& enemy : enemyList)
@@ -324,7 +327,7 @@ void SceneGame::CheckCollison()
 
 				float enemyX = enemyRect.left + enemyRect.width / 2.f;
 				float enemyY = enemyRect.top + enemyRect.height / 2.f;
-				
+
 				float dx = objX - enemyX;
 				float dy = objY - enemyY;
 
@@ -336,54 +339,34 @@ void SceneGame::CheckCollison()
 
 				if (overlapX < overlapY)
 				{
-					
+
 					if (dx < 0)
 					{
 						//왼쪽
 						enemy->OnCollide(Direction::Left);
 					}
-						
+
 					else
 					{
 						enemy->OnCollide(Direction::Right);
 						//오른쪽
 					}
-						
-				}
-				else
-				{
-					obj->OnInteract();
-
-					Rupee* rupee = dynamic_cast<Rupee*>(obj);
-					if (rupee != nullptr)
+					if (dy < 0)
 					{
-						HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD")); // 또는 멤버 변수로 접근 가능
-						if (hud != nullptr)
-						{
-							hud->AddRupee(1);  // 루피 1 증가
-						}
+						//왼쪽
+						enemy->OnCollide(Direction::Up);
 					}
 
-					continue;
-				}
-				Heart* heart = dynamic_cast<Heart*>(obj);
-				if (heart != nullptr)
-				{
-					if (player != nullptr)
+					else
 					{
-						player->Heal(1); // ❤️ Player가 체력 회복
+						enemy->OnCollide(Direction::Down);
+						//오른쪽
 					}
 
-					obj->OnInteract(); // 아이템 제거
-					continue;
-				}
-				player->SetPosition(player->GetPos());
-				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
-				{
-					obj->OnInteract();
 				}
 			}
 		}
+
 		if (dynamic_cast<Bush*> (obj))
 		{
 			if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetBoundBox().rect))
@@ -409,11 +392,29 @@ void SceneGame::CheckCollison()
 				}
 			}
 		}
+
 		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
 		{
-			if (obj->GetType() == Interactable::Type::Heart || obj->GetType() == Interactable::Type::Rupee)
+			Rupee* rupee = dynamic_cast<Rupee*>(obj);
+			if (rupee != nullptr)
 			{
 				obj->OnInteract();
+				HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD")); // 또는 멤버 변수로 접근 가능
+				if (hud != nullptr)
+				{
+					hud->AddRupee(1);  // 루피 1 증가
+				}
+				continue;
+			}
+			Heart* heart = dynamic_cast<Heart*>(obj);
+			if (heart != nullptr)
+			{
+				obj->OnInteract();
+				if (player != nullptr)
+				{
+					player->Heal(1); // ❤️ Player가 체력 회복
+				}
+				obj->OnInteract(); // 아이템 제거
 				continue;
 			}
 			player->SetPosition(player->GetPos());
@@ -421,10 +422,11 @@ void SceneGame::CheckCollison()
 			{
 				obj->OnInteract();
 			}
-
 		}
+
 	}
 }
+
 
 void SceneGame::SpawnSquareHitBox()
 {
@@ -453,15 +455,15 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	for (int id : layer1Gid)
 	{
 		//layer 1 : bush
-		int layer1Gid[] = { 24670, 24590 };
-		for (int id : layer1Gid)
+		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
+		for (const auto& pos : positions)
 		{
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{//bush
 				SpawnInteractable(pos, Interactable::Type::Throw);
 			}
 		}
-	
+	}
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
@@ -502,16 +504,16 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				default:
 					break;
 				}
-				AddGameObject(inter);
-				interactList.push_back(inter);
-				inter->SetOrigin(Origins::TC);
-				inter->Reset();
-				inter->SetPosition(pos);
+				//AddGameObject(inter);
+				//interactList.push_back(inter);
+				//inter->SetOrigin(Origins::TC);
+				//inter->Reset();
+				//inter->SetPosition(pos);
 
-				HitBox hitbox;
-				sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
-				hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
-				collisions.push_back(hitbox);
+				//HitBox hitbox;
+				//sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
+				//hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
+				//collisions.push_back(hitbox);
 			}
 		}
 	}
@@ -541,7 +543,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
-	
+
 	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
@@ -557,7 +559,7 @@ void SceneGame::Init()
 	tileMapGame->Init();
 	TEXTURE_MGR.Load("graphics/Heart.png");
 	TEXTURE_MGR.Load("graphics/Heart_empty.png");
-	
+
 	inventoryUI = new InventoryUI();
 	inventoryUI->Init();
 	inventoryUI->sortingLayer = SortingLayers::UI;
@@ -678,13 +680,13 @@ void SceneGame::Draw(sf::RenderWindow& window)
 	window.setView(window.getDefaultView());
 	hud->Draw(window);
 	// 💡 UI는 기본 뷰로 바꿔서 그리기
-	if (inventoryUI->IsActive()) 
+	if (inventoryUI->IsActive())
 	{
 		inventoryUI->Draw(window);
 	}
 	sf::View prev = window.getView();
 	window.setView(prev); // 원래 뷰로 복구
 	Scene::Draw(window);
-	
+
 
 }

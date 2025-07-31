@@ -36,6 +36,7 @@ protected:
 	Player* player;
 	HUD* hud;
 	TileMap* tileMapGame;
+	InventoryUI* inventoryUI;
 
 	//std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;

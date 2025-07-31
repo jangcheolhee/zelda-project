@@ -2,8 +2,7 @@
 #include "GameObject.h"
 #include "InventoryUI.h"
 #include "HUD.h"
-class HUD :
-    public GameObject
+class HUD : public GameObject
 {
 protected:
 	sf::Sprite body;
@@ -12,7 +11,7 @@ protected:
 	sf::Sprite statusUI;
 	InventoryUI inventoryUI;
 	bool showStatus = true;
-	int hp = 6;          
+	int hp = 6;
 	int maxHp = 6;
 	//int heartCount;
 	sf::Text heartText;
@@ -38,11 +37,11 @@ public:
 
 	void AddRupee(int amount);
 	void AddHeart(int amount);
-	
+
 	void SetHeartCount(int newHp)
 	{
 		hp = std::clamp(newHp, 0, maxHp);
-			UpdateHeartSprites();
+		UpdateHeartSprites();
 	}
 	void UpdateHeartSprites();
 };

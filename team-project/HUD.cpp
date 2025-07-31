@@ -70,7 +70,7 @@ void HUD::Release()
 void HUD::Reset()
 {
 	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
-	body.setTextureRect({0,0,256,224});
+	body.setTextureRect({ 0,0,256,224 });
 	SetScale({ 2.f,2.f });
 }
 
@@ -82,14 +82,14 @@ void HUD::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
 	window.draw(rupeeText);  // 루피 텍스트 같이 그리기
-	
+
 	int heartsToDraw = (hp + 1) / 2;
-	
+
 	if (showStatus)
 	{
 		window.draw(statusUI);
 	}
-	
+
 	for (const auto& heart : heartSprites)
 	{
 		window.draw(heart);
@@ -104,7 +104,7 @@ void HUD::AddRupee(int amount)
 
 void HUD::AddHeart(int amount)
 {
-	SetHeartCount(hp + amount); 
+	SetHeartCount(hp + amount);
 }
 
 void HUD::UpdateHeartSprites()
