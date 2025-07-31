@@ -71,7 +71,6 @@ public:
 	void SpawnSquareHitBox();
 
 	void SpawnHiddenObject();
-	void DadddyEvent();
 
 	void Init() override;
 	void Enter() override;

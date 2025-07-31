@@ -85,13 +85,13 @@ Direction Npc::GetDirectionToPlayer()
 
 void Npc::DaddySprite()
 {
-    body.setTexture(TEXTURE_MGR.Get("graphics/HiddenPathToGarden.png"));
-    body.setTextureRect({ 217, 102, 30, 30 });
-    SetOrigin(Origins::MC);
+    body.setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
+    body.setTextureRect({ 218, 102, 28, 29 }); 
+    SetOrigin(Origins::TL); 
     SetScale({ 1, 1 });
 }
 
-void Npc::OnInteract()
+void Npc::HandleBasicNpcInteraction()
 {
     sf::FloatRect rect = player->GetGlobalBounds();
     rect.left -= 2.f;
@@ -99,65 +99,91 @@ void Npc::OnInteract()
     rect.width += 4.f;
     rect.height += 4.f;
 
-    //switch (type)
-    //{
-    //case Npc::Type::None:
-    //    break;
-    //case Npc::Type::Guard:
-    //{
-        if (rect.intersects(GetGlobalBounds()) && npcSay == 0 && sayCount < 2)
+    if (rect.intersects(GetGlobalBounds()) && npcSay == 0 && sayCount < 2)
+    {
+        player->isNpcTalk = 1;
+
+        if (player->isNpcTalk == 1)
         {
-            player->isNpcTalk = 1;
+            conversation = new SpriteGo("graphics/conversation.png", "Conversation");
+            conversation->Init();
+            conversation->Reset();
+            conversation->SetActive(1);
+            conversation->SetOrigin(Origins::MC);
+            conversation->SetScale({ 2.5f, 2.5f });
+            auto size = FRAMEWORK.GetWindowSizeF();
+            conversation->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+        }
 
-            if (player->isNpcTalk == 1)
+        if (sayCount == 0)
+        {
+            sayCount++;
+            std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+        }
+        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+        {
+            sayCount++;
+            std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+        }
+        if (sayCount == 2)
+        {
+            sayCount = 0;
+            npcSay = !npcSay;
+            player->isNpcTalk = 0;
+            if (player->isNpcTalk == 0)
             {
-                conversation = new SpriteGo("graphics/conversation.png", "Conversation");
-                conversation->Init();
-                conversation->Reset();
-                conversation->SetActive(1);
-                conversation->SetOrigin(Origins::MC);
-                conversation->SetScale({2.5f, 2.5f});
-                auto size = FRAMEWORK.GetWindowSizeF();
-                conversation->SetPosition({ size.x*0.5f, size.y*0.5f });
-            }
-
-            if (sayCount == 0)
-            {
-                sayCount++;
-
-                //textGo ����
-                std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
-            }
-            if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
-            {
-                sayCount++;
-                //textGo ����
-                std::cout << "You Can Do It! Bye." << sayCount << std::endl;
-            }
-            if (sayCount == 2)
-            {
-                sayCount = 0;
-                npcSay = !npcSay;
-                player->isNpcTalk = 0;
-                if (player->isNpcTalk == 0)
-                {
-                    delete conversation;
-                    conversation = nullptr;
-                }
-
-                //conversation->SetActive(0);
-                sayCount = 0;
-                npcSay = !npcSay;
-                player->isNpcTalk = 0;
+                delete conversation;
+                conversation = nullptr;
             }
         }
-    //}
-    //    break;
-    //case Npc::Type::Daddy:
-    //    break;
-    //default:
-    //    break;
-    //}
+    }
+}
+
+void Npc::HandleDadInteraction()
+{
+    if (!player) return;
+
+    sf::Vector2f playerPos = player->GetPosition();
+    sf::Vector2f dadPos = GetPosition();
+
+    float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
+
+    if (distance < 30.0f)
+    {
+        player->isNpcTalk = 1;
+
+        if (sayCount == 0)
+        {
+            sayCount++;
+            std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+        }
+        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+        {
+            sayCount++;
+            std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+        }
+        if (sayCount == 2)
+        {
+            npcSay = !npcSay;
+            player->isNpcTalk = 0;
+        }
+    }
+}
+
+void Npc::OnInteract()
+{
+    switch (npcType)
+    {
+    case Type::Basic:
+        HandleBasicNpcInteraction();
+        break;
+    case Type::Dad:
+        HandleDadInteraction();
+        break;
+    default:
+        HandleBasicNpcInteraction();
+        break;
+    }
 }
 
 void Npc::Init()
@@ -171,6 +197,11 @@ void Npc::Reset()
     currentDirection = Direction::Down;
     DirectionSprite(currentDirection);
 
+    if (npcType != Type::Dad)
+    {
+        DirectionSprite(currentDirection);
+    }
+
     if (conversation != nullptr)
     {
         delete conversation;
@@ -182,7 +213,7 @@ void Npc::Update(float dt)
 {
     Interactable::Update(dt);
 
-    if (player != nullptr)
+    if (player != nullptr && npcType != Type::Dad)
     {
         Direction newDirection = GetDirectionToPlayer();
         if (newDirection != currentDirection)
@@ -191,6 +222,7 @@ void Npc::Update(float dt)
             DirectionSprite(currentDirection);
         }
     }
+
     OnInteract();
 
     if (conversation != nullptr)

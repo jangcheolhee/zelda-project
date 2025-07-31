@@ -11,6 +11,7 @@
 #include <istream>
 #include "SceneCastle.h"
 #include "HitboxGenerator.h"
+#include "Npc.h"
 
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
@@ -238,52 +239,34 @@ void SceneHidden::SpawnHiddenObject()
 	hiddenPathCover->SetPosition(hiddenPathPos);
 	AddGameObject(hiddenPathCover);
 
-	//Daddy
+	//Dad
 	sf::Vector2f dadPos = tileMapHidden->getPosition(1, 1174);
 
-	dad = new SpriteGo();
-	dad->SetName("floor1DoorPathCovers");
-	dad->Init();
-
-	dad->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
-	dad->GetSprite().setTextureRect({ 218, 102, 28, 29 });
-
-	dad->SetActive(1);
-	dad->SetOrigin(Origins::TL);
-	dad->SetPosition(dadPos);
-	AddGameObject(dad);
-}
-
-void SceneHidden::DadddyEvent()
-{
-	if (!dad || !player) return;
-
-	sf::Vector2f playerPos = player->GetPosition();
-	sf::Vector2f dadPos = dad->GetPosition();
-
-	float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
-
-	if (distance < 30.0f)
+	Interactable* dadInteractable = nullptr;
+	auto& pool = interactPool[Interactable::Type::Npc];
+	if (!pool.empty())
 	{
-		player->isNpcTalk = 1;
+		dadInteractable = pool.front();
+		pool.pop_front();
+	}
+	else dadInteractable = (Interactable*)AddGameObject(new Npc());
 
-		if (sayCount == 0)
-		{
-			sayCount++;
+	if (auto npc = dynamic_cast<Npc*>(dadInteractable))
+	{
+		npc->SetNpcType(Npc::Type::Dad);
+		npc->SetPlayer(player);
 
-			std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
-		}
-		if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
-		{
-			sayCount++;
+		dadInteractable->Init();
+		dadInteractable->Reset();
 
-			std::cout << "You Can Do It! Bye." << sayCount << std::endl;
-		}
-		if (sayCount == 2)
+		if (auto npc = dynamic_cast<Npc*>(dadInteractable))
 		{
-			dadSay = !dadSay;
-			player->isNpcTalk = 0;
+			npc->DaddySprite();
 		}
+
+		dadInteractable->SetActive(true);
+		dadInteractable->SetPosition(dadPos);
+		interactList.push_back(dadInteractable);
 	}
 }
 
@@ -344,7 +327,6 @@ void SceneHidden::Update(float dt)
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();
-	DadddyEvent();
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Castle" << std::endl;
