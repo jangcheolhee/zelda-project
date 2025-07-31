@@ -76,6 +76,7 @@ void Enemy::OnDamage(int damage)
 	{
 		DeathAnimation();
 	}
+	std::cout << 34;
 }
 
 void Enemy::Init()

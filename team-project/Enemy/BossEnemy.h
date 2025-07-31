@@ -7,7 +7,7 @@ enum class BossState
 	Idle,
 	Jump,
 };
-class BossEnemy : public GameObject
+class BossEnemy : public Enemy
 {
 protected:
 	int hp = 5;
@@ -49,6 +49,6 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
-	void OnDamage(int dmg);
+	
 };
 

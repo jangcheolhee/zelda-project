@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "BossEnemy.h"
 BossEnemy::BossEnemy(const std::string& name)
-	: GameObject(name)
+	: Enemy(name)
 {
 }
 
@@ -60,16 +60,7 @@ void BossEnemy::Init()
 void BossEnemy::Release()
 {
 }
-void BossEnemy::OnDamage(int dmg)
-{
 
-	hp=hp - dmg;
-	if (hp < 0)
-	{
-		hp = 0;
-		SetActive(false);
-	}
-}
 
 
 void BossEnemy::Reset()
