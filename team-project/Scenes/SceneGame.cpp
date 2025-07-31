@@ -543,8 +543,8 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
-
-	//fontIds.push_back("fonts/DS-DIGIT.ttf");
+	fontIds.push_back("fonts/Neo.ttf");
+	
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
@@ -563,7 +563,7 @@ void SceneGame::Init()
 	inventoryUI = new InventoryUI();
 	inventoryUI->Init();
 	inventoryUI->sortingLayer = SortingLayers::UI;
-	inventoryUI->sortingOrder = 10;//우선순위높음
+	inventoryUI->sortingOrder = 10;
 	AddGameObject(inventoryUI);
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
@@ -584,13 +584,6 @@ void SceneGame::Exit()
 	GAME_MGR.playerHp = player->GetHp();
 	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
 
-	//GAME_MGR.SaveGame("data/data.json");
-	for (Enemy* enemy : enemyList)
-	{
-		enemy->SetActive(false);
-		enemyPools[enemy->GetType()].push_back(enemy);
-	}
-	enemyList.clear();
 	Scene::Exit();
 }
 
@@ -607,7 +600,7 @@ void SceneGame::Enter()
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
-	GAME_MGR.Save();
+	
 	player->SetPosition(startPos);
 }
 
@@ -671,7 +664,7 @@ void SceneGame::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
 	{
-		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
+		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" <<std::endl;
 	}
 }
 

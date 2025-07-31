@@ -235,6 +235,7 @@ void SceneHidden::Enter()
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
+	
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }

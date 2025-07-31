@@ -10,7 +10,6 @@ class SaveSlotUI : public GameObject
 protected:
 	struct Slot {
 		sf::Sprite icon;
-		
 		std::vector<sf::Sprite> hearts;
 	};
 
