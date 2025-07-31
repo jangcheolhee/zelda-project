@@ -83,16 +83,13 @@ void HUD::Draw(sf::RenderWindow& window)
 	window.draw(body);
 	window.draw(rupeeText);  // 루피 텍스트 같이 그리기
 	
-	//int heartsToDraw = (hp + 1) / 2;
+	int heartsToDraw = (hp + 1) / 2;
 	
 	if (showStatus)
 	{
 		window.draw(statusUI);
 	}
-	else
-	{
-		inventoryUI.Draw(window);
-	}
+	
 	for (const auto& heart : heartSprites)
 	{
 		window.draw(heart);

@@ -451,8 +451,8 @@ void SceneGame::Init()
 	inventoryUI = new InventoryUI();
 	inventoryUI->Init();
 	inventoryUI->sortingLayer = SortingLayers::UI;
+	inventoryUI->sortingOrder = 10;//우선순위높음
 	AddGameObject(inventoryUI);
-
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 
@@ -526,12 +526,16 @@ void SceneGame::Update(float dt)
 
 void SceneGame::Draw(sf::RenderWindow& window)
 {
-	Scene::Draw(window);
-	// 💡 UI는 기본 뷰로 바꿔서 그리기
-	sf::View prev = window.getView();
 	window.setView(window.getDefaultView());
 	hud->Draw(window);
+	// 💡 UI는 기본 뷰로 바꿔서 그리기
+	if (inventoryUI->IsActive()) 
+	{
+		inventoryUI->Draw(window);
+	}
+	sf::View prev = window.getView();
 	window.setView(prev); // 원래 뷰로 복구
+	Scene::Draw(window);
 	
 
 }
