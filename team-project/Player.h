@@ -69,6 +69,7 @@ public:
 	Player(const std::string& name = "");
 	virtual ~Player() = default;
 
+	int GetMaxHp() { return maxHp; }
 	int GetHp() { return hp; }
 	void SetHp(int hp) { this->hp = hp; }
 

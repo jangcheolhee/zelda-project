@@ -1,23 +1,12 @@
 #pragma once
 #include "Singleton.h"
-#include "Inventory.h"
-#include "QuestMgr.h"
 
-struct PlayerData
-{
-	std::string name;
-	int hp;
-	sf::Vector2f position;
-};
 
 class GameMgr : public Singleton<GameMgr>
 {
-	friend Singleton<GameMgr>;
 private:
-	PlayerData playerData;
-
-	Inventory* inventory;
-	QuestMgr* questMgr;
+	
+	int slotIdx = -1;
 
 public:
 	void Init();
@@ -25,11 +14,17 @@ public:
 	void Draw(sf::RenderWindow& window);
 	void Release();
 	
-	void SaveGame(const std::string& filename);
-	void LoadGame(const std::string& filename);
-	PlayerData& GetPlayerData() { return playerData; }
-	void SetPlayerData(int hp, sf::Vector2f pos);
 
+	int currentMapID = 1;
+	sf::Vector2f playerSpawnPosition = {184,536};
+	int playerHp = 3;
+	
+	void Save() { SaveToSlot(slotIdx); }
+	void SaveToSlot(int index);
+	void LoadFromSlot(int index);
+	void DeleteSaveSlot(int index);
+
+	std::string GetSlotFileName(int index) const;
 };
 
 #define GAME_MGR (GameMgr::Instance())

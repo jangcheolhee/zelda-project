@@ -217,6 +217,10 @@ void SceneHidden::Enter()
 
 	sf::Vector2f startPos = tileMapHidden->getPosition(1, 6206);
 	player->SetPosition(startPos);
+	GAME_MGR.playerHp = player->GetMaxHp();
+	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
+	GAME_MGR.playerSpawnPosition = startPos;
+	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }
 
@@ -229,7 +233,7 @@ void SceneHidden::Update(float dt)
 	UpdateBehaviorZone();
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
-		GAME_MGR.SetPlayerData(player->GetHp(), sf::Vector2f{0,0});
+		
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
 }

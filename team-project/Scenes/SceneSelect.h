@@ -1,14 +1,15 @@
 #pragma once
 #include "Scene.h"
+class SaveSlotUI;
 class Player;
-class SceneTest : public Scene
+class SceneSelect : public Scene
 {
-	Player* player;
+	SaveSlotUI* saveSloatUI;
 
 public:
 
-	SceneTest();
-	void Release() override;
+	SceneSelect();
+
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;

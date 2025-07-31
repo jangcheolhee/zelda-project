@@ -880,7 +880,9 @@ void SceneGame::Init()
 
 void SceneGame::Exit()
 {
-	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
+	GAME_MGR.playerHp = player->GetHp();
+	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
+
 	//GAME_MGR.SaveGame("data/data.json");
 	for (Enemy* enemy : enemyList)
 	{
@@ -902,6 +904,10 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
 	Scene::Enter();
+	GAME_MGR.playerHp = player->GetMaxHp();
+	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
+	GAME_MGR.playerSpawnPosition = startPos;
+	GAME_MGR.Save();
 	player->SetPosition(startPos);
 }
 

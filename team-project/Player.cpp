@@ -145,13 +145,13 @@ void Player::Init()
 
 void Player::Release()
 {
-	GAME_MGR.SetPlayerData(hp, position);
+	
 }
 
 void Player::Reset()
 {
-	hp = GAME_MGR.GetPlayerData().hp;
-	SetPosition(GAME_MGR.GetPlayerData().position);
+	hp = GAME_MGR.playerHp;
+	SetPosition(GAME_MGR.playerSpawnPosition);
 	wantsToInteract = false;
 	isInteract = false;
 	bool isMovingLeft = false;

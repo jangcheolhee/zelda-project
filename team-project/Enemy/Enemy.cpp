@@ -47,16 +47,16 @@ void Enemy::OnCollide(Direction direction)
 	switch (direction)
 	{
 	case Direction::Left : 
-		position.x += 0.5;
+		position.x += 0.2;
 		break;
 	case Direction::Right:
-		position.x -= 0.5;
+		position.x -= 0.2;
 		break;
 	case Direction::Up: 
-		position.y += 0.5;
+		position.y += 0.2;
 		break;
 	case Direction::Down:
-		position.y -= 0.5;
+		position.y -= 0.2;
 		break;
 	}
 }
@@ -70,6 +70,7 @@ void Enemy::OnCollide(Player* player)
 
 void Enemy::OnDamage(int damage)
 {
+	SetPosition(pastPosition);
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 	if (hp == 0)
 	{
@@ -174,6 +175,7 @@ void Enemy::OnHit(int damage)
 
 void Enemy::DeathAnimation()
 {
+	SetPosition(pastPosition);
 	animator.Play("animations/EnemyDeath.csv");
 }
 

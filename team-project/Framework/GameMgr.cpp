@@ -3,63 +3,59 @@
 
 void GameMgr::Release()
 {
-    delete inventory;
-    delete questMgr;
+
 }
 
-void GameMgr::SaveGame(const std::string& filename)
+void GameMgr::SaveToSlot(int index)
 {
-	
-	playerData.name = "Link"; 
-
 	json j;
+	j["map"] = currentMapID;
+	j["position"] = { {"x", playerSpawnPosition.x}, {"y", playerSpawnPosition.y} };
+	j["hp"] = playerHp;
 
-	// PlayerData ����
-	j["player"]["name"] = playerData.name;
-	j["player"]["hp"] = playerData.hp;
-	j["player"]["position"]["x"] = playerData.position.x;
-	j["player"]["position"]["y"] = playerData.position.y;
-
-	std::ofstream file(filename);
-	if (file.is_open())
+	std::filesystem::create_directories("save");
+	std::ofstream out(GetSlotFileName(index));
+	if (out.is_open())
 	{
-		file << j.dump(4); 
-		file.close();
+		out << j.dump(4);
 	}
 }
 
-void GameMgr::LoadGame(const std::string& filename)
+void GameMgr::LoadFromSlot(int index)
 {
-	std::ifstream file(filename);
-	if (!file.is_open())
-	{
-		std::cerr << "Failed to open save file.\n";
-		return;
+	slotIdx = index;
+	std::ifstream in(GetSlotFileName(index));
+	if (!in.is_open()) 
+	{ 
+		SaveToSlot(index); 
+		return; 
 	}
 
 	json j;
-	file >> j;
-	file.close();
+	in >> j;
 
-	// PlayerData �ҷ�����
-	playerData.name = j["player"]["name"];
-	playerData.hp = j["player"]["hp"];
-	playerData.position.x = j["player"]["position"]["x"];
-	playerData.position.y = j["player"]["position"]["y"];
+	currentMapID = j["map"];
+	playerSpawnPosition.x = j["position"]["x"];
+	playerSpawnPosition.y = j["position"]["y"];
+	playerHp = j["hp"];
 }
 
-void GameMgr::SetPlayerData(int hp, sf::Vector2f pos)
+void GameMgr::DeleteSaveSlot(int index)
 {
-	playerData.hp = hp;
-	playerData.position = pos;
+	std::string path = GetSlotFileName(index);
+	if (std::filesystem::exists(path))
+	{
+		std::filesystem::remove(path);
+	}
 }
 
+std::string GameMgr::GetSlotFileName(int index) const
+{
+	return "save/slot" + std::to_string(index) + ".json";
+}
 
 void GameMgr::Init()
 {
-    inventory = new Inventory();
-    questMgr = new QuestMgr();
-	LoadGame("data/data.json");
 }
 void GameMgr::Update(float dt)
 {
