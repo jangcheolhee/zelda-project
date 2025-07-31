@@ -70,7 +70,7 @@ void Enemy::OnCollide(Player* player)
 
 void Enemy::OnDamage(int damage)
 {
-	SetPosition(pastPosition);
+	
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 	if (hp == 0)
 	{
