@@ -50,6 +50,7 @@ protected:
 	float wallY = 0;
 	float wallWithdh = 0;
 	float wallHeight = 0;
+	bool squareToggle = false;
 
 	SpriteGo* hiddenPathCover;
 

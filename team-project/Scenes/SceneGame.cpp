@@ -538,14 +538,13 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
-	
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
+	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	
-
 	hud = new HUD("HUD");
 	AddGameObject(hud);
 	player = new Player("Player");

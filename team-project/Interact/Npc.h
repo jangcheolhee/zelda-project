@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Interactable.h"
 class SpriteGo;
+class TextGo;
 class Npc : public Interactable
 {
 public:
@@ -18,6 +19,7 @@ protected:
 	int sayCount = 0;
 	
 	SpriteGo* conversation;
+	TextGo* dialogText;
 	sf::View talkUi;
 
 	Type npcType = Type::Basic;

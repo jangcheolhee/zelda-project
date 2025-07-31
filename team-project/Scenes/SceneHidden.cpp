@@ -188,15 +188,21 @@ void SceneHidden::CheckCollison()
 
 void SceneHidden::SpawnSquareHitBox()
 {
+	std::cout << "SpawnSquareHitBox() called" << std::endl;
+
 	HitboxGenerator::SpawnSquareHitBox(
 		tileMapHidden,
 		collisions,
 		collisionBox
 	);
 
+	std::cout << "After SpawnSquareHitBox, collisions size: " << collisions.size() << std::endl;
+
 	for (const auto& hitbox : collisions)
 	{
 		sf::FloatRect rect = hitbox.rect.getGlobalBounds();
+		std::cout << "Hitbox created at: " << rect.left << ", " << rect.top
+			<< " size: " << rect.width << "x" << rect.height << std::endl;
 		wallX = rect.left;
 		wallY = rect.top;
 		wallWithdh = rect.width;
@@ -224,6 +230,7 @@ void SceneHidden::SpawnSquareHitBox()
 
 void SceneHidden::SpawnHiddenObject()
 {
+
 	//Hidden Door Path
 	sf::Vector2f hiddenPathPos = tileMapHidden->getPosition(1, 6168);
 
@@ -346,12 +353,17 @@ void SceneHidden::Update(float dt)
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Castle);
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F10))
+	{
+		squareToggle = !squareToggle; 
+	}
 }
 
 void SceneHidden::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
 	window.setView(worldView);
+
 	for (auto& col : collisions)
 	{
 		std::cout << "hiddenDraw"<< col.GetPosition().x << std::endl;

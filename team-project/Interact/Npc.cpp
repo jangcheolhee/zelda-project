@@ -2,6 +2,7 @@
 #include "Defines.h"
 #include "Npc.h"
 #include "SpriteGo.h"
+#include "TextGo.h"
 #include "Player.h"
 #include <cmath>
 #include "Scene.h"
@@ -9,6 +10,7 @@
 Npc::Npc(const std::string& name)
 {
     conversation = nullptr;
+    dialogText = nullptr;
 }
 
 Npc::~Npc()
@@ -17,6 +19,11 @@ Npc::~Npc()
     {
         delete conversation;
         conversation = nullptr;
+    }
+    if (dialogText != nullptr)
+    {
+        delete dialogText;
+        dialogText = nullptr;
     }
 }
 
@@ -103,7 +110,7 @@ void Npc::HandleBasicNpcInteraction()
     {
         player->isNpcTalk = 1;
 
-        if (player->isNpcTalk == 1)
+        if (player->isNpcTalk == 1 && conversation == nullptr)
         {
             conversation = new SpriteGo("graphics/conversation.png", "Conversation");
             conversation->Init();
@@ -113,17 +120,33 @@ void Npc::HandleBasicNpcInteraction()
             conversation->SetScale({ 2.5f, 2.5f });
             auto size = FRAMEWORK.GetWindowSizeF();
             conversation->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+
+            dialogText = new TextGo("fonts/DS-DIGIT.ttf", "DialogText");
+            dialogText->Init();
+            dialogText->Reset();
+            dialogText->SetActive(1);
+            dialogText->SetOrigin(Origins::MC);
+            dialogText->SetCharacterSize(24);
+            dialogText->SetFillColor(sf::Color::Black);
+            dialogText->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+            
         }
 
         if (sayCount == 0)
         {
             sayCount++;
-            std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+            if (dialogText != nullptr)
+            {
+                dialogText->SetString("Hi, Don't Do That!");
+            }
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
             sayCount++;
-            std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+            if (dialogText != nullptr)
+            {
+                dialogText->SetString("You Can Do It! Bye.");
+            }
         }
         if (sayCount == 2)
         {
@@ -134,6 +157,8 @@ void Npc::HandleBasicNpcInteraction()
             {
                 delete conversation;
                 conversation = nullptr;
+                delete dialogText;
+                dialogText = nullptr;
             }
         }
     }
@@ -189,6 +214,10 @@ void Npc::OnInteract()
 void Npc::Init()
 {
     Interactable::Init();
+
+    auto size = FRAMEWORK.GetWindowSizeF();
+    talkUi.setSize(size);
+    talkUi.setCenter({ size.x * 0.5f, size.y * 0.5f });
 }
 
 void Npc::Reset()
@@ -207,6 +236,10 @@ void Npc::Reset()
         delete conversation;
         conversation = nullptr;
     }
+
+    auto size = FRAMEWORK.GetWindowSizeF();
+    talkUi.setSize(size);
+    talkUi.setCenter({ size.x * 0.5f, size.y * 0.5f });
 }
 
 void Npc::Update(float dt)
@@ -234,13 +267,12 @@ void Npc::Update(float dt)
 void Npc::Draw(sf::RenderWindow& window)
 {
     Interactable::Draw(window);
-    if (player->isNpcTalk == 1 && conversation!=nullptr)
+    if (player->isNpcTalk == 1 && conversation != nullptr)
     {
-        auto size = FRAMEWORK.GetWindowSizeF();
-        sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
-        talkUi.setSize(size);
-        talkUi.setCenter(center);
+        sf::View originalView = window.getView();
         window.setView(talkUi);
         conversation->Draw(window);
+        if (dialogText != nullptr) dialogText->Draw(window);
+        window.setView(originalView);
     }
 }
