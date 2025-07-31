@@ -539,20 +539,19 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
-	//texIds.push_back("graphics/Heart.png");
+	
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
-
-	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
-	//ANI_CLIP_MGR.Load("animations/run.csv");
-	//ANI_CLIP_MGR.Load("animations/jump.csv");
+	
 
 	hud = new HUD("HUD");
 	AddGameObject(hud);
 	player = new Player("Player");
+	player->SetSceneGame(this);
+	
 	player->SetHUD(hud);
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
@@ -577,6 +576,7 @@ void SceneGame::Init()
 	flowerBool = true;
 
 	Scene::Init();
+
 }
 
 void SceneGame::Exit()
@@ -687,6 +687,9 @@ void SceneGame::Draw(sf::RenderWindow& window)
 	sf::View prev = window.getView();
 	window.setView(prev); // 원래 뷰로 복구
 	Scene::Draw(window);
+}
 
-
+const std::list<Interactable*>& SceneGame::GetInteractablesList() const
+{
+	return interactList;
 }

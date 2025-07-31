@@ -1,20 +1,21 @@
 #pragma once
-
+#include "HitBox.h"
 class GameObject
 {
 
 protected:
 	std::string name;
 	bool active = true;
-
+	HitBox hitBox;
 	sf::Vector2f position;
 	float rotation = 0.f;
 	sf::Vector2f scale = { 1.f, 1.f };
 	sf::Vector2f origin;
-
 	Origins originPreset = Origins::TL;
+	bool pushable = false;
 
 public:
+	virtual const HitBox& GetHitBox() const { return hitBox; }
 
 	SortingLayers sortingLayer = SortingLayers::Default;
 	int sortingOrder = 0;
@@ -61,9 +62,5 @@ public:
 
 	virtual void Update(float dt) = 0;
 	virtual void Draw(sf::RenderWindow& window) = 0;
-
 	virtual bool IsActive() const { return active; }
-
-
 };
-

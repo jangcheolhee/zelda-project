@@ -139,7 +139,7 @@ void Npc::OnInteract()
                     conversation = nullptr;
                 }
 
-                conversation->SetActive(0);
+                //conversation->SetActive(0);
                 sayCount = 0;
                 npcSay = !npcSay;
                 player->isNpcTalk = 0;

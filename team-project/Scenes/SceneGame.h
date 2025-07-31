@@ -32,7 +32,7 @@ class SceneGame : public Scene
 protected:
 	
 	bool changeZone = false;
-
+	
 	Player* player;
 	HUD* hud;
 	TileMap* tileMapGame;
@@ -41,7 +41,7 @@ protected:
 	//std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
 	std::list<Enemy*> enemyList;
-
+	
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
 
@@ -69,7 +69,14 @@ protected:
 
 public:
 	SceneGame();
-
+	const std::list<GameObject*>& GetGameObjects() const
+	{
+		return gameObjects;
+	}
+	std::vector<Interactable*> GetInteractables() const
+	{
+		return std::vector<Interactable*>(interactList.begin(), interactList.end());
+	}
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();
@@ -98,4 +105,5 @@ public:
 	void Draw(sf::RenderWindow& window)override;
 	Player* GetPlayer() const { return player; }
 	HUD* GetHUD() const { return hud; }
+	const std::list<Interactable*>& GetInteractablesList() const;
 };
