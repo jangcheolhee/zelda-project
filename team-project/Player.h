@@ -9,12 +9,10 @@ enum class PlayerState
 	Move,
 	Attack,
 };
-
+class HUD;
 class Player :  public GameObject
 {
 protected:
-	
-
 	int rupee = 0;
 	sf::Texture* swordTexture = nullptr;
 	PlayerState state = PlayerState::Idle;
@@ -37,9 +35,9 @@ protected:
 	sf::Texture* texture = nullptr;
 	
 	HitBox hitBox;
-	int hp = 0;
-	int maxHp = 10;
-
+	int hp = 6;
+	int maxHp = 6;
+	HUD* hud = nullptr;
 	bool isInvincible = false;
 	float invincibleTime = 1.0f;        // 무적 지속 시간 (초)
 	float invincibleElapsed = 0.0f;     // 무적 상태 경과 시간
@@ -111,6 +109,8 @@ public:
 	void OnDamage(int damage);
 	void UpdateFixedHitBox();
 	void HandleMovement(float dt);
-
+	void SetHUD(HUD* hudptr) { hud = hudptr; }
 	bool IsAttacking() const;
+	void Heal(int amount);
+	
 };

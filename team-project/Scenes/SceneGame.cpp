@@ -13,6 +13,7 @@
 #include <istream>
 #include "InventoryUI.h"
 
+
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
 {
@@ -343,6 +344,17 @@ void SceneGame::CheckCollison()
 
 					continue;
 				}
+				Heart* heart = dynamic_cast<Heart*>(obj);
+				if (heart != nullptr)
+				{
+					if (player != nullptr)
+					{
+						player->Heal(1); // ❤️ Player가 체력 회복
+					}
+
+					obj->OnInteract(); // 아이템 제거
+					continue;
+				}
 				player->SetPosition(player->GetPos());
 				if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
 				{
@@ -424,14 +436,18 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
-	
-	
+	//texIds.push_back("graphics/Heart.png");
+
+	hud = new HUD("HUD");
+	AddGameObject(hud);
 	player = new Player("Player");
+	player->SetHUD(hud);
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
-	AddGameObject(new HUD("HUD"));
-
+	TEXTURE_MGR.Load("graphics/Heart.png");
+	TEXTURE_MGR.Load("graphics/Heart_empty.png");
+	
 	inventoryUI = new InventoryUI();
 	inventoryUI->Init();
 	inventoryUI->sortingLayer = SortingLayers::UI;
@@ -511,9 +527,11 @@ void SceneGame::Update(float dt)
 void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
-
-	/*if (showInventory)
-		inventoryUI->Draw(window);*/
+	// 💡 UI는 기본 뷰로 바꿔서 그리기
+	sf::View prev = window.getView();
+	window.setView(window.getDefaultView());
+	hud->Draw(window);
+	window.setView(prev); // 원래 뷰로 복구
 	
 
 }

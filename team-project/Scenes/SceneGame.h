@@ -4,7 +4,9 @@
 #include "Enemy.h"
 #include "Interactable.h"
 #include "InventoryUI.h"
+#include "HUD.h"
 class Player;
+
 class TileMap;
 
 struct MapZone
@@ -28,6 +30,7 @@ class SceneGame : public Scene
 {
 protected:
 	Player* player;
+	HUD* hud;
 	TileMap* tileMapGame;
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
@@ -73,4 +76,6 @@ public:
 	void Enter() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window)override;
+	Player* GetPlayer() const { return player; }
+	HUD* GetHUD() const { return hud; }
 };

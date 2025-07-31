@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "HUD.h"
 HUD::HUD(const std::string& name)
 	: GameObject(name)
@@ -49,6 +49,18 @@ void HUD::Init()
 	rupeeText.setFillColor(sf::Color::White);
 	rupeeText.setPosition(134.f, 43.f);
 	rupeeText.setString("0 0 0");
+
+	heartSprites.clear();
+
+
+	for (int i = 0; i < maxHp / 2; ++i)
+	{
+		sf::Sprite sprite;
+		sprite.setScale(0.9f, 0.9f);
+		sprite.setPosition(323.f + i * 17.f, 45.f);
+		heartSprites.push_back(sprite);
+	}
+	UpdateHeartSprites();
 }
 
 void HUD::Release()
@@ -69,8 +81,10 @@ void HUD::Update(float dt)
 void HUD::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
-	window.draw(rupeeText);  // ·çÇÇ ÅØ½ºÆ® °°ÀÌ ±×¸®±â
-
+	window.draw(rupeeText);  // ë£¨í”¼ í…ìŠ¤íŠ¸ ê°™ì´ ê·¸ë¦¬ê¸°
+	
+	//int heartsToDraw = (hp + 1) / 2;
+	
 	if (showStatus)
 	{
 		window.draw(statusUI);
@@ -79,10 +93,36 @@ void HUD::Draw(sf::RenderWindow& window)
 	{
 		inventoryUI.Draw(window);
 	}
+	for (const auto& heart : heartSprites)
+	{
+		window.draw(heart);
+	}
 }
 
 void HUD::AddRupee(int amount)
 {
 	rupeeCount += amount;
 	rupeeText.setString("0 0 " + std::to_string(rupeeCount));
+}
+
+void HUD::AddHeart(int amount)
+{
+	SetHeartCount(hp + amount); 
+}
+
+void HUD::UpdateHeartSprites()
+{
+	int heartsToDraw = (hp + 1) / 2;
+
+	for (int i = 0; i < heartSprites.size(); ++i)
+	{
+		if (i < heartsToDraw)
+		{
+			heartSprites[i].setTexture(TEXTURE_MGR.Get("graphics/Heart.png"));
+		}
+		else
+		{
+			heartSprites[i].setTexture(TEXTURE_MGR.Get("graphics/Heart_empty.png"));
+		}
+	}
 }

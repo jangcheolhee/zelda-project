@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "InventoryUI.h"
+#include "HUD.h"
 class HUD :
     public GameObject
 {
@@ -11,6 +12,13 @@ protected:
 	sf::Sprite statusUI;
 	InventoryUI inventoryUI;
 	bool showStatus = true;
+	int hp = 6;          
+	int maxHp = 6;
+	//int heartCount;
+	sf::Text heartText;
+	sf::Texture fullHeartTex;
+	std::vector<sf::Sprite> heartSprites;
+	//sf::Sprite heartSprite;
 
 public:
 	HUD(const std::string& name = "");
@@ -29,5 +37,13 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 
 	void AddRupee(int amount);
+	void AddHeart(int amount);
+	
+	void SetHeartCount(int newHp)
+	{
+		hp = std::clamp(newHp, 0, maxHp);
+			UpdateHeartSprites();
+	}
+	void UpdateHeartSprites();
 };
 
