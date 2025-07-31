@@ -12,11 +12,16 @@
 #include "SceneCastle.h"
 #include "HitboxGenerator.h"
 
-
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
 	player = nullptr;
+	dad = nullptr;
 	tileMapHidden = nullptr;
+}
+
+void SceneHidden::SetPlayer(Player* p) {
+	
+	player = p;
 }
 
 void SceneHidden::InitZones()
@@ -92,6 +97,8 @@ void SceneHidden::UpdateZones()
 			if (zone.onEnter)
 			{
 				zone.onEnter();
+				SpawnSquareHitBox();
+				SpawnHiddenObject();
 			}
 		}
 		else if (!nowInZone && zone.entered)
@@ -185,6 +192,99 @@ void SceneHidden::SpawnSquareHitBox()
 		collisions,
 		collisionBox
 	);
+
+	for (const auto& hitbox : collisions)
+	{
+		sf::FloatRect rect = hitbox.rect.getGlobalBounds();
+		wallX = rect.left;
+		wallY = rect.top;
+		wallWithdh = rect.width;
+		wallHeight = rect.height;
+
+		Interactable* inter = nullptr;
+		auto& pool = interactPool[Interactable::Type::JumpWall];
+		if (!pool.empty())
+		{
+			inter = pool.front();
+			pool.pop_front();
+		}
+		else inter = (Interactable*)AddGameObject(new JumpWall());
+		inter->Init();
+		if (dynamic_cast<JumpWall*>(inter))
+		{
+			dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+		}
+		inter->Reset();
+		inter->SetActive(true);
+		inter->SetPosition({ wallX,wallY });
+		interactList.push_back(inter);
+	}
+}
+
+void SceneHidden::SpawnHiddenObject()
+{
+	//Hidden Door Path
+	sf::Vector2f hiddenPathPos = tileMapHidden->getPosition(1, 6168);
+
+	auto hiddenPathCover = new SpriteGo();
+	hiddenPathCover->SetName("floor1DoorPathCovers");
+	hiddenPathCover->Init();
+
+	hiddenPathCover->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
+	hiddenPathCover->GetSprite().setTextureRect({ 112, 208, 32, 112 });
+
+	hiddenPathCover->SetActive(1);
+	hiddenPathCover->SetOrigin(Origins::TL);
+	hiddenPathCover->SetPosition(hiddenPathPos);
+	AddGameObject(hiddenPathCover);
+
+	//Daddy
+	sf::Vector2f dadPos = tileMapHidden->getPosition(1, 1174);
+
+	dad = new SpriteGo();
+	dad->SetName("floor1DoorPathCovers");
+	dad->Init();
+
+	dad->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
+	dad->GetSprite().setTextureRect({ 218, 102, 28, 29 });
+
+	dad->SetActive(1);
+	dad->SetOrigin(Origins::TL);
+	dad->SetPosition(dadPos);
+	AddGameObject(dad);
+}
+
+void SceneHidden::DadddyEvent()
+{
+	if (!dad || !player) return;
+
+	sf::Vector2f playerPos = player->GetPosition();
+	sf::Vector2f dadPos = dad->GetPosition();
+
+	float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
+
+	if (distance < 30.0f)
+	{
+		player->isNpcTalk = 1;
+
+		if (sayCount == 0)
+		{
+			sayCount++;
+
+			std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+		}
+		if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+		{
+			sayCount++;
+
+			std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+		}
+		if (sayCount == 2)
+		{
+			dadSay = !dadSay;
+			player->isNpcTalk = 0;
+		}
+	}
 }
 
 void SceneHidden::DeleteInteractables()
@@ -200,14 +300,11 @@ void SceneHidden::DeleteInteractables()
 
 void SceneHidden::Init()
 {
+	texIds.push_back("data/HiddenPathToGarden.png");
+
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
-	auto dad = new SpriteGo();
-	dad->Init();
-	dad->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
-	//dad->GetSprite().getTextureRect({220,103,30,30});
-	//dad->SetActive
 
 	AddGameObject(player);
 	AddGameObject(tileMapHidden);
@@ -243,6 +340,7 @@ void SceneHidden::Update(float dt)
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();
+	DadddyEvent();
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Castle" << std::endl;
@@ -253,6 +351,11 @@ void SceneHidden::Update(float dt)
 		GAME_MGR.SetPlayerData(player->GetHp(), sf::Vector2f{0,0});
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
+	{
+		std::cout << "Hidden" << std::endl;
+		SCENE_MGR.ChangeScene(SceneIds::Hidden);
+	}
 }
 
 void SceneHidden::Draw(sf::RenderWindow& window)
@@ -261,6 +364,7 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	window.setView(worldView);
 	for (auto& col : collisions)
 	{
+		std::cout << "hiddenDraw"<< col.GetPosition().x << std::endl;
 		col.Draw(window);
 	}
 }

@@ -69,7 +69,6 @@ public:
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);
 	void DeleteInteractables();
-
 	
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
@@ -82,7 +81,6 @@ public:
 
 	void SpawnInteractableObject(sf::FloatRect zone);
 	void CheckCollison();
-
 	void SpawnSquareHitBox();
 
 	void Init() override;

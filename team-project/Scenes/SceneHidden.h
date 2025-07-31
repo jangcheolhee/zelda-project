@@ -30,11 +30,13 @@ class SceneHidden : public Scene
 protected:	
 	Player* player;
 	TileMap* tileMapHidden;
-	SpriteGo* Dad;
 
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
+
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
+	std::list<Interactable*>interactList;
 
 	std::vector<HiddenZone> hiddenZones;
 	int zoneID = 1;
@@ -44,17 +46,32 @@ protected:
 
 	std::vector<HitBox> collisions;
 	sf::RectangleShape collisionBox;
+	float wallX = 0;
+	float wallY = 0;
+	float wallWithdh = 0;
+	float wallHeight = 0;
+
+	SpriteGo* hiddenPathCover;
+
+	SpriteGo* dad;
+	bool dadSay = 0;
+	int sayCount = 0;
+
 public:
 	SceneHidden();
-
+	void SetPlayer(Player* p);
+	
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();
 
 	void DeleteInteractables();
 
-	void CheckCollison();\
+	void CheckCollison();
 	void SpawnSquareHitBox();
+
+	void SpawnHiddenObject();
+	void DadddyEvent();
 
 	void Init() override;
 	void Enter() override;

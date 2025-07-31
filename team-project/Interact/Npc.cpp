@@ -4,6 +4,7 @@
 #include "SpriteGo.h"
 #include "Player.h"
 #include <cmath>
+#include "Scene.h"
 
 Npc::Npc(const std::string& name)
 {
@@ -108,14 +109,16 @@ void Npc::OnInteract()
         {
             player->isNpcTalk = 1;
 
-            if (conversation == nullptr)
+            if (player->isNpcTalk == 1)
             {
                 conversation = new SpriteGo("graphics/conversation.png", "Conversation");
                 conversation->Init();
                 conversation->Reset();
-                conversation->SetActive(1);  
+                conversation->SetActive(1);
                 conversation->SetOrigin(Origins::MC);
-                conversation->SetPosition({ 100.f, 100.f });
+                conversation->SetScale({2.5f, 2.5f});
+                auto size = FRAMEWORK.GetWindowSizeF();
+                conversation->SetPosition({ size.x*0.5f, size.y*0.5f });
             }
 
             if (sayCount == 0)
@@ -133,16 +136,14 @@ void Npc::OnInteract()
             }
             if (sayCount == 2)
             {
-                if (conversation != nullptr)
+                sayCount = 0;
+                npcSay = !npcSay;
+                player->isNpcTalk = 0;
+                if (player->isNpcTalk == 0)
                 {
                     delete conversation;
                     conversation = nullptr;
                 }
-
-                conversation->SetActive(0);
-                sayCount = 0;
-                npcSay = !npcSay;
-                player->isNpcTalk = 0;
             }
         }
     //}
@@ -152,9 +153,6 @@ void Npc::OnInteract()
     //default:
     //    break;
     //}
-
-
-   
 }
 
 void Npc::Init()
@@ -199,8 +197,13 @@ void Npc::Update(float dt)
 void Npc::Draw(sf::RenderWindow& window)
 {
     Interactable::Draw(window);
-    if (conversation != nullptr)
+    if (player->isNpcTalk == 1 && conversation!=nullptr)
     {
+        auto size = FRAMEWORK.GetWindowSizeF();
+        sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
+        talkUi.setSize(size);
+        talkUi.setCenter(center);
+        window.setView(talkUi);
         conversation->Draw(window);
     }
 }

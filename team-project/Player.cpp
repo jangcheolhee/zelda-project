@@ -186,8 +186,7 @@ void Player::Update(float dt)
 		attackElapsed = 0.f;
 		attackFrameIndex = 0;
 
-		if (swordTexture)
-			body.setTexture(*swordTexture);
+		if (swordTexture) body.setTexture(*swordTexture);
 
 		auto& attackVec = attackAnimations[currentDirection];
 
@@ -200,10 +199,8 @@ void Player::Update(float dt)
 				rect.left += rect.width;
 				rect.width = -rect.width;
 			}
-
 			body.setTextureRect(rect);
 		}
-
 	}
 
 	if (state == PlayerState::Attack)
@@ -220,8 +217,6 @@ void Player::Update(float dt)
 			{
 				attackElapsed = 0.f;
 				attackFrameIndex++;
-
-
 
 				if (attackFrameIndex >= attackVec.size())
 				{

@@ -2,12 +2,12 @@
 #include "HitboxGenerator.h"
 
 void HitboxGenerator::SpawnSquareHitBox(
-    TileMap* tileMapGame,
+    TileMap* tileMapName,
     std::vector<HitBox>& collisions,
     sf::RectangleShape& collisionBox)
 {
     HitboxCorners corners;
-    if (!tileMapGame->LoadHitboxLayer(corners)) return;
+    if (!tileMapName->LoadHitboxLayer(corners)) return;
 
     // 검색 범위와 허용 오차 확대
     const float searchWidth = 500.f;  // 더 큰 히트박스 허용

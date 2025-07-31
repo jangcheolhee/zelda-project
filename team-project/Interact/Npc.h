@@ -18,6 +18,7 @@ protected:
 	int sayCount = 0;
 	
 	SpriteGo* conversation;
+	sf::View talkUi;
 
 	Type type = Type::None;
 

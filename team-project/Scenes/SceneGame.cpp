@@ -252,7 +252,6 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 	inter->SetActive(true);
 	inter->SetPosition(pos);
 	interactList.push_back(inter);
-
 }
 
 void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
@@ -420,7 +419,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 			}
 		}
 	}
-
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
@@ -560,10 +558,7 @@ void SceneGame::Update(float dt)
 			RecycleEnemy(*it);
 			it = enemyList.erase(it);
 		}
-		else
-		{
-			++it;
-		}
+		else ++it;
 	}
 	auto it1 = interactList.begin();
 	while (it1 != interactList.end())
@@ -574,10 +569,7 @@ void SceneGame::Update(float dt)
 			interactPool[(*it1)->GetType()].push_back(*it1);
 			it1 = interactList.erase(it1);
 		}
-		else
-		{
-			++it1;
-		}
+		else ++it1;
 	}
 	CheckCollison();
 	UpdateZones();
@@ -600,6 +592,10 @@ void SceneGame::Update(float dt)
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Castle);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F4))
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
