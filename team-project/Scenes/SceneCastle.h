@@ -3,12 +3,10 @@
 #include "Enemy.h"
 #include "Interactable.h"
 #include "SpriteGo.h"
-#include "HitBox.h" 
-
 class Player;
 class TileMap;
 
-struct HiddenZone
+struct CastleZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
@@ -17,7 +15,7 @@ struct HiddenZone
 	std::function<void()> onExit;
 	bool entered = false;
 
-	HiddenZone(const sf::FloatRect& b, int id,
+	CastleZone(const sf::FloatRect& b, int id,
 		std::function<void()> enter,
 		std::function<void()> exit,
 		bool e = false)
@@ -25,27 +23,23 @@ struct HiddenZone
 	}
 };
 
-class SceneHidden : public Scene
+class SceneCastle :public Scene
 {
-protected:	
+protected:
 	Player* player;
-	TileMap* tileMapHidden;
-	SpriteGo* Dad;
+	TileMap* tileMapCastle;
 
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
-	std::vector<HiddenZone> hiddenZones;
+	std::vector<CastleZone> castleZones;
 	int zoneID = 1;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
-
-	std::vector<HitBox> collisions;
-	sf::RectangleShape collisionBox;
 public:
-	SceneHidden();
+	SceneCastle();
 
 	void InitZones();
 	void UpdateZones();
@@ -53,11 +47,9 @@ public:
 
 	void DeleteInteractables();
 
-	void CheckCollison();\
-	void SpawnSquareHitBox();
+	void CheckCollison();
 
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
-	void Draw(sf::RenderWindow& window) override;
 };

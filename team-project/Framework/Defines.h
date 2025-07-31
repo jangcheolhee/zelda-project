@@ -23,6 +23,7 @@ enum class SceneIds
 	Select,
 	Game,
 	Hidden,
+	Castle,
 	Count,
 };
 

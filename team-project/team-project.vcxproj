@@ -219,6 +219,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="HitboxGenerator.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Interact\Heart.cpp" />
     <ClCompile Include="Interact\Chest.cpp" />
@@ -243,6 +244,8 @@
     <ClCompile Include="Interact\Npc.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Interact\Rupee.cpp" />
+    <ClCompile Include="SaveMgr.cpp" />
+    <ClCompile Include="Scenes\SceneCastle.cpp" />
     <ClCompile Include="SaveSlotUI.cpp" />
     <ClCompile Include="Scenes\SceneHidden.cpp" />
     <ClCompile Include="Scenes\SceneGame.cpp" />
@@ -260,6 +263,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="HitboxGenerator.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Interact\Heart.h" />
     <ClInclude Include="Interact\Chest.h" />
@@ -289,6 +293,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Interact\Rupee.h" />
     <ClInclude Include="SaveSlotUI.h" />
+    <ClInclude Include="SaveMgr.h" />
+    <ClInclude Include="Scenes\SceneCastle.h" />
     <ClInclude Include="Scenes\SceneHidden.h" />
     <ClInclude Include="Scenes\SceneGame.h" />
     <ClInclude Include="Framework\SceneMgr.h" />

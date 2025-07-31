@@ -1,13 +1,22 @@
 #include "stdafx.h"
 #include "Defines.h"
 #include "Npc.h"
+#include "SpriteGo.h"
 #include "Player.h"
 #include <cmath>
 
-//npc 별로 스폰하기
-
 Npc::Npc(const std::string& name)
 {
+    conversation = nullptr;
+}
+
+Npc::~Npc()
+{
+    if (conversation != nullptr)
+    {
+        delete conversation;
+        conversation = nullptr;
+    }
 }
 
 void Npc::SetPlayer(Player* p)
@@ -73,15 +82,78 @@ Direction Npc::GetDirectionToPlayer()
     }
 }
 
+void Npc::DaddySprite()
+{
+    body.setTexture(TEXTURE_MGR.Get("graphics/HiddenPathToGarden.png"));
+    body.setTextureRect({ 217, 102, 30, 30 });
+    SetOrigin(Origins::MC);
+    SetScale({ 1, 1 });
+}
+
 void Npc::OnInteract()
 {
-    if (player)
-    {
-        if (GetGlobalBounds().contains(player->GetGlobalBounds().getPosition()))
+    sf::FloatRect rect = player->GetGlobalBounds();
+    rect.left -= 2.f;
+    rect.top -= 2.f;
+    rect.width += 4.f;
+    rect.height += 4.f;
+
+    //switch (type)
+    //{
+    //case Npc::Type::None:
+    //    break;
+    //case Npc::Type::Guard:
+    //{
+        if (rect.intersects(GetGlobalBounds()) && npcSay == 0 && sayCount < 2)
         {
-            std::cout << "HI" << std::endl;
+            player->isNpcTalk = 1;
+
+            if (conversation == nullptr)
+            {
+                conversation = new SpriteGo("graphics/conversation.png", "Conversation");
+                conversation->Init();
+                conversation->Reset();
+                conversation->SetActive(1);  
+                conversation->SetOrigin(Origins::MC);
+                conversation->SetPosition({ 100.f, 100.f });
+            }
+
+            if (sayCount == 0)
+            {
+                sayCount++;
+
+                //textGo 띄우기
+                std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+            }
+            if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+            {
+                sayCount++;
+                //textGo 띄우기
+                std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+            }
+            if (sayCount == 2)
+            {
+                if (conversation != nullptr)
+                {
+                    delete conversation;
+                    conversation = nullptr;
+                }
+
+                conversation->SetActive(0);
+                sayCount = 0;
+                npcSay = !npcSay;
+                player->isNpcTalk = 0;
+            }
         }
-    }
+    //}
+    //    break;
+    //case Npc::Type::Daddy:
+    //    break;
+    //default:
+    //    break;
+    //}
+
+
    
 }
 
@@ -95,7 +167,12 @@ void Npc::Reset()
     Interactable::Reset();
     currentDirection = Direction::Down;
     DirectionSprite(currentDirection);
-    type = Type::Npc;
+
+    if (conversation != nullptr)
+    {
+        delete conversation;
+        conversation = nullptr;
+    }
 }
 
 void Npc::Update(float dt)
@@ -112,4 +189,18 @@ void Npc::Update(float dt)
         }
     }
     OnInteract();
+
+    if (conversation != nullptr)
+    {
+        conversation->Update(dt);
+    }
+}
+
+void Npc::Draw(sf::RenderWindow& window)
+{
+    Interactable::Draw(window);
+    if (conversation != nullptr)
+    {
+        conversation->Draw(window);
+    }
 }

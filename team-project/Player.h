@@ -13,8 +13,6 @@ enum class PlayerState
 class Player :  public GameObject
 {
 protected:
-	
-
 	int rupee = 0;
 	sf::Texture* swordTexture = nullptr;
 	PlayerState state = PlayerState::Idle;
@@ -81,7 +79,6 @@ public:
 	// 충돌 체크 함수-----------
 	void OnCollide(Enemy* enemy);
 	bool WantsToInteract(){ return wantsToInteract; }
-
 	void AddRupee(int i) { rupee += i; }
 	//--------------
 
@@ -99,7 +96,6 @@ public:
 
 	sf::FloatRect GetGlobalBounds() const override;
 
-
 	void Init() override;
 	void Release() override;
 	void Reset() override;
@@ -115,4 +111,6 @@ public:
 
 	bool IsAttacking() const;
 	HitBox GetHitBox() { return hitBox; }
+
+	bool isNpcTalk = 0;
 };
