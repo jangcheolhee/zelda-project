@@ -244,7 +244,6 @@
     <ClCompile Include="Interact\Npc.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Interact\Rupee.cpp" />
-    <ClCompile Include="SaveMgr.cpp" />
     <ClCompile Include="Scenes\SceneCastle.cpp" />
     <ClCompile Include="SaveSlotUI.cpp" />
     <ClCompile Include="Scenes\SceneHidden.cpp" />
@@ -293,7 +292,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Interact\Rupee.h" />
     <ClInclude Include="SaveSlotUI.h" />
-    <ClInclude Include="SaveMgr.h" />
     <ClInclude Include="Scenes\SceneCastle.h" />
     <ClInclude Include="Scenes\SceneHidden.h" />
     <ClInclude Include="Scenes\SceneGame.h" />

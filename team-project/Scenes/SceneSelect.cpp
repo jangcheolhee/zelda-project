@@ -4,44 +4,43 @@
 #include "TextGo.h"
 #include "SaveSlotUI.h"
 SceneSelect::SceneSelect()
-    : Scene(SceneIds::Select)
+	: Scene(SceneIds::Select)
 {
 }
 
 void SceneSelect::Init()
 {
-    texIds.push_back("graphics/Items.png");
-    
-        texIds.push_back("graphics/Link.png");
-    fontIds.push_back("fonts/DS-DIGIT.ttf");
+	texIds.push_back("graphics/Items.png");
 
-    saveSloatUI = (SaveSlotUI*)AddGameObject(new SaveSlotUI());
+	fontIds.push_back("fonts/DS-DIGIT.ttf");
 
-    saveSloatUI->onSlotSelected = [](int slotIndex)
-        {
-           GAME_MGR.LoadFromSlot(slotIndex);
-           SCENE_MGR.ChangeScene((SceneIds)GAME_MGR.currentMapID);
-        };
+	saveSloatUI = (SaveSlotUI*)AddGameObject(new SaveSlotUI());
 
-    saveSloatUI->onSlotDelete = [](int slotIndex)
-        {
-            GAME_MGR.DeleteSaveSlot(slotIndex);
-        };
+	saveSloatUI->onSlotSelected = [](int slotIndex)
+		{
+			GAME_MGR.LoadFromSlot(slotIndex);
+			SCENE_MGR.ChangeScene((SceneIds)GAME_MGR.currentMapID);
+		};
 
-    Scene::Init();
+	saveSloatUI->onSlotDelete = [](int slotIndex)
+		{
+			GAME_MGR.DeleteSaveSlot(slotIndex);
+		};
+
+	Scene::Init();
 }
 
 void SceneSelect::Enter()
 {
-    auto size = FRAMEWORK.GetWindowSizeF();
-    sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
-    uiView.setSize(size);
-    uiView.setCenter(center);
+	auto size = FRAMEWORK.GetWindowSizeF();
+	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
+	uiView.setSize(size);
+	uiView.setCenter(center);
 
-    Scene::Enter();
+	Scene::Enter();
 }
 
 void SceneSelect::Update(float dt)
 {
-    Scene::Update(dt);
+	Scene::Update(dt);
 }
