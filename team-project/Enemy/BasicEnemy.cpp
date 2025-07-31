@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BasicEnemy.h""
+#include "Player.h"
 
 void BasicEnemy::Init()
 {
@@ -8,49 +9,65 @@ void BasicEnemy::Init()
 	speed = 40.f;
 	hp = 10;
 
-	
+
 }
 
 void BasicEnemy::Reset()
 {
-	
+
 	// 여기서 sprite texture 변경하기
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
-	direction = (Direction) Utils::RandomRange(0, 4);
+	direction = (Direction)Utils::RandomRange(0, 4);
 	ChangeSprite();
+
+	state = EnemyState::Patrol;
 	maxHp = 5;
 	hp = maxHp;
-	
-	
 }
 
-void BasicEnemy::UpdateBehavior(float dt)
+void BasicEnemy::Update(float dt)
 {
+	Enemy::Update(dt);
 	pastPosition = GetPosition();
-	moveTimer += dt;
-	if (moveTimer > 2)
+	if (Utils::Distance(GetPosition(), player->GetPosition()) < 50)
 	{
-		dir = { 0.f,0.f };
+		state = EnemyState::Chase;
+	}
+	else
+	{
+		state = EnemyState::Patrol;
+	}
+	if (state == EnemyState::Patrol)
+	{
+		moveTimer += dt;
+	
 		if (moveTimer > 3)
 		{
 			direction = (Direction)Utils::RandomRange(0, 4);
 			moveTimer = 0;
 			ChangeSprite();
 		}
-		
-	}
-	position += dir * speed * dt;
-	SetPosition(position);
 	
+	}
+	else if (state == EnemyState::Chase)
+	{
+		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+		moveTimer = 0;
+	}
+	velocity = dir * speed;
+	position += velocity *dt;
+	SetPosition(position);
+	boundBox.rect.setPosition(GetPosition());
 }
 
 void BasicEnemy::ChangeSprite()
 {
+	velocity = { 0,0 };
+
 	switch (direction)
 	{
 	case  Direction::Up:
-		
 		body.setTextureRect({ 7,924,24,25 });
 		dir = { 0.f,-1.f };
 		break;
@@ -69,4 +86,6 @@ void BasicEnemy::ChangeSprite()
 		SetScale({ -1.f,1.f });
 		break;
 	}
+
 }
+

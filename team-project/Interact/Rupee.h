@@ -10,9 +10,8 @@ public:
 	
 	void Init() override;
 	void Reset() override;
-
+	void Update(float dt) override;
 	// Interactable을(를) 통해 상속됨
-	void OnInteract() override;
-	void UpdateBeHavior(float dt) override;
+	void OnInteract() override; 
 };
 

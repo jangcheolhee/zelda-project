@@ -12,6 +12,8 @@
 #include "HUD.h"
 #include "HitboxGenerator.h"
 #include <istream>
+#include "InventoryUI.h"
+
 
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
@@ -103,10 +105,8 @@ void SceneGame::UpdateZones()
 			{
 				zone.entered = true;
 				zoneID = zone.zoneId;
-
 				changeZone = true;
 				zone.onEnter();
-
 				SpawnInteractableObject(zone.bounds);
 				SpawnFlowers(zone.bounds);
 				SpawnSquareHitBox();
@@ -116,7 +116,6 @@ void SceneGame::UpdateZones()
 		else if (!nowInZone && zone.entered)
 		{
 			zone.entered = false;
-
 			if (zone.onExit)
 			{
 				zone.onExit();
@@ -225,10 +224,8 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 		case Interactable::Type::Chest:
 			break;
 		case Interactable::Type::JumpWall:
-		{
-			inter = (Interactable*)AddGameObject(new JumpWall());
+			inter = (JumpWall*)AddGameObject(new JumpWall());
 			break;
-		}
 		case Interactable::Type::Heart:
 			inter = (Heart*)AddGameObject(new Heart());
 			break;
@@ -300,6 +297,7 @@ void SceneGame::FlowerBreath(float dt)
 	}
 }
 
+
 void SceneGame::CheckCollison()
 {
 	for (auto& enemy : enemyList)
@@ -311,28 +309,70 @@ void SceneGame::CheckCollison()
 		}
 	}
 
-	sf::FloatRect rect = player->GetGlobalBounds();
-	rect.left -= 2.f;
-	rect.top -= 2.f;
-	rect.width += 4.f;
-	rect.height += 4.f;
+
 	for (auto& obj : interactList)
 	{
 		for (auto& enemy : enemyList)
 		{
-			if (obj->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+			if (Utils::CheckCollision(obj->GetHitBox().rect, enemy->GetBoundBox().rect))
 			{
-				enemy->SetPosition(enemy->GetPos());
+				//enemy->SetPosition(enemy->GetPos());
+
+				sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
+				sf::FloatRect enemyRect = enemy->GetBoundBox().rect.getGlobalBounds();
+
+				float objX = objRect.left + objRect.width / 2.f;
+				float objY = objRect.top + objRect.height / 2.f;
+
+				float enemyX = enemyRect.left + enemyRect.width / 2.f;
+				float enemyY = enemyRect.top + enemyRect.height / 2.f;
+
+				float dx = objX - enemyX;
+				float dy = objY - enemyY;
+
+				float combinedHalfWidth = (objRect.width + enemyRect.width) / 2.f;
+				float combinedHalfHeight = (objRect.height + enemyRect.height) / 2.f;
+
+				float overlapX = combinedHalfWidth - std::abs(dx);
+				float overlapY = combinedHalfHeight - std::abs(dy);
+
+				if (overlapX < overlapY)
+				{
+
+					if (dx < 0)
+					{
+						//왼쪽
+						enemy->OnCollide(Direction::Left);
+					}
+
+					else
+					{
+						enemy->OnCollide(Direction::Right);
+						//오른쪽
+					}
+					if (dy < 0)
+					{
+						//왼쪽
+						enemy->OnCollide(Direction::Up);
+					}
+
+					else
+					{
+						enemy->OnCollide(Direction::Down);
+						//오른쪽
+					}
+
+				}
 			}
 		}
-		if (obj->GetType() == Interactable::Type::Throw)
+
+		if (dynamic_cast<Bush*> (obj))
 		{
-			if (rect.intersects(obj->GetGlobalBounds()))
+			if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetBoundBox().rect))
 			{
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
-					int r = Utils::RandomRange(0, 3);
-
+					int r = Utils::RandomRange(0, 4);
 					switch (r)
 					{
 					case 0:
@@ -340,7 +380,6 @@ void SceneGame::CheckCollison()
 						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 3,-16 }), Interactable::Type::Rupee);
 						break;
 					}
-
 					case 1:
 					{
 						SpawnInteractable(obj->GetPosition() + sf::Vector2f({ 4,-4 }), Interactable::Type::Heart);
@@ -353,11 +392,28 @@ void SceneGame::CheckCollison()
 			}
 		}
 
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
 		{
-			if (obj->GetType() == Interactable::Type::Heart || obj->GetType() == Interactable::Type::Rupee)
+			Rupee* rupee = dynamic_cast<Rupee*>(obj);
+			if (rupee != nullptr)
 			{
 				obj->OnInteract();
+				HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD")); // 또는 멤버 변수로 접근 가능
+				if (hud != nullptr)
+				{
+					hud->AddRupee(1);  // 루피 1 증가
+				}
+				continue;
+			}
+			Heart* heart = dynamic_cast<Heart*>(obj);
+			if (heart != nullptr)
+			{
+				obj->OnInteract();
+				if (player != nullptr)
+				{
+					player->Heal(1); // ❤️ Player가 체력 회복
+				}
+				obj->OnInteract(); // 아이템 제거
 				continue;
 			}
 			player->SetPosition(player->GetPos());
@@ -365,24 +421,11 @@ void SceneGame::CheckCollison()
 			{
 				obj->OnInteract();
 			}
-
 		}
 
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
-		{
-			if (obj->GetType() == Interactable::Type::Rupee || obj->GetType() == Interactable::Type::Heart)
-			{
-				obj->OnInteract();
-				continue;
-			}
-			player->SetMovable(false);
-			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
-			{
-				obj->OnInteract();
-			}
-		}
 	}
 }
+
 
 void SceneGame::SpawnSquareHitBox()
 {
@@ -410,6 +453,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	int layer1Gid[] = { 24670, 24590 };
 	for (int id : layer1Gid)
 	{
+		//layer 1 : bush
 		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
 		for (const auto& pos : positions)
 		{
@@ -459,16 +503,16 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				default:
 					break;
 				}
-				AddGameObject(inter);
-				interactList.push_back(inter);
-				inter->SetOrigin(Origins::TC);
-				inter->Reset();
-				inter->SetPosition(pos);
+				//AddGameObject(inter);
+				//interactList.push_back(inter);
+				//inter->SetOrigin(Origins::TC);
+				//inter->Reset();
+				//inter->SetPosition(pos);
 
-				HitBox hitbox;
-				sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
-				hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
-				collisions.push_back(hitbox);
+				//HitBox hitbox;
+				//sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
+				//hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
+				//collisions.push_back(hitbox);
 			}
 		}
 	}
@@ -493,20 +537,32 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Items.png");
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
+	texIds.push_back("graphics/inventory.png");
+	
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
-	//fontIds.push_back("fonts/DS-DIGIT.ttf");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
-	//ANI_CLIP_MGR.Load("animations/run.csv");
-	//ANI_CLIP_MGR.Load("animations/jump.csv");
+	
 
+	hud = new HUD("HUD");
+	AddGameObject(hud);
 	player = new Player("Player");
+	player->SetSceneGame(this);
+	
+	player->SetHUD(hud);
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
-	AddGameObject(new HUD());
+	TEXTURE_MGR.Load("graphics/Heart.png");
+	TEXTURE_MGR.Load("graphics/Heart_empty.png");
+
+	inventoryUI = new InventoryUI();
+	inventoryUI->Init();
+	inventoryUI->sortingLayer = SortingLayers::UI;
+	inventoryUI->sortingOrder = 10;//우선순위높음
+	AddGameObject(inventoryUI);
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
 
@@ -519,11 +575,14 @@ void SceneGame::Init()
 	flowerBool = true;
 
 	Scene::Init();
+
 }
 
 void SceneGame::Exit()
 {
-	GAME_MGR.SetPlayerData(player->GetHp(), player->GetPosition());
+	GAME_MGR.playerHp = player->GetHp();
+	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
+
 	//GAME_MGR.SaveGame("data/data.json");
 	for (Enemy* enemy : enemyList)
 	{
@@ -544,8 +603,15 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
 	Scene::Enter();
+	GAME_MGR.playerHp = player->GetMaxHp();
+	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
+	GAME_MGR.playerSpawnPosition = startPos;
+	GAME_MGR.Save();
 	player->SetPosition(startPos);
 }
+
+
+
 
 void SceneGame::Update(float dt)
 {
@@ -582,6 +648,11 @@ void SceneGame::Update(float dt)
 		std::cout << "Hidden" << std::endl;
 		SCENE_MGR.ChangeScene(SceneIds::Hidden);
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
+	{
+		bool toggle = !inventoryUI->IsVisible();
+		inventoryUI->SetActive(toggle);
+	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
 	{
 		std::cout << "Hidden" << std::endl;
@@ -603,10 +674,19 @@ void SceneGame::Update(float dt)
 
 void SceneGame::Draw(sf::RenderWindow& window)
 {
-	Scene::Draw(window);
-	window.setView(worldView);
-	for (auto& col : collisions)
+	window.setView(window.getDefaultView());
+	hud->Draw(window);
+	// 💡 UI는 기본 뷰로 바꿔서 그리기
+	if (inventoryUI->IsActive())
 	{
-		col.Draw(window);
+		inventoryUI->Draw(window);
 	}
+	sf::View prev = window.getView();
+	window.setView(prev); // 원래 뷰로 복구
+	Scene::Draw(window);
+}
+
+const std::list<Interactable*>& SceneGame::GetInteractablesList() const
+{
+	return interactList;
 }

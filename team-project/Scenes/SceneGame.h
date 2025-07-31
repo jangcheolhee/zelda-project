@@ -3,7 +3,10 @@
 #include "SpriteGo.h"
 #include "Enemy.h"
 #include "Interactable.h"
+#include "InventoryUI.h"
+#include "HUD.h"
 class Player;
+
 class TileMap;
 class HitBox;
 
@@ -29,19 +32,22 @@ class SceneGame : public Scene
 protected:
 	
 	bool changeZone = false;
-
+	
 	Player* player;
+	HUD* hud;
 	TileMap* tileMapGame;
+	InventoryUI* inventoryUI;
 
 	//std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
 	std::list<Enemy*> enemyList;
-
+	
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
 
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
+	bool showInventory=false;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
@@ -63,7 +69,14 @@ protected:
 
 public:
 	SceneGame();
-
+	const std::list<GameObject*>& GetGameObjects() const
+	{
+		return gameObjects;
+	}
+	std::vector<Interactable*> GetInteractables() const
+	{
+		return std::vector<Interactable*>(interactList.begin(), interactList.end());
+	}
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();
@@ -87,5 +100,8 @@ public:
 	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
-	void Draw(sf::RenderWindow& window) override;
+	void Draw(sf::RenderWindow& window)override;
+	Player* GetPlayer() const { return player; }
+	HUD* GetHUD() const { return hud; }
+	const std::list<Interactable*>& GetInteractablesList() const;
 };

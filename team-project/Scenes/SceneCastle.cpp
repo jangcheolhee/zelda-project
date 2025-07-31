@@ -266,6 +266,9 @@ void SceneCastle::Enter()
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
 	player->SetPosition(startPos);
+	GAME_MGR.playerHp = player->GetMaxHp();
+	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
+	GAME_MGR.playerSpawnPosition = startPos;
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }
 
@@ -300,7 +303,7 @@ void SceneCastle::Update(float dt)
 	//}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
-		GAME_MGR.SetPlayerData(player->GetHp(), sf::Vector2f{ 0,0 });
+		
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F4))

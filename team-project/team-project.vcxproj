@@ -238,19 +238,20 @@
     <ClCompile Include="Framework\GameMgr.cpp" />
     <ClCompile Include="Interact\Interactable.cpp" />
     <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="InventoryUI.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Interact\JumpWall.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Interact\Npc.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Framework\QuestMgr.cpp" />
     <ClCompile Include="Interact\Rupee.cpp" />
-    <ClCompile Include="SaveMgr.cpp" />
     <ClCompile Include="Scenes\SceneCastle.cpp" />
+    <ClCompile Include="SaveSlotUI.cpp" />
     <ClCompile Include="Scenes\SceneHidden.cpp" />
     <ClCompile Include="Scenes\SceneGame.cpp" />
     <ClCompile Include="Framework\SceneMgr.cpp" />
     <ClCompile Include="Framework\SoundMgr.cpp" />
+    <ClCompile Include="Scenes\SceneSelect.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='team-project-bin|x64'">Create</PrecompiledHeader>
@@ -285,19 +286,20 @@
     <ClInclude Include="Framework\GameMgr.h" />
     <ClInclude Include="Interact\Interactable.h" />
     <ClInclude Include="Inventory.h" />
+    <ClInclude Include="InventoryUI.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Interact\JumpWall.h" />
     <ClInclude Include="Interact\Npc.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Framework\QuestMgr.h" />
     <ClInclude Include="Interact\Rupee.h" />
-    <ClInclude Include="SaveMgr.h" />
+    <ClInclude Include="SaveSlotUI.h" />
     <ClInclude Include="Scenes\SceneCastle.h" />
     <ClInclude Include="Scenes\SceneHidden.h" />
     <ClInclude Include="Scenes\SceneGame.h" />
     <ClInclude Include="Framework\SceneMgr.h" />
     <ClInclude Include="Framework\SoundMgr.h" />
+    <ClInclude Include="Scenes\SceneSelect.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Framework\TextGo.h" />
     <ClInclude Include="Framework\Utils.h" />

@@ -1,10 +1,24 @@
 #pragma once
 #include "GameObject.h"
-class HUD :
-    public GameObject
+#include "InventoryUI.h"
+#include "HUD.h"
+class HUD : public GameObject
 {
 protected:
 	sf::Sprite body;
+	int rupeeCount = 0;
+	sf::Text rupeeText;
+	sf::Sprite statusUI;
+	InventoryUI inventoryUI;
+	bool showStatus = true;
+	int hp = 6;
+	int maxHp = 6;
+	//int heartCount;
+	sf::Text heartText;
+	sf::Texture fullHeartTex;
+	std::vector<sf::Sprite> heartSprites;
+	//sf::Sprite heartSprite;
+
 public:
 	HUD(const std::string& name = "");
 	virtual ~HUD() = default;
@@ -20,4 +34,15 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+
+	void AddRupee(int amount);
+	void AddHeart(int amount);
+
+	void SetHeartCount(int newHp)
+	{
+		hp = std::clamp(newHp, 0, maxHp);
+		UpdateHeartSprites();
+	}
+	void UpdateHeartSprites();
 };
+

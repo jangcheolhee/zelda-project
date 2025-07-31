@@ -25,8 +25,9 @@ void Rupee::OnInteract()
 	}
 }
 
-void Rupee::UpdateBeHavior(float dt)
+void Rupee::Update(float dt)
 {
+	Interactable::Update(dt);
 	life += dt;
 	if ((int)life % 3 == 0)
 	{

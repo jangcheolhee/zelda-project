@@ -125,13 +125,13 @@ void Npc::OnInteract()
             {
                 sayCount++;
 
-                //textGo ¶ç¿ì±â
+                //textGo ï¿½ï¿½ï¿½ï¿½
                 std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
             }
             if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
             {
                 sayCount++;
-                //textGo ¶ç¿ì±â
+                //textGo ï¿½ï¿½ï¿½ï¿½
                 std::cout << "You Can Do It! Bye." << sayCount << std::endl;
             }
             if (sayCount == 2)
@@ -144,6 +144,11 @@ void Npc::OnInteract()
                     delete conversation;
                     conversation = nullptr;
                 }
+
+                //conversation->SetActive(0);
+                sayCount = 0;
+                npcSay = !npcSay;
+                player->isNpcTalk = 0;
             }
         }
     //}

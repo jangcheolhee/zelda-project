@@ -16,7 +16,7 @@ class BasicEnemy :  public Enemy
 {
 protected:
 	float moveTimer = 0.f;
-	
+	EnemyState state = EnemyState::Patrol;
 
 public:
 
@@ -25,8 +25,8 @@ public:
 	// Enemy을(를) 통해 상속됨
 	void Init() override;
 	void Reset() override;
-	void UpdateBehavior(float dt) override;
+	void Update(float dt) override;
 	void ChangeSprite();
-	
+
 };
 

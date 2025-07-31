@@ -21,6 +21,7 @@ protected:
 	Animator animator;
 	sf::Sprite body;
 	HitBox hitBox;
+	HitBox boundBox;
 	Player* player;
 	SceneGame* sceneGame = nullptr;
 
@@ -53,16 +54,12 @@ public:
 
 	sf::FloatRect GetGlobalBounds() const override
 	{
-		sf::FloatRect rect = body.getGlobalBounds();
-		rect.left -= 2.f;
-		rect.top -= 2.f;
-		rect.width += 4.f;
-		rect.height += 4.f;
-		return rect;
+		return body.getGlobalBounds();
 	}
 
+	HitBox GetHitBox() { return hitBox; };
+	HitBox GetBoundBox() { return boundBox; };
 	virtual void OnInteract() = 0;
 	virtual bool IsDestructible() const { return false; }
-	virtual void UpdateBeHavior(float dt) {};
 	void Shoot();
 };

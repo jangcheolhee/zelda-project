@@ -70,11 +70,18 @@ void Scene::Update(float dt)
 
 void Scene::Draw(sf::RenderWindow& window)
 {
+	
 	std::list<GameObject*> sortedObjects(gameObjects);
 	sortedObjects.sort(DrawOrderComparer());
 
 	window.setView(worldView);
 	bool isUiView = false;
+
+	for (auto obj : gameObjects)
+	{
+		if (obj->IsActive())
+			obj->Draw(window);
+	}
 
 	for (auto obj : sortedObjects)
 	{

@@ -27,6 +27,7 @@ protected:
 	sf::Vector2f initPosition;
 
 	HitBox hitBox;
+	HitBox boundBox;
 
 	int maxHp = 10;
 	int hp = 3;
@@ -65,7 +66,7 @@ public:
 	{
 		return body.getGlobalBounds();
 	}
-
+	virtual void OnCollide(Direction direction);
 	void OnCollide(Player* player);
 	int GetDamage() { return damage; }
 
@@ -78,11 +79,12 @@ public:
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
 
-	virtual void UpdateBehavior(float dt) = 0; 
+	
 	virtual void OnCollideBySword();
 	virtual void OnHit(int damage);
 
 	void DeathAnimation();
-	
+	HitBox GetHitBox() { return hitBox; };
+	HitBox GetBoundBox() { return boundBox; };
 };
 
