@@ -92,7 +92,7 @@ void Bush::Update(float dt)
 		for (auto& enemy : enemyList)
 		{
 
-			if (Utils::CheckCollision(enemy->GetBoundBox().rect, hitBox.rect))
+			if (Utils::CheckCollision(enemy->GetBoundBox().rect, boundBox.rect))
 			{
 				isHit = true;
 				enemy->OnDamage(1);
@@ -133,5 +133,5 @@ void Bush::Shoot()
 		break;
 	}
 	velocity = dir * speed;
-
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/throw.wav"));
 }

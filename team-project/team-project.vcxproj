@@ -218,6 +218,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy\BossEnemy.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="HitboxGenerator.cpp" />
     <ClCompile Include="HUD.cpp" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Interact\Npc.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Interact\Rupee.cpp" />
+    <ClCompile Include="Scenes\SceneBoss.cpp" />
     <ClCompile Include="Scenes\SceneCastle.cpp" />
     <ClCompile Include="SaveSlotUI.cpp" />
     <ClCompile Include="Scenes\SceneHidden.cpp" />
@@ -262,6 +264,7 @@
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Enemy\BossEnemy.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="HitboxGenerator.h" />
     <ClInclude Include="HUD.h" />
@@ -294,6 +297,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Interact\Rupee.h" />
     <ClInclude Include="SaveSlotUI.h" />
+    <ClInclude Include="Scenes\SceneBoss.h" />
     <ClInclude Include="Scenes\SceneCastle.h" />
     <ClInclude Include="Scenes\SceneHidden.h" />
     <ClInclude Include="Scenes\SceneGame.h" />

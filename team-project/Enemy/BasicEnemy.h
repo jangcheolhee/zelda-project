@@ -19,14 +19,11 @@ protected:
 	EnemyState state = EnemyState::Patrol;
 
 public:
-
-
-
 	// Enemy을(를) 통해 상속됨
 	void Init() override;
 	void Reset() override;
 	void Update(float dt) override;
 	void ChangeSprite();
-
+	
 };
 

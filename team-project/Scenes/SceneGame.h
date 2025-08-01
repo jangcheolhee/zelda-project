@@ -77,12 +77,12 @@ public:
 	{
 		return std::vector<Interactable*>(interactList.begin(), interactList.end());
 	}
+	std::list<Interactable*> GetInteract(){return interactList;}
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);
 	void DeleteInteractables();
-
 	
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy(); 
@@ -95,7 +95,6 @@ public:
 
 	void SpawnInteractableObject(sf::FloatRect zone);
 	void CheckCollison();
-
 	void SpawnSquareHitBox();
 
 	void Init() override;

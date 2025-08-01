@@ -52,6 +52,7 @@ bool TileMap::LoadTileMap(const std::string& tilePath)
         tileset.columns = tsJ["columns"];
         tilesets.push_back(std::move(tileset));
     }
+
     //Ÿ�� �׸���
     for (const auto& layer : tmJ["layers"])
     {
@@ -156,7 +157,7 @@ std::vector<sf::Vector2f> TileMap::getPositions(int layerIndex, int targetGid)
     return pos;
 }
 
-bool TileMap::LoadHitboxLayer(HitboxCorners& outCorners)
+bool TileMap::LoadHitboxLayer(HitboxCorners& outCorners, std::string sceneName)
 {
     const auto& layers = tmJ["layers"];
     const int mapWidth = tmJ["width"];
@@ -182,22 +183,85 @@ bool TileMap::LoadHitboxLayer(HitboxCorners& outCorners)
 
                 sf::Vector2f position = sf::Vector2f(x * tileWidth, y * tileHeight) + origin;
 
-                switch (gid)
+                if (sceneName == "Game")
                 {
-                case 24590: // 좌상단
-                    outCorners.topLefts.push_back(position);
-                    break;
-                case 24591: // 우상단
-                    outCorners.topRights.push_back(position);
-                    break;
-                case 24618: // 좌하단
-                    outCorners.bottomLefts.push_back(position);
-                    break;
-                case 24619: // 우하단
-                    outCorners.bottomRights.push_back(position);
-                    break;
-                default:
-                    break;
+                    switch (gid)
+                    {
+                    case 24590: // 좌상단
+                        outCorners.topLefts.push_back(position);
+                        break;
+                    case 24591: // 우상단
+                        outCorners.topRights.push_back(position);
+                        break;
+                    case 24618: // 좌하단
+                        outCorners.bottomLefts.push_back(position);
+                        break;
+                    case 24619: // 우하단
+                        outCorners.bottomRights.push_back(position);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else if (sceneName == "Hidden")
+                {
+                    switch (gid)
+                    {
+                    case 6158: // 좌상단
+                        outCorners.topLefts.push_back(position);
+                        break;
+                    case 6159: // 우상단
+                        outCorners.topRights.push_back(position);
+                        break;
+                    case 6186: // 좌하단
+                        outCorners.bottomLefts.push_back(position);
+                        break;
+                    case 6187: // 우하단
+                        outCorners.bottomRights.push_back(position);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else if (sceneName == "Castle")
+                {
+                    switch (gid)
+                    {
+                    case 8134: // 좌상단
+                        outCorners.topLefts.push_back(position);
+                        break;
+                    case 8135: // 우상단
+                        outCorners.topRights.push_back(position);
+                        break;
+                    case 8162: // 좌하단
+                        outCorners.bottomLefts.push_back(position);
+                        break;
+                    case 8163: // 우하단
+                        outCorners.bottomRights.push_back(position);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else if (sceneName == "Boss")
+                {
+                    switch (gid)
+                    {
+                    case 1038: // 좌상단
+                        outCorners.topLefts.push_back(position);
+                        break;
+                    case 1039: // 우상단
+                        outCorners.topRights.push_back(position);
+                        break;
+                    case 1066: // 좌하단
+                        outCorners.bottomLefts.push_back(position);
+                        break;
+                    case 1067: // 우하단
+                        outCorners.bottomRights.push_back(position);
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
         }
@@ -205,7 +269,6 @@ bool TileMap::LoadHitboxLayer(HitboxCorners& outCorners)
     }
     return false; // 못 찾은 경우
 }
-
 
 void TileMap::Init()
 {

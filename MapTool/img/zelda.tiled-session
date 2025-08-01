@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj",
+    "activeFile": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj",
     "expandedProjectPaths": [
         "."
     ],
@@ -44,12 +44,20 @@
             "scaleInDock": 0.33,
             "scaleInEditor": 1
         },
-        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInner.tmj": {
-            "scale": 0.5,
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/boss.tmj": {
+            "scale": 2.89453125,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 912,
-                "y": 416
+                "x": 127.8272604588394,
+                "y": 128
+            }
+        },
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInner.tmj": {
+            "scale": 3,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 496.99999999999994,
+                "y": 147.16666666666669
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInside.tsj": {
@@ -84,8 +92,8 @@
             "scale": 1.669921875,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 239.53216374269005,
-                "y": 256.00000000000006
+                "x": 256.2994152046784,
+                "y": 256
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/home_background.tsj": {
@@ -101,8 +109,8 @@
             "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": -7,
-                "y": 896.6666666666666
+                "x": 512,
+                "y": 768.3333333333333
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj": {
@@ -110,7 +118,7 @@
             "selectedLayer": 3,
             "viewCenter": {
                 "x": 512,
-                "y": 769
+                "y": 768.5
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/zelda_house_outdoor.tsj": {
@@ -181,12 +189,12 @@
     "last.exportedFilePath": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data",
     "last.imagePath": "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data",
     "map.fixedSize": true,
-    "map.height": 58,
+    "map.height": 32,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "json",
     "map.tileHeight": 8,
     "map.tileWidth": 8,
-    "map.width": 140,
+    "map.width": 32,
     "openFiles": [
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/filed.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/zelda_house_outdoor.tsj",
@@ -207,10 +215,10 @@
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_44_1024-1024.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/Lumiere_64_512-512.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj",
-        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInner.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInside.tsj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/originalMap.tmj",
+        "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/field.tmj",
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/house.tsj"
     ],

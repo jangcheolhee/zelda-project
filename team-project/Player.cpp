@@ -3,7 +3,9 @@
 #include "AnimationClip.h"
 #include "HUD.h"
 #include "SceneGame.h"
-
+#include "SceneCastle.h"
+#include "SceneHidden.h"
+#include "SceneBoss.h"
 
 
 Player::Player(const std::string& name)
@@ -15,10 +17,12 @@ void Player::OnCollide(Enemy* enemy)
 {
 	// 칼 히트박스가 활성화되어 있고,
 		// 현재 적의 바운딩박스와 충돌한다면
+	
 	if (swordHitBoxActive &&
 		swordHitBox.rect.getGlobalBounds().intersects(enemy->GetHitBox().rect.getGlobalBounds()))
 	{
 		enemy->OnCollideBySword(); // 적 피격 처리
+		enemy->OnDamage(1);
 	}
 }
 
@@ -87,6 +91,7 @@ void Player::Init()
 	if (!TEXTURE_MGR.Exists(swordTexPath))
 	{
 		TEXTURE_MGR.Load(swordTexPath);
+		
 	}
 	swordTexture = &TEXTURE_MGR.Get(swordTexPath);
 
@@ -152,10 +157,8 @@ void Player::Init()
 	{
 		std::cout << "[DEBUG] pushingAnimations[" << static_cast<int>(dir) << "] = " << frames.size() << " 프레임\n";
 	}
-	body.setScale(1.0f, 1.0f); // ũ�� ����
+	body.setScale(1.0f, 1.0f);
 
-	// ��Ʈ�ڽ� �ʱ�ȭ
-	//hitBox.UpdateTransform(body, body.getLocalBounds());
 }
 
 void Player::Release()
@@ -248,6 +251,9 @@ void Player::Update(float dt)
 		isPushing = false;
 	}
 
+	
+
+
 	previousPosition = GetPosition();
 	timeSinceLastDamage += dt;
 	// 상태 판단
@@ -291,8 +297,7 @@ void Player::Update(float dt)
 		attackElapsed = 0.f;
 		attackFrameIndex = 0;
 
-		if (swordTexture)
-			body.setTexture(*swordTexture);
+		if (swordTexture) body.setTexture(*swordTexture);
 
 		auto& attackVec = attackAnimations[currentDirection];
 
@@ -305,10 +310,8 @@ void Player::Update(float dt)
 				rect.left += rect.width;
 				rect.width = -rect.width;
 			}
-
 			body.setTextureRect(rect);
 		}
-
 	}
 
 	if (playerState == PlayerState::Attack)
@@ -325,8 +328,6 @@ void Player::Update(float dt)
 			{
 				attackElapsed = 0.f;
 				attackFrameIndex++;
-
-
 
 				if (attackFrameIndex >= attackVec.size())
 				{
@@ -389,13 +390,36 @@ void Player::Update(float dt)
 		}
 		body.move(sf::Vector2f(0.f, 0.f)); // 공격 중엔 이동 없음
 		UpdateFixedHitBox();
+		//------------------------------
+		if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
+		{
+			enemyList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Castle)
+		{
+			enemyList = dynamic_cast<SceneCastle*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Hidden)
+		{
+			enemyList = dynamic_cast<SceneHidden*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Boss)
+		{
+			enemyList = dynamic_cast<SceneBoss*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+
+		for (auto& enemy : enemyList)
+		{
+			OnCollide(enemy);
+			
+		}//-----------------------------
 		return; // 공격 중에는 나머지 처리 스킵
 	}
+	
 
 	moveDir = { 0.f, 0.f };
 	bool moving = false;
-	//bool isMovingLeft = false;
-	// 방향 키 입력 시 방향 결정
+
 
 	// 2. 이동 방향은 3개까지 입력 가능 (움직임만)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
@@ -483,6 +507,7 @@ void Player::Draw(sf::RenderWindow& window)
 	if (swordHitBoxActive)
 	{
 		swordHitBox.Draw(window);
+
 	}
 
 }
@@ -541,7 +566,6 @@ void Player::TriggerInteraction(GameObject* obj)
 
 	std::cout << ">>> interact ok! <<<" << std::endl;
 
-
 }
 
 void Player::TakeDamageIfPossible(int damage)
@@ -557,7 +581,7 @@ void Player::OnDamage(int damage)
 	//if (isInvincible) return;
 
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
-
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/link hurt.wav"));
 	std::cout << "[Player] damage! " << damage << " ▶ HP: " << hp << "\n";
 	if (hud != nullptr)
 	{
@@ -568,6 +592,7 @@ void Player::OnDamage(int damage)
 	if (hp <= 0)
 	{
 		std::cout << "[Player] Die!\n";
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/link dies.wav"));
 		SetActive(false); // 비활성화 또는 리스폰 처리
 		// 여기에 죽었을 때 상태 전환이나 UI 호출 가능
 	}
@@ -596,6 +621,7 @@ bool Player::IsAttacking() const
 void Player::Heal(int amount)
 {
 	hp = Utils::Clamp(hp + amount, 0, maxHp);
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/heart.wav"));
 	if (hud != nullptr)
 	{
 		hud->SetHeartCount(hp);

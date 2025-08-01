@@ -10,7 +10,7 @@ struct CastleZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
-	// Ãß°¡ Á¤º¸
+	// ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	std::function<void()> onEnter;
 	std::function<void()> onExit;
 	bool entered = false;
@@ -26,30 +26,63 @@ struct CastleZone
 class SceneCastle :public Scene
 {
 protected:
+	bool changeZone = false;
+
 	Player* player;
 	TileMap* tileMapCastle;
 
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
-
+	std::list<Interactable*>interactList;
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::vector<CastleZone> castleZones;
 	int zoneID = 1;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
+
+	std::vector<HitBox> collisions;
+	sf::RectangleShape collisionBox;
+	float wallX = 0;
+	float wallY = 0;
+	float wallWithdh = 0;
+	float wallHeight = 0;
+	bool squareToggle = false;
+
+	//floor
+	std::vector<SpriteGo*> floor1DoorPathCovers; //1ï¿½ï¿½ 2ï¿½ï¿½
+	SpriteGo* floor2DoorPathCover; //2ï¿½ï¿½ 1ï¿½ï¿½
+	SpriteGo* LeftBridge;
+	SpriteGo* RightBridge;
+	bool isSecondFloor = 0;
+	//2floor checkpoint
+	std::vector<sf::Vector2f> secondPos;
+	std::vector<sf::FloatRect> secondBounds;
+	sf::FloatRect secondBound;
+	//1floor checkpoint
+	std::vector<sf::Vector2f> firstPos;
+	std::vector<sf::FloatRect> firstBounds;
+	sf::FloatRect firstBound;
+
 public:
+	std::list<Interactable*> GetInteract() { return interactList; }
+	std::list<Enemy*> GetEnemy() { return enemyList; }
 	SceneCastle();
 
 	void InitZones();
 	void UpdateZones();
-	void UpdateBehaviorZone();
+	void UpdateBehaviorZone(float dt);
 
 	void DeleteInteractables();
 
 	void CheckCollison();
+	void SpawnSquareHitBox();
+
+	void SpawnFloorCovers();
 
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
+	void Draw(sf::RenderWindow& window) override;
 };

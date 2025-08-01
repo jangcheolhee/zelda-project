@@ -12,8 +12,6 @@ void SaveSlotUI::SetSlotData(int index, int heartCount)
 
 	Slot& s = slots[index];
 
-
-	// 하트 설정
 	for (int i = 0; i < s.hearts.size(); ++i)
 	{
 		s.hearts[i].setColor(i < heartCount ? sf::Color::White : sf::Color(100, 100, 100, 100));
@@ -35,7 +33,7 @@ void SaveSlotUI::UpdateUIByState()
 		Utils::SetOrigin(title, Origins::MC);
 		break;
 	case MenuState::ConfirmDelete:
-		title.setString("Delete this slot?");
+		title.setString("Check delete slot?");
 		Utils::SetOrigin(title, Origins::MC);
 		break;
 	}
@@ -103,40 +101,51 @@ void SaveSlotUI::Reset()
 	slots.resize(3);
 	for (int i = 0; i < 3; ++i)
 	{
-		Slot& s = slots[i];
-		s.icon.setTexture(TEXTURE_MGR.Get("graphics/Link.png"));
-		s.icon.setTextureRect({ 0, 0, 16, 24 });
-		s.icon.setScale(2.f, 2.f); // 확대
-		Utils::SetOrigin(s.icon, Origins::MC);
-
-		s.hearts.resize(3);
-		for (int j = 0; j < 3; ++j)
+		if (GAME_MGR.CheckSlot(i))
 		{
-			s.hearts[j].setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
-			s.hearts[j].setTextureRect({ 104,280,8,8 });
-			s.hearts[j].setScale(1.5f, 1.5f);
+			Slot& s = slots[i];
+			s.icon.setTexture(TEXTURE_MGR.Get("graphics/Link.png"));
+			if (GAME_MGR.currentMapID == 1)
+			{
+				s.icon.setTextureRect({ 0, 0, 16, 24 });
+			}
+			else if (GAME_MGR.currentMapID == 2)
+			{
+				s.icon.setTextureRect({ 0, 112, 16, 24 });
+			}
+			s.icon.setScale(2.f, 2.f);
+			Utils::SetOrigin(s.icon, Origins::MC);
+
+			s.hearts.resize(GAME_MGR.playerHp);
+			for (int j = 0; j < s.hearts.size(); ++j)
+			{
+				s.hearts[j].setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
+				s.hearts[j].setTextureRect({ 104,280,8,8 });
+				s.hearts[j].setScale(1.5f, 1.5f);
+			}
 		}
-	}
-	copyText.setFont(FONT_MGR.Get("fonts/DS-DIGIT.ttf"));
-	copyText.setString("Copy");
-	copyText.setFillColor(sf::Color::White);
-	copyText.setPosition(center.x, center.y + 140);
-	copyText.setCharacterSize(24);
-	Utils::SetOrigin(copyText, Origins::MC);
+		copyText.setFont(FONT_MGR.Get("fonts/DS-DIGIT.ttf"));
+		copyText.setString("Copy");
+		copyText.setFillColor(sf::Color::White);
+		copyText.setPosition(center.x, center.y + 140);
+		copyText.setCharacterSize(24);
+		Utils::SetOrigin(copyText, Origins::MC);
 
-	deleteText.setFont(FONT_MGR.Get("fonts/DS-DIGIT.ttf"));
-	deleteText.setString("Delete");
-	deleteText.setFillColor(sf::Color::White);
-	deleteText.setPosition(center.x, center.y + 200);
-	deleteText.setCharacterSize(24);
-	Utils::SetOrigin(deleteText, Origins::MC);
+		deleteText.setFont(FONT_MGR.Get("fonts/DS-DIGIT.ttf"));
+		deleteText.setString("Delete");
+		deleteText.setFillColor(sf::Color::White);
+		deleteText.setPosition(center.x, center.y + 200);
+		deleteText.setCharacterSize(24);
+		Utils::SetOrigin(deleteText, Origins::MC);
 
-	body.setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
-	body.setTextureRect({ 153,272,16,16 });
-	body.setPosition(center.x - 120.f, center.y - 40.f * selectedIndex * slotSpacing);
-	body.setScale(-2.f, 2.f);
-	Utils::SetOrigin(body, Origins::MC);
+		body.setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
+		body.setTextureRect({ 153,272,16,16 });
+		body.setPosition(center.x - 120.f, center.y - 40.f * selectedIndex * slotSpacing);
+		body.setScale(-2.f, 2.f);
+		Utils::SetOrigin(body, Origins::MC);
 
+		}
+		
 }
 
 void SaveSlotUI::Update(float dt)
@@ -181,6 +190,8 @@ void SaveSlotUI::Update(float dt)
 	{
 		if (state == MenuState::ConfirmDelete)
 			SetState(MenuState::SelectSlot);
+
+		
 	}
 
 }
@@ -190,17 +201,21 @@ void SaveSlotUI::Draw(sf::RenderWindow& window)
 	window.draw(title);
 	for (int i = 0; i < slots.size(); ++i)
 	{
-		float y = center.y - 40.f + i * slotSpacing;
-		Slot& s = slots[i];
-
-		s.icon.setPosition(sf::Vector2f{ center.x - 110.f, y });
-		window.draw(s.icon);
-
-		for (int j = 0; j < s.hearts.size(); ++j)
+		if (GAME_MGR.CheckSlot(i))
 		{
-			s.hearts[j].setPosition(center.x + 90.f + j * 18.f, y + 5);
-			window.draw(s.hearts[j]);
+			float y = center.y - 40.f + i * slotSpacing;
+			Slot& s = slots[i];
+
+			s.icon.setPosition(sf::Vector2f{ center.x - 110.f, y });
+			window.draw(s.icon);
+
+			for (int j = 0; j < s.hearts.size(); ++j)
+			{
+				s.hearts[j].setPosition(center.x + 90.f + j * 18.f, y + 5);
+				window.draw(s.hearts[j]);
+			}
 		}
+		
 	}
 	window.draw(body);
 	window.draw(copyText);

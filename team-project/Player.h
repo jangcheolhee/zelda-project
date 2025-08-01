@@ -35,6 +35,8 @@ protected:
 	float speed = 50.f;        
 	float attackFrameTime = 1.f / 20.f;
 
+
+	std::list<Enemy*> enemyList;
 	sf::Vector2f velocity = { 0.f, 0.f };
 	std::map<Direction, std::vector<sf::IntRect>> animations;
 	std::map<Direction, std::vector<sf::IntRect>> attackAnimations;

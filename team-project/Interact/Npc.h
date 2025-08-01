@@ -1,14 +1,15 @@
 ﻿#pragma once
 #include "Interactable.h"
 class SpriteGo;
+class TextGo;
 class Npc : public Interactable
 {
 public:
 	enum class Type
 	{
 		None = -1,
-		Guard,
-		Daddy,
+		Basic,
+		Dad,
 	};
 protected:
 	Direction currentDirection;
@@ -18,8 +19,10 @@ protected:
 	int sayCount = 0;
 	
 	SpriteGo* conversation;
+	TextGo* dialogText;
+	sf::View talkUi;
 
-	Type type = Type::None;
+	Type npcType = Type::Basic;
 
 public:
 
@@ -27,12 +30,15 @@ public:
 	~Npc();
 
 	void SetPlayer(Player* p);
+	void SetNpcType(Type type) { npcType = type; }
+	Type GetNpcType() const { return npcType; }
+
 	void DirectionSprite(Direction dir);
 	Direction GetDirectionToPlayer();
-
 	void DaddySprite();
 
-	Type GetType() const { return type; }
+	void HandleBasicNpcInteraction();
+	void HandleDadInteraction();
 
 	// Interactable
 	void OnInteract() override;

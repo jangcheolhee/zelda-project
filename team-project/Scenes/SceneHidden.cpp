@@ -15,10 +15,16 @@
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
 	player = nullptr;
+	dad = nullptr;
 	tileMapHidden = nullptr;
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/inventory.png");
+}
+
+void SceneHidden::SetPlayer(Player* p) {
+	
+	player = p;
 }
 
 void SceneHidden::InitZones()
@@ -94,6 +100,8 @@ void SceneHidden::UpdateZones()
 			if (zone.onEnter)
 			{
 				zone.onEnter();
+				SpawnSquareHitBox();
+				SpawnHiddenObject();
 			}
 		}
 		else if (!nowInZone && zone.entered)
@@ -147,36 +155,32 @@ void SceneHidden::CheckCollison()
 {
 	if (!player) return;
 
-	for (auto& enemy : enemyList)
-	{
-		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-		{
-			player->OnCollide(enemy);
-			enemy->OnCollide(player);
-		}
-	}
 
-	for (auto& obj : interactables)
+	for (auto& obj : interactList)
 	{
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
 		{
-			player->SetMovable(false);
-			// 플레이어가 obj가 충돌한 방향으로는 움직일 수 없게 하기
 			switch (obj->GetType())
 			{
-			case Interactable::Type::Throw: case Interactable::Type::Chest:
+			case Interactable::Type::Throw:
+			case Interactable::Type::Chest:
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
 					obj->OnInteract();
 				}
 				break;
 
-			case Interactable::Type::Heart: case Interactable::Type::JumpWall: case Interactable::Type::Rupee:
+			case Interactable::Type::Heart:
+			case Interactable::Type::Rupee:
+				obj->OnInteract();
+				break;
 
+			case Interactable::Type::JumpWall:
+				player->SetPosition(player->GetPos());
 				obj->OnInteract();
 				break;
 			}
-		}player->SetMovable(true);
+		}
 	}
 }
 
@@ -185,8 +189,86 @@ void SceneHidden::SpawnSquareHitBox()
 	HitboxGenerator::SpawnSquareHitBox(
 		tileMapHidden,
 		collisions,
-		collisionBox
+		collisionBox,
+		"Hidden"
 	);
+
+	for (const auto& hitbox : collisions)
+	{
+		sf::FloatRect rect = hitbox.rect.getGlobalBounds();
+		wallX = rect.left;
+		wallY = rect.top;
+		wallWithdh = rect.width;
+		wallHeight = rect.height;
+
+		Interactable* inter = nullptr;
+		auto& pool = interactPool[Interactable::Type::JumpWall];
+		if (!pool.empty())
+		{
+			inter = pool.front();
+			pool.pop_front();
+		}
+		else inter = (Interactable*)AddGameObject(new JumpWall());
+		inter->Init();
+
+		if (dynamic_cast<JumpWall*>(inter))
+		{
+			dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+		}
+		inter->Reset();
+		inter->SetActive(true);
+		inter->SetPosition({ wallX,wallY });
+		interactList.push_back(inter);
+	}
+}
+
+void SceneHidden::SpawnHiddenObject()
+{
+
+	//Hidden Door Path
+	sf::Vector2f hiddenPathPos = tileMapHidden->getPosition(1, 6168);
+
+	auto hiddenPathCover = new SpriteGo();
+	hiddenPathCover->SetName("floor1DoorPathCovers");
+	hiddenPathCover->Init();
+
+	hiddenPathCover->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
+	hiddenPathCover->GetSprite().setTextureRect({ 112, 208, 32, 112 });
+
+	hiddenPathCover->SetActive(1);
+	hiddenPathCover->SetOrigin(Origins::TL);
+	hiddenPathCover->SetPosition(hiddenPathPos);
+	AddGameObject(hiddenPathCover);
+
+	//Dad
+	sf::Vector2f dadPos = tileMapHidden->getPosition(1, 1174);
+
+	Interactable* dadInteractable = nullptr;
+	auto& pool = interactPool[Interactable::Type::Npc];
+	if (!pool.empty())
+	{
+		dadInteractable = pool.front();
+		pool.pop_front();
+	}
+	else dadInteractable = (Interactable*)AddGameObject(new Npc());
+
+	if (auto npc = dynamic_cast<Npc*>(dadInteractable))
+	{
+		npc->SetNpcType(Npc::Type::Dad);
+		npc->SetPlayer(player);
+
+		dadInteractable->Init();
+		dadInteractable->Reset();
+
+		if (auto npc = dynamic_cast<Npc*>(dadInteractable))
+		{
+			npc->DaddySprite();
+		}
+
+		dadInteractable->SetActive(true);
+		dadInteractable->SetPosition(dadPos);
+		interactList.push_back(dadInteractable);
+	}
 }
 
 void SceneHidden::DeleteInteractables()
@@ -202,16 +284,13 @@ void SceneHidden::DeleteInteractables()
 
 void SceneHidden::Init()
 {
+	texIds.push_back("data/HiddenPathToGarden.png");
+	soundIds.push_back("bgm/Cave.flac");
+
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
 	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
-
-	auto dad = new SpriteGo("Dad");
-	dad->Init();
-	dad->sortingLayer = SortingLayers::Background;
-	dad->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
-	AddGameObject(dad);
 	
 	hud = new HUD("HUD");
 	hud->Init();
@@ -233,13 +312,22 @@ void SceneHidden::Init()
 	endPos = tileMapHidden->getPosition(1, 5680);	
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
-	Scene::Init();
+	Scene::Inithud = new HUD("HUD");
+	hud->Init();
+	
+	AddGameObject(hud);
+
+	if (FindGameObject("InventoryUI") == nullptr) 
+	{
+		inventoryUI = new InventoryUI("InventoryUI");
+		inventoryUI->Init();
+		AddGameObject(inventoryUI);
+	}();
 }
 
 void SceneHidden::Enter()
 {
-	Scene::Enter();
-	
+
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
@@ -252,12 +340,14 @@ void SceneHidden::Enter()
 		inventoryUI->Reset();          // 필요 시 초기화 상태도 같이
 	}
 
-
+	Scene::Enter();
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Cave.flac"));
 	sf::Vector2f startPos = tileMapHidden->getPosition(1, 6206);
 	player->SetPosition(startPos);
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
+	
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }
@@ -276,9 +366,23 @@ void SceneHidden::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
-		
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Hidden);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Castle);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F4))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Boss);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F5))
+	{
+		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 
 	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
 	{
