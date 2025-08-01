@@ -293,6 +293,7 @@ void Player::Update(float dt)
 	if (!isAttacking && InputMgr::GetKeyDown(sf::Keyboard::Z))
 	{
 		playerState = PlayerState::Attack;
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/sword.wav"));
 		isAttacking = true;
 		attackElapsed = 0.f;
 		attackFrameIndex = 0;

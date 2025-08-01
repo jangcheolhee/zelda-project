@@ -21,8 +21,10 @@ protected:
 	sf::Vector2f destinyPos = { 0.f, 0.f };
 	sf::Vector2f direction = { 0,0 };
 	float timer = 0;
+	float hitTimer = 0;
 	HitBox hitBox;
 	BossState state;
+	bool OnHit = false;
 
 public:
 	BossEnemy(const std::string& name = "");
@@ -53,5 +55,6 @@ public:
 
 	void OnDamage(int damage) override;
 
+	void Change();
 
 };

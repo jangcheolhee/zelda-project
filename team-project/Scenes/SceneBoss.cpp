@@ -119,7 +119,18 @@ void SceneBoss::DeleteInteractables()
 void SceneBoss::Init()
 {
 
-texIds.push_back("graphics/Boss.png");
+	soundIds.push_back("effects/link hurt.wav");
+	soundIds.push_back("effects/throw.wav");
+	soundIds.push_back("effects/rupee.wav");
+	soundIds.push_back("effects/heart.wav");
+	soundIds.push_back("effects/enemy hit.wav");
+	soundIds.push_back("effects/link dies.wav");
+	soundIds.push_back("effects/sword.wav");
+	soundIds.push_back("bgm/boss.flac");
+	soundIds.push_back("effects/boss hit.wav");
+	texIds.push_back("graphics/Boss.png");
+
+	ANI_CLIP_MGR.Load("animations/bossDie.csv");
 	player = new Player("Player");
 	tileMapBoss = new TileMap("TileMapBoss", "data/boss.tmj");
 	tileMapBoss->Init();
@@ -135,6 +146,8 @@ texIds.push_back("graphics/Boss.png");
 
 void SceneBoss::Enter()
 {
+	
+
 	auto size = FRAMEWORK.GetWindowSizeF();
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter({ 0,0 });
@@ -161,6 +174,7 @@ void SceneBoss::Enter()
 		BossEnemy* b = new BossEnemy();
 		AddGameObject(b);
 		bosses.push_back(b);
+		b->Init();
 		b->StartPos(starts[i]);
 		b->DesPos(points[i]);
 	
@@ -172,7 +186,8 @@ void SceneBoss::Enter()
 	GAME_MGR.playerSpawnPosition = startPos;
 	GAME_MGR.Save();
 	worldView.setCenter({player->GetGlobalBounds().getPosition().x+5.f, player->GetGlobalBounds().getPosition().y - 90.f});
-
+	Scene::Enter();
+	SOUND_MGR.PlayBgm("bgm/boss.flac");
 	SpawnSquareHitBox();
 }
 

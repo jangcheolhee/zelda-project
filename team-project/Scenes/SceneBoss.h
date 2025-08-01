@@ -40,7 +40,8 @@ public:
 	SceneBoss();
 	void SetPlayer(Player* p);
 
-std::list<Enemy*> GetEnemy() { return bosses; }
+	std::list<Enemy*> GetEnemy() { return bosses; }
+	std::list<Interactable*> GetInteract() { return interactList; }
 
 	void DeleteInteractables();
 

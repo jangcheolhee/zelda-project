@@ -271,7 +271,13 @@ void SceneCastle::DeleteInteractables()
 void SceneCastle::Init()
 {
 
-	
+	soundIds.push_back("effects/link hurt.wav");
+	soundIds.push_back("effects/throw.wav");
+	soundIds.push_back("effects/rupee.wav");
+	soundIds.push_back("effects/heart.wav");
+	soundIds.push_back("effects/enemy hit.wav");
+	soundIds.push_back("effects/link dies.wav");
+	soundIds.push_back("effects/sword.wav");
 	texIds.push_back("data/59984.png");
 
 	player = new Player("Player");

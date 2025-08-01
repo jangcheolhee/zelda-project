@@ -1,6 +1,9 @@
 ﻿#include "stdafx.h"
 #include "Enemy.h"
 #include "SceneGame.h"
+#include "SceneHidden.h"
+#include "SceneBoss.h"
+#include "SceneCastle.h"
 #include "Player.h"
 Enemy::Enemy(const std::string& name)
 	: GameObject(name)
@@ -121,15 +124,29 @@ void Enemy::Reset()
 		sceneGame = nullptr;
 	}
 	player = (Player*)SCENE_MGR.GetCurrentScene()->FindGameObject("Player");
-	
+
 	SetActive(true);
 	SetPosition(initPosition);
 }
 
 void Enemy::Update(float dt)
 {
+	switch (SCENE_MGR.GetCurrentSceneId())
+	{
+	case SceneIds::Game:
+		interList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetInteract();
+		break;
+	case SceneIds::Hidden:
+		interList = dynamic_cast<SceneHidden*>(SCENE_MGR.GetCurrentScene())->GetInteract();
+		break;
+	case SceneIds::Castle:
+		interList = dynamic_cast<SceneCastle*>(SCENE_MGR.GetCurrentScene())->GetInteract();
+		break;
+	case SceneIds::Boss:
+		interList = dynamic_cast<SceneBoss*>(SCENE_MGR.GetCurrentScene())->GetInteract();
+		break;
+	}
 	
-	interList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetInteract();
 	for (auto& obj : interList)
 	{
 

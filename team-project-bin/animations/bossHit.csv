@@ -1,0 +1,12 @@
+ID,FPS,"LoopType (0: Single, 1: Loop)",,,
+BossHit,10,0,,,
+,,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT,"FLIPX (0:Fale, 1:True)"
+graphics/Boss.png,8,17,29,43,0
+graphics/Boss.png,38,17,29,43,
+graphics/Boss.png,68,17,29,43,
+graphics/Boss.png,98,17,29,43,
+graphics/Boss.png,128,17,29,43,
+graphics/Boss.png,158,17,29,43,
+graphics/Boss.png,188,17,29,43,
+graphics/Boss.png,218,17,29,43,

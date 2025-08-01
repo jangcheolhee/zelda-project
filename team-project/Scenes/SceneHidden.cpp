@@ -283,7 +283,13 @@ void SceneHidden::Init()
 {
 	texIds.push_back("data/HiddenPathToGarden.png");
 	soundIds.push_back("bgm/Cave.flac");
-
+	soundIds.push_back("effects/link hurt.wav");
+	soundIds.push_back("effects/throw.wav");
+	soundIds.push_back("effects/rupee.wav");
+	soundIds.push_back("effects/heart.wav");
+	soundIds.push_back("effects/enemy hit.wav");
+	soundIds.push_back("effects/link dies.wav");
+	soundIds.push_back("effects/sword.wav");
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
