@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SceneCastle.h"
 #include "Player.h"
 #include "TileMap.h"
@@ -6,8 +6,13 @@
 #include "JumpWall.h"
 #include "BasicEnemy.h"
 #include "Enemy.h"
+#include "HUD.h"
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 {
+	texIds.push_back("graphics/HUD.png");
+	
+	texIds.push_back("graphics/inventory.png");
+	fontIds.push_back("fonts/Neo.ttf");
 	player = nullptr;
 	tileMapCastle = nullptr;
 }
@@ -342,6 +347,16 @@ void SceneCastle::Init()
 	tileMapCastle = new TileMap("TileMapCastle", "data/castleInner.tmj");
 	tileMapCastle->Init();
 
+	hud = new HUD("HUD");
+	hud->Init();
+	AddGameObject(hud);
+
+	if (FindGameObject("InventoryUI") == nullptr)
+	{
+		inventoryUI = new InventoryUI("InventoryUI");
+		inventoryUI->Init();
+		AddGameObject(inventoryUI);
+	}
 	AddGameObject(player);
 	AddGameObject(tileMapCastle);
 
@@ -365,6 +380,8 @@ void SceneCastle::Init()
 	endPos = tileMapCastle->getPosition(2, 8313);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
+	
+
 	Scene::Init();
 }
 
@@ -376,6 +393,11 @@ void SceneCastle::Enter()
 	uiView.setSize(size);
 	uiView.setCenter(center);
 	worldView.setSize({ size.x * .5f, size.y * .5f });
+	if (inventoryUI)
+	{
+		inventoryUI->SetActive(false); // 처음 진입 시 숨김 처리
+		inventoryUI->Reset();          // 필요 시 초기화 상태도 같이
+	}
 
 	Scene::Enter();
 
@@ -440,15 +462,29 @@ void SceneCastle::Update(float dt)
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
+	{
+		if (inventoryUI)
+		{
+			bool active = inventoryUI->GetActive();
+			inventoryUI->SetActive(!active);
+		}
+	}
 }
 
 void SceneCastle::Draw(sf::RenderWindow& window)
 {
-	Scene::Draw(window);
 	window.setView(worldView);
+	Scene::Draw(window);
 
 	for (auto& col : collisions)
 	{
 		col.Draw(window);
 	}
+	/*if (hud) hud->Draw(window);
+	if (inventoryUI && inventoryUI->GetActive())
+	{
+		inventoryUI->Draw(window);
+
+	}*/
 }
