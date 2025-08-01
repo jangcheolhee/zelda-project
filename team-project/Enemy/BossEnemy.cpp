@@ -175,6 +175,7 @@ void BossEnemy::OnDamage(int damage)
 		OnHit = true;
 		if (hp <= 0)
 		{
+			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss dies.wav"));
 			Change();
 		}
 		hitTimer = 0;

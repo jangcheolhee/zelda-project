@@ -128,6 +128,7 @@ void SceneBoss::Init()
 	soundIds.push_back("effects/sword.wav");
 	soundIds.push_back("bgm/boss.flac");
 	soundIds.push_back("effects/boss hit.wav");
+	soundIds.push_back("effects/boss dies.wav");
 	texIds.push_back("graphics/Boss.png");
 
 	ANI_CLIP_MGR.Load("animations/bossDie.csv");
