@@ -33,7 +33,7 @@ void SceneBoss::CheckCollison()
 		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 		{
 			player->OnCollide(enemy);
-			enemy->OnCollide(player);
+			//enemy->OnCollide(player);
 		}
 	}
 
