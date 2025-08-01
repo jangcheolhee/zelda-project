@@ -80,7 +80,6 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
-
 	
 	virtual void OnCollideBySword();
 

@@ -31,17 +31,20 @@ protected:
 	Player* player;
 	TileMap* tileMapCastle;
 
+	//inter
 	std::vector<Interactable*> interactables;
-	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
-	std::list<Enemy*> enemyList;
 	std::list<Interactable*>interactList;
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
+	//enemy
+	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
+	std::list<Enemy*> enemyList;
+	//zone
 	std::vector<CastleZone> castleZones;
 	int zoneID = 1;
-
+	//pos
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
-
+	//collision
 	std::vector<HitBox> collisions;
 	sf::RectangleShape collisionBox;
 	float wallX = 0;
@@ -49,7 +52,6 @@ protected:
 	float wallWithdh = 0;
 	float wallHeight = 0;
 	bool squareToggle = false;
-
 	//floor
 	std::vector<SpriteGo*> floor1DoorPathCovers; //1�� 2��
 	SpriteGo* floor2DoorPathCover; //2�� 1��
@@ -66,21 +68,25 @@ protected:
 	sf::FloatRect firstBound;
 
 public:
-	std::list<Interactable*> GetInteract() { return interactList; }
-	std::list<Enemy*> GetEnemy() { return enemyList; }
 	SceneCastle();
-
+	void SpawnFloorCovers();
+	//Enemy
+	std::list<Enemy*> GetEnemy() { return enemyList; }
+	void RecycleEnemy(Enemy* enemy);
+	void DeleteEnemy();
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
+	//zone
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);
-
+	//interact
+	std::list<Interactable*> GetInteract() { return interactList; }
 	void DeleteInteractables();
-
+	//hitbox
 	void CheckCollison();
 	void SpawnSquareHitBox();
-
-	void SpawnFloorCovers();
-
+	//Scene
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;

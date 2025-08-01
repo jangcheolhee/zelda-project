@@ -33,6 +33,7 @@ void SceneBoss::CheckCollison()
 		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
 		{
 			player->OnCollide(enemy);
+			//enemy->OnCollide(player);
 		}
 	}
 
@@ -147,8 +148,6 @@ void SceneBoss::Init()
 
 void SceneBoss::Enter()
 {
-	
-
 	auto size = FRAMEWORK.GetWindowSizeF();
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter({ 0,0 });
@@ -175,7 +174,6 @@ void SceneBoss::Enter()
 		BossEnemy* b = new BossEnemy();
 		AddGameObject(b);
 		bosses.push_back(b);
-		b->Init();
 		b->StartPos(starts[i]);
 		b->DesPos(points[i]);
 	
@@ -188,7 +186,7 @@ void SceneBoss::Enter()
 	GAME_MGR.Save();
 	worldView.setCenter({player->GetGlobalBounds().getPosition().x+5.f, player->GetGlobalBounds().getPosition().y - 90.f});
 	Scene::Enter();
-	SOUND_MGR.PlayBgm("bgm/boss.flac");
+
 	SpawnSquareHitBox();
 }
 

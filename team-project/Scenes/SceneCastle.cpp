@@ -4,8 +4,8 @@
 #include "TileMap.h"
 #include "HitboxGenerator.h"
 #include "JumpWall.h"
-
-
+#include "BasicEnemy.h"
+#include "Enemy.h"
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 {
 	player = nullptr;
@@ -22,10 +22,12 @@ void SceneCastle::InitZones()
 		[this]()
 		  {
 			  std::cout << "Zone 1 Enter" << std::endl;
+			  SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		  },
 		[this]()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
+			  DeleteEnemy();
 		  },
 		false
 		});
@@ -35,10 +37,12 @@ void SceneCastle::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 2 Enter" << std::endl;
+			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		},
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
+			DeleteEnemy();
 		},
 		false
 		});
@@ -48,10 +52,12 @@ void SceneCastle::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 3 Enter" << std::endl;
+			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		},
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
+			DeleteEnemy();
 		},
 		false
 		});
@@ -90,7 +96,6 @@ void SceneCastle::UpdateZones()
 	}
 }
 
-
 void SceneCastle::UpdateBehaviorZone(float dt)
 {
 	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, castleZones[zoneID - 1].bounds.left + worldView.getSize().x / 2, castleZones[zoneID - 1].bounds.left + castleZones[0].bounds.width - worldView.getSize().x / 2);
@@ -113,8 +118,6 @@ void SceneCastle::UpdateBehaviorZone(float dt)
 void SceneCastle::CheckCollison()
 {
 	if (!player) return;
-
-	
 
 	for (auto& obj : interactList)
 	{
@@ -146,16 +149,12 @@ void SceneCastle::CheckCollison()
 
 void SceneCastle::SpawnSquareHitBox()
 {
-	std::cout << "SpawnSquareHitBox() called" << std::endl;
-
 	HitboxGenerator::SpawnSquareHitBox(
 		tileMapCastle,
 		collisions,
 		collisionBox,
 		"Castle"
 	);
-
-	std::cout << "After SpawnSquareHitBox, collisions size: " << collisions.size() << std::endl;
 
 	for (const auto& hitbox : collisions)
 	{
@@ -268,8 +267,67 @@ void SceneCastle::DeleteInteractables()
 	interactables.clear();
 }
 
+void SceneCastle::RecycleEnemy(Enemy* enemy)
+{
+	if (enemy)
+	{
+		enemy->SetActive(false);
+		enemyPools[enemy->GetType()].push_back(enemy);
+	}
+}
+
+void SceneCastle::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
+{
+	Enemy* enemy = nullptr;
+
+	auto& pool = enemyPools[type];
+	if (!pool.empty())
+	{
+		enemy = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		switch (type)
+		{
+		case Enemy::Types::Basic:
+			enemy = (Enemy*)AddGameObject(new BasicEnemy());
+			break;
+		case Enemy::Types::Count:
+			break;
+		default:
+			break;
+		}
+		enemy->Init();
+	}
+	enemy->Reset();
+	enemy->SetPosition(pos);
+	enemy->SetActive(true);
+
+	enemyList.push_back(enemy);
+}
+
+void SceneCastle::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
+{
+	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(layerIndex, targetGid);
+	for (const auto& pos : positions)
+	{
+		SpawnEnemy(pos, type);
+	}
+}
+
+void SceneCastle::DeleteEnemy()
+{
+	for (Enemy* e : enemyList)
+	{
+		RecycleEnemy(e);
+	}
+	enemyList.clear();
+}
+
 void SceneCastle::Init()
 {
+	texIds.push_back("graphics/Enemy_sheet.png");
 
 	soundIds.push_back("effects/link hurt.wav");
 	soundIds.push_back("effects/throw.wav");
@@ -312,8 +370,6 @@ void SceneCastle::Init()
 
 void SceneCastle::Enter()
 {
-
-	
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
