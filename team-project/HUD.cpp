@@ -42,7 +42,7 @@ void HUD::Init()
 {
 	
 	sortingLayer = SortingLayers::UI;
-	sortingOrder = 0;
+	sortingOrder = 5;
 	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
 
 	rupeeText.setFont(FONT_MGR.Get("fonts/Neo.ttf"));

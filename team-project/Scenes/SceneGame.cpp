@@ -2,7 +2,6 @@
 #include "SceneGame.h"
 #include "Player.h"
 #include "TileMap.h"
-#include "BasicEnemy.h"
 #include "Bush.h"
 #include "Npc.h"
 #include "Chest.h"
@@ -31,15 +30,12 @@ void SceneGame::InitZones()
 		[this]()
 		  {
 			  std::cout << "Zone 1 Enter" << std::endl;
-			  sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
-			  SpawnEnemy(enemyPos, Enemy::Types::Basic);
 
 		  },
 		[this]()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
 			  DeleteInteractables();
-			  DeleteEnemy();
 		  },
 		false
 		});
@@ -54,7 +50,6 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
-			DeleteEnemy();
 		},
 		false
 		});
@@ -69,7 +64,6 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
-			DeleteEnemy();
 		},
 		false
 		});
@@ -84,7 +78,6 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 4 Exit" << std::endl;
-			DeleteEnemy();
 		},
 		false
 		});
@@ -163,45 +156,6 @@ void SceneGame::DeleteInteractables()
 	}
 	interactList.clear();
 }
-void SceneGame::RecycleEnemy(Enemy* enemy)
-{
-	if (enemy)
-	{
-		enemy->SetActive(false);
-		enemyPools[enemy->GetType()].push_back(enemy);
-	}
-}
-
-void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
-{
-	Enemy* enemy = nullptr;
-
-	auto& pool = enemyPools[type];
-	if (!pool.empty())
-	{
-		enemy = pool.front();
-		pool.pop_front();
-	}
-	else
-	{
-		switch (type)
-		{
-		case Enemy::Types::Basic:
-			enemy = (Enemy*)AddGameObject(new BasicEnemy());
-			break;
-		case Enemy::Types::Count:
-			break;
-		default:
-			break;
-		}
-		enemy->Init();
-	}
-	enemy->Reset();
-	enemy->SetPosition(pos);
-	enemy->SetActive(true);
-
-	enemyList.push_back(enemy);
-}
 
 void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 {
@@ -249,15 +203,6 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 	inter->SetActive(true);
 	inter->SetPosition(pos);
 	interactList.push_back(inter);
-}
-
-void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
-{
-	std::vector<sf::Vector2f> positions = tileMapGame->getPositions(layerIndex, targetGid);
-	for (const auto& pos : positions)
-	{
-		SpawnEnemy(pos, type);
-	}
 }
 
 void SceneGame::SpawnFlowers(sf::FloatRect zone)
@@ -453,15 +398,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	}
 }
 
-void SceneGame::DeleteEnemy()
-{
-	for (Enemy* e : enemyList)
-	{
-		RecycleEnemy(e);
-	}
-	enemyList.clear();
-}
-
 void SceneGame::Init()
 {
 	texIds.push_back("graphics/sprite_sheet.png");
@@ -481,6 +417,7 @@ void SceneGame::Init()
 	
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
+	fontIds.push_back("fonts/DungGeunMo.ttf");
 	
 	soundIds.push_back("bgm/Overworld.flac");
 	soundIds.push_back("effects/link hurt.wav");
@@ -559,16 +496,6 @@ void SceneGame::Enter()
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
-	auto it = enemyList.begin();
-	while (it != enemyList.end())
-	{
-		if (!(*it)->GetActive())
-		{
-			RecycleEnemy(*it);
-			it = enemyList.erase(it);
-		}
-		else ++it;
-	}
 	auto it1 = interactList.begin();
 	while (it1 != interactList.end())
 	{
@@ -584,7 +511,6 @@ void SceneGame::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone(dt);
 	FlowerBreath(dt);
-
 
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{

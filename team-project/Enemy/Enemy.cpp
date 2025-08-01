@@ -90,8 +90,8 @@ void Enemy::Init()
 
 
 
-	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = -1;
+	sortingLayer = SortingLayers::Enemy;
+	sortingOrder = 3;
 	animator.SetTarget(&body);
 	SetOrigin(Origins::TL);
 	boundBox.rect.setSize({ 16,24 });

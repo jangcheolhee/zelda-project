@@ -266,7 +266,7 @@ void SceneHidden::SpawnHiddenObject()
 		}
 
 		dadInteractable->SetActive(true);
-		dadInteractable->SetPosition(dadPos);
+		dadInteractable->SetPosition({dadPos.x+20.f, dadPos.y+20.f});
 		interactList.push_back(dadInteractable);
 	}
 }

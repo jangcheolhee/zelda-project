@@ -121,7 +121,7 @@ void Npc::HandleBasicNpcInteraction()
             auto size = FRAMEWORK.GetWindowSizeF();
             conversation->SetPosition({ size.x * 0.5f, size.y * 0.5f });
 
-            dialogText = new TextGo("fonts/DS-DIGIT.ttf", "DialogText");
+            dialogText = new TextGo("fonts/DungGeunMo.ttf", "DialogText");
             dialogText->Init();
             dialogText->Reset();
             dialogText->SetActive(1);
@@ -129,7 +129,6 @@ void Npc::HandleBasicNpcInteraction()
             dialogText->SetCharacterSize(24);
             dialogText->SetFillColor(sf::Color::Black);
             dialogText->SetPosition({ size.x * 0.5f, size.y * 0.5f });
-            
         }
 
         if (sayCount == 0)
@@ -137,7 +136,8 @@ void Npc::HandleBasicNpcInteraction()
             sayCount++;
             if (dialogText != nullptr)
             {
-                dialogText->SetString("Hi, Don't Do That!");
+                std::cout << "You Can Do It! 잘가." << std::endl;
+                dialogText->SetString("물건에 가까이 가서 X 버튼을 누르면 물건을 들어 올릴 수 있어...");
             }
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
@@ -169,7 +169,7 @@ void Npc::HandleDadInteraction()
     if (!player) return;
 
     sf::Vector2f playerPos = player->GetPosition();
-    sf::Vector2f dadPos = GetPosition();
+    sf::Vector2f dadPos = { GetPosition().x, GetPosition().y };
 
     float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
 

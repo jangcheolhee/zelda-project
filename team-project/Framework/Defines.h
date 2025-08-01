@@ -3,10 +3,12 @@
 
 enum class SortingLayers
 {
-	Background,
-	Foreground,
-	Default,
-	UI,
+	Background, //0, tilemap
+	Foreground, //1, interactble ->
+	Player, //2, player
+	Enemy, //3, enemy
+	Default, // 4, hitbox
+	UI, //5, UI
 };
 
 enum class Origins

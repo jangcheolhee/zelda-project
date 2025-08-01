@@ -77,8 +77,8 @@ void Player::Init()
 	
 	hp = maxHp; 
 
-	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = 0;
+	sortingLayer = SortingLayers::Player;
+	sortingOrder = 2;
 
 	std::string texPath = "graphics/Link.png";
 	if (!TEXTURE_MGR.Exists(texPath))
@@ -395,7 +395,6 @@ void Player::Update(float dt)
 		//------------------------------
 		if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
 		{
-			enemyList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
 		}
 		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Castle)
 		{

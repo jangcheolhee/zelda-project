@@ -54,8 +54,8 @@ void BossEnemy::Init()
 			SetActive(false);
 		}
 	);
-	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = 0;
+	sortingLayer = SortingLayers::Enemy;
+	sortingOrder = 3;
 
 	Utils::SetOrigin(body, Origins::MC);
 	Utils::SetOrigin(shadow, Origins::MC);
