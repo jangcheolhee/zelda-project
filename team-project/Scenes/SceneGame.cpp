@@ -301,71 +301,11 @@ void SceneGame::FlowerBreath(float dt)
 
 void SceneGame::CheckCollison()
 {
-	for (auto& enemy : enemyList)
-	{
-		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-		{
-			player->OnCollide(enemy);
-			enemy->OnCollide(player);
-		}
-	}
+	
 
 
 	for (auto& obj : interactList)
 	{
-		for (auto& enemy : enemyList)
-		{
-			if (Utils::CheckCollision(obj->GetHitBox().rect, enemy->GetBoundBox().rect))
-			{
-				//enemy->SetPosition(enemy->GetPos());
-
-				sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
-				sf::FloatRect enemyRect = enemy->GetBoundBox().rect.getGlobalBounds();
-
-				float objX = objRect.left + objRect.width / 2.f;
-				float objY = objRect.top + objRect.height / 2.f;
-
-				float enemyX = enemyRect.left + enemyRect.width / 2.f;
-				float enemyY = enemyRect.top + enemyRect.height / 2.f;
-
-				float dx = objX - enemyX;
-				float dy = objY - enemyY;
-
-				float combinedHalfWidth = (objRect.width + enemyRect.width) / 2.f;
-				float combinedHalfHeight = (objRect.height + enemyRect.height) / 2.f;
-
-				float overlapX = combinedHalfWidth - std::abs(dx);
-				float overlapY = combinedHalfHeight - std::abs(dy);
-
-				if (overlapX < overlapY)
-				{
-
-					if (dx < 0)
-					{
-						//왼쪽
-						enemy->OnCollide(Direction::Left);
-					}
-
-					else
-					{
-						enemy->OnCollide(Direction::Right);
-						//오른쪽
-					}
-					if (dy < 0)
-					{
-						//왼쪽
-						enemy->OnCollide(Direction::Up);
-					}
-
-					else
-					{
-						enemy->OnCollide(Direction::Down);
-						//오른쪽
-					}
-
-				}
-			}
-		}
 
 		if (dynamic_cast<Bush*> (obj))
 		{
@@ -544,7 +484,7 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
 	fontIds.push_back("fonts/Neo.ttf");
-	
+
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	//ANI_CLIP_MGR.Load("animations/run.csv");
@@ -600,7 +540,7 @@ void SceneGame::Enter()
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
-	
+
 	player->SetPosition(startPos);
 }
 
@@ -664,7 +604,7 @@ void SceneGame::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
 	{
-		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" <<std::endl;
+		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
 }
 

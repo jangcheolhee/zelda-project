@@ -36,6 +36,9 @@ protected:
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
+	std::list<Interactable*>interactList;
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
+
 	std::vector<HiddenZone> hiddenZones;
 	int zoneID = 1;
 
@@ -46,7 +49,8 @@ protected:
 	sf::RectangleShape collisionBox;
 public:
 	SceneHidden();
-
+	std::list<Interactable*> GetInteract() { return interactList; }
+	std::list<Enemy*> GetEnemy() { return enemyList; }
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();

@@ -14,7 +14,6 @@ bool GameMgr::CheckSlot(int index)
 	{
 		return false;
 	}
-	LoadFromSlot(index);
 	return true;
 }
 
@@ -57,12 +56,10 @@ void GameMgr::LoadFromSlot(int index)
 		
 		SaveToSlot2(index); 
 		return;
-		
 	}
 
 	json j;
 	in >> j;
-	slotIdx = index;
 	currentMapID = j["map"];
 	playerSpawnPosition.x = j["position"]["x"];
 	playerSpawnPosition.y = j["position"]["y"];

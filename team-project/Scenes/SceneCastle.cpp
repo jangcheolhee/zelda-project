@@ -136,14 +136,7 @@ void SceneCastle::CheckCollison()
 {
 	if (!player) return;
 
-	for (auto& enemy : enemyList)
-	{
-		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-		{
-			player->OnCollide(enemy);
-			enemy->OnCollide(player);
-		}
-	}
+	
 
 	for (auto& obj : interactables)
 	{
@@ -210,6 +203,8 @@ void SceneCastle::Enter()
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
+
+	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }
 

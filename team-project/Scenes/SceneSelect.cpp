@@ -20,6 +20,7 @@ void SceneSelect::Init()
 		{
 			GAME_MGR.LoadFromSlot(slotIndex);
 			SCENE_MGR.ChangeScene((SceneIds)GAME_MGR.currentMapID);
+			GAME_MGR.slotIdx = slotIndex;
 		};
 
 	saveSloatUI->onSlotDelete = [](int slotIndex)

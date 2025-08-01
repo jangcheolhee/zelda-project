@@ -1,16 +1,18 @@
 #pragma once
 #include "Scene.h"
 class Player;
-class BossEnemy;
+class Enemy;
 class SceneBoss : public Scene
 {
 protected:
 	Player* player;
-	std::vector<BossEnemy*> bosses;
+	std::list<Enemy*> bosses;
 	std::vector<sf::Vector2f> points;
 	std::vector<sf::Vector2f> starts;
-public:
 
+
+public:
+	std::list<Enemy*> GetEnemy() { return bosses; }
 	SceneBoss();
 
 	void Init() override;

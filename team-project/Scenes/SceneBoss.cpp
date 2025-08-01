@@ -57,12 +57,5 @@ void SceneBoss::Enter()
 void SceneBoss::Update(float dt)
 {
 	Scene::Update(dt);
-	for (auto b : bosses)
-	{
-		if (Utils::CheckCollision(player->GetHitBox().rect, b->GetHitBox().rect))
-		{
-			player->OnDamage(0);
-			b->OnDamage(0);
-		}
-	}
+	
 }

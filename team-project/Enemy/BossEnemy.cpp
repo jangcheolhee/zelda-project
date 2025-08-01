@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BossEnemy.h"
+#include "Player.h"
 BossEnemy::BossEnemy(const std::string& name)
 	: Enemy(name)
 {
@@ -123,7 +124,23 @@ void BossEnemy::Update(float dt)
 		
 		break;
 	case BossState::Jump:
+		if (timer == 0)
+		{
+			velocity.y = -151;
+			
+		}
+		timer += dt;
+		//direction = Utils::GetNormal(player->GetPosition() - GetPosition());
+		velocity += gravity * dt;
+		position += velocity * dt;
+		SetPosition(position);
+		SetPosition(GetPosition() + direction * dt * 50.f);
 
+		if (velocity.y > 150)
+		{
+			timer = 0;
+
+		}
 
 		break;
 	}

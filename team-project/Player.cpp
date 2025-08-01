@@ -2,6 +2,10 @@
 #include "Player.h"
 #include "AnimationClip.h"
 #include "HUD.h"
+#include "SceneGame.h"
+#include "SceneCastle.h"
+#include "SceneHidden.h"
+#include "SceneBoss.h"
 
 
 Player::Player(const std::string& name)
@@ -162,6 +166,9 @@ void Player::Update(float dt)
 {
 	if (isNpcTalk) return;
 
+	
+
+
 	previousPosition = GetPosition();
 	timeSinceLastDamage += dt;
 	// 깜빡임 무적 처리
@@ -286,8 +293,32 @@ void Player::Update(float dt)
 		}
 		body.move(sf::Vector2f(0.f, 0.f)); // 공격 중엔 이동 없음
 		UpdateFixedHitBox();
+		//------------------------------
+		if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
+		{
+			enemyList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Castle)
+		{
+			enemyList = dynamic_cast<SceneCastle*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Hidden)
+		{
+			enemyList = dynamic_cast<SceneHidden*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Boss)
+		{
+			enemyList = dynamic_cast<SceneBoss*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+		}
+
+		for (auto& enemy : enemyList)
+		{
+			OnCollide(enemy);
+			
+		}//-----------------------------
 		return; // 공격 중에는 나머지 처리 스킵
 	}
+	
 
 	sf::Vector2f movement(0.f, 0.f);
 	bool moving = false;

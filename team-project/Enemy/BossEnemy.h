@@ -6,6 +6,7 @@ enum class BossState
 	Stop,
 	Idle,
 	Jump,
+	Berserk,
 };
 class BossEnemy : public Enemy
 {
@@ -26,7 +27,7 @@ protected:
 public:
 	BossEnemy(const std::string& name = "");
 	virtual ~BossEnemy() = default;
-	HitBox GetHitBox() { return hitBox; }
+	HitBox GetHitBox()override { return hitBox; }
 	sf::Vector2f GetPos() { return pastPos; }
 	void StartPos(sf::Vector2f pos) { startPos = pos;}
 	void DesPos(sf::Vector2f pos) { destinyPos = pos; }

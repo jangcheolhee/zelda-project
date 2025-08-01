@@ -69,7 +69,7 @@ protected:
 
 public:
 	SceneGame();
-
+	std::list<Interactable*> GetInteract(){return interactList;}
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();

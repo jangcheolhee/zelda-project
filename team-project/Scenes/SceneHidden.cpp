@@ -144,14 +144,6 @@ void SceneHidden::CheckCollison()
 {
 	if (!player) return;
 
-	for (auto& enemy : enemyList)
-	{
-		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-		{
-			player->OnCollide(enemy);
-			enemy->OnCollide(player);
-		}
-	}
 
 	for (auto& obj : interactables)
 	{

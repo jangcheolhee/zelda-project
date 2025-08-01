@@ -32,13 +32,16 @@ protected:
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
-
+	std::list<Interactable*>interactList;
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::vector<CastleZone> castleZones;
 	int zoneID = 1;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
 public:
+	std::list<Interactable*> GetInteract() { return interactList; }
+	std::list<Enemy*> GetEnemy() { return enemyList; }
 	SceneCastle();
 
 	void InitZones();

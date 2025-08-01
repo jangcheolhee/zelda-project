@@ -5,6 +5,7 @@
 
 class SceneGame;
 class Player;
+class Interactable;
 class Enemy : public GameObject
 {
 public:
@@ -21,7 +22,7 @@ protected:
 	Animator animator;
 	SceneGame* sceneGame = nullptr;
 	Player* player;
-	
+	std::list<Interactable*> interList;
 	sf::Vector2f velocity = { 0.f, 0.f };
 	
 	sf::Vector2f initPosition;
@@ -66,12 +67,13 @@ public:
 	{
 		return body.getGlobalBounds();
 	}
+	
 	virtual void OnCollide(Direction direction);
-	void OnCollide(Player* player);
+
 	int GetDamage() { return damage; }
 
 	const HitBox& GetHitBox() const { return hitBox; }
-	void OnDamage(int damage);
+	virtual void OnDamage(int damage);
 	
 	void Init() override;
 	void Release() override;
@@ -84,7 +86,6 @@ public:
 	virtual void OnHit(int damage);
 
 	void DeathAnimation();
-	HitBox GetHitBox() { return hitBox; };
-	HitBox GetBoundBox() { return boundBox; };
+	virtual HitBox GetHitBox() { return hitBox; };
+	virtual HitBox GetBoundBox() { return boundBox; };
 };
-
