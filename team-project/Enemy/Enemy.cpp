@@ -70,14 +70,19 @@ void Enemy::OnCollide(Direction direction)
 
 void Enemy::OnDamage(int damage)
 {
-
-	hp = Utils::Clamp(hp - damage, 0, maxHp);
-
-	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/ennemy hit.wav"));
-	if (hp == 0)
+	
+	if (timer > 1)
 	{
-		DeathAnimation();
+		hp = Utils::Clamp(hp - damage, 0, maxHp);
+
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/enemy hit.wav"));
+		if (hp == 0)
+		{
+			DeathAnimation();
+		}
+		timer = 0;
 	}
+	
 }
 
 void Enemy::Init()
@@ -94,10 +99,7 @@ void Enemy::Init()
 	sortingOrder = -1;
 	animator.SetTarget(&body);
 	SetOrigin(Origins::TL);
-	boundBox.rect.setSize({ 16,24 });
-	boundBox.SetOrigin(Origins::TL);
-	hitBox.rect.setSize({ 8,12 });
-	hitBox.SetOrigin(Origins::TL);
+	
 
 	animator.AddEvent("Death", 6,
 		[this]()
@@ -127,10 +129,19 @@ void Enemy::Reset()
 
 	SetActive(true);
 	SetPosition(initPosition);
+	boundBox.rect.setSize({ 16,24 });
+	boundBox.SetOrigin(Origins::TL);
+	hitBox.rect.setSize({ 8,12 });
+	hitBox.SetOrigin(Origins::TL);
 }
 
 void Enemy::Update(float dt)
 {
+	timer += dt;
+	if (timer < 2)
+	{
+		SetPosition(pastPosition);
+	}
 	switch (SCENE_MGR.GetCurrentSceneId())
 	{
 	case SceneIds::Game:
@@ -241,6 +252,7 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 
 void Enemy::DeathAnimation()
 {
+	hitBox.rect.setSize({ 0,0 });
 	SetPosition(pastPosition);
 	animator.Play("animations/EnemyDeath.csv");
 }

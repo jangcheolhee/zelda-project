@@ -11,6 +11,7 @@ enum class BossState
 class BossEnemy : public Enemy
 {
 protected:
+	
 	int hp = 5;
 	sf::Vector2f pastPos;
 	sf::Sprite body;
@@ -24,7 +25,7 @@ protected:
 	float hitTimer = 0;
 	HitBox hitBox;
 	BossState state;
-	bool OnHit = false;
+	bool onHit = false;
 
 public:
 	BossEnemy(const std::string& name = "");

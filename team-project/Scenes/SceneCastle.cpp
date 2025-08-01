@@ -328,7 +328,7 @@ void SceneCastle::DeleteEnemy()
 void SceneCastle::Init()
 {
 	texIds.push_back("graphics/Enemy_sheet.png");
-
+	texIds.push_back("graphics/Death.png");
 	soundIds.push_back("effects/link hurt.wav");
 	soundIds.push_back("effects/throw.wav");
 	soundIds.push_back("effects/rupee.wav");

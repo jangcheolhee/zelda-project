@@ -173,6 +173,7 @@ void SceneBoss::Enter()
 	{
 		BossEnemy* b = new BossEnemy();
 		AddGameObject(b);
+		b->Init();
 		bosses.push_back(b);
 		b->StartPos(starts[i]);
 		b->DesPos(points[i]);

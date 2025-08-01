@@ -10,7 +10,7 @@ void BossEnemy::SetPosition(const sf::Vector2f& pos)
 {
 	GameObject::SetPosition(pos);
 	body.setPosition(pos);
-	shadow.setPosition(pos + sf::Vector2f{0,24});
+	shadow.setPosition(pos + sf::Vector2f{ 0,24 });
 }
 
 void BossEnemy::SetRotation(float rot)
@@ -57,6 +57,7 @@ void BossEnemy::Init()
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
 
+
 	Utils::SetOrigin(body, Origins::MC);
 	Utils::SetOrigin(shadow, Origins::MC);
 }
@@ -69,7 +70,7 @@ void BossEnemy::Release()
 
 void BossEnemy::Reset()
 {
-	
+
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Boss.png"));
 	shadow.setTexture(TEXTURE_MGR.Get("graphics/Boss.png"));
@@ -91,8 +92,8 @@ void BossEnemy::Update(float dt)
 		timer += dt;
 		if (Utils::RandomRange(0, 2) == 0)
 		{
-			SetPosition({ GetPosition().x - 0.05f ,GetPosition().y});
-			
+			SetPosition({ GetPosition().x - 0.05f ,GetPosition().y });
+
 		}
 		else
 		{
@@ -102,7 +103,7 @@ void BossEnemy::Update(float dt)
 		{
 			state = BossState::Idle;
 			SetScale({ 1,1 });
-			
+
 			timer = 0;
 		}
 		break;
@@ -122,20 +123,34 @@ void BossEnemy::Update(float dt)
 		position += velocity * dt;
 		SetPosition(position);
 		SetPosition(GetPosition() + direction * dt * 50.f);
-		
-		if (velocity.y >150)
+
+		if (velocity.y > 150)
 		{
 			timer = 0;
 		}
-		
+
 		break;
 	case BossState::Jump:
 		if (timer == 0)
 		{
 			velocity.y = -151;
-			
+
 		}
+		if (onHit)
+		{
+			body.setColor(Utils::RandomColor());
+			if (hitTimer > 1)
+			{
+				onHit = false;
+
+				body.setColor(sf::Color(0xffffffff));
+
+			}
+		}
+		
+
 		timer += dt;
+		hitTimer += dt;
 		direction = Utils::GetNormal(player->GetPosition() - GetPosition());
 		velocity += gravity * dt;
 		position += velocity * dt;
@@ -150,7 +165,7 @@ void BossEnemy::Update(float dt)
 
 void BossEnemy::Draw(sf::RenderWindow& window)
 {
-	
+
 	window.draw(shadow);
 	window.draw(body);
 	hitBox.Draw(window);
@@ -160,21 +175,23 @@ void BossEnemy::OnDamage(int damage)
 {
 	if (hitTimer > 1)
 	{
+
 		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss hit.wav"));
 		hp -= damage;
-		OnHit = true;
+		onHit = true;
 		if (hp <= 0)
-		{
+		{body.setColor(sf::Color(0xffffffff));
 			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss dies.wav"));
 			Change();
 		}
 		hitTimer = 0;
 	}
-	
+
 }
 
 void BossEnemy::Change()
 {
+	body.setColor(sf::Color(0xffffffff));
 	animator.Play("animations/bossDie.csv");
 }
 

@@ -1,5 +1,5 @@
 ID,FPS,"LoopType (0: Single, 1: Loop)",,,
-BossDie,5,0,,,
+BossDie,10,0,,,
 ,,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT,"FLIPX (0:Fale, 1:True)"
 graphics/Boss.png,190,124,50,50,0

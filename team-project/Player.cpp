@@ -22,7 +22,7 @@ void Player::OnCollide(Enemy* enemy)
 		swordHitBox.rect.getGlobalBounds().intersects(enemy->GetHitBox().rect.getGlobalBounds()))
 	{
 		enemy->OnCollideBySword(); // 적 피격 처리
-		enemy->OnDamage(1);
+		enemy->OnDamage(2);
 	}
 }
 

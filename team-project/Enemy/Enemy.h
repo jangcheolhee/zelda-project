@@ -43,7 +43,7 @@ protected:
 	sf::Vector2f dir = { 0.f, 0.f };
 	Direction direction = Direction::Down;
 	sf::Vector2f pastPosition;
-
+	float timer = 0.f;
 public:
 	Enemy(const std::string& name = "");
 	~Enemy() = default;

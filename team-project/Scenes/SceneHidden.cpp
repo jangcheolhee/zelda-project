@@ -333,7 +333,7 @@ void SceneHidden::Init()
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
-
+	texIds.push_back("graphics/Death.png");
 	soundIds.push_back("bgm/Cave.flac");
 
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
