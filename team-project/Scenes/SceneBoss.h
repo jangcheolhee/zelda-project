@@ -6,7 +6,6 @@
 #include "HitBox.h" 
 class Player;
 class TileMap;
-class Enemy;
 class SceneBoss : public Scene
 {
 protected:
