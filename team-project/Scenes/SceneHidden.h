@@ -4,6 +4,7 @@
 #include "Interactable.h"
 #include "SpriteGo.h"
 #include "HitBox.h" 
+#include "HUD.h"
 
 class Player;
 class TileMap;
@@ -44,6 +45,8 @@ protected:
 
 	std::vector<HitBox> collisions;
 	sf::RectangleShape collisionBox;
+	HUD* hud = nullptr;
+	InventoryUI* inventoryUI = nullptr;
 public:
 	SceneHidden();
 
@@ -53,7 +56,7 @@ public:
 
 	void DeleteInteractables();
 
-	void CheckCollison();\
+	void CheckCollison();
 	void SpawnSquareHitBox();
 
 	void Init() override;

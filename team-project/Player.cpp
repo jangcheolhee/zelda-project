@@ -192,36 +192,7 @@ void Player::Update(float dt)
 			collidingWithPushable = true;
 		}
 	}
-	//if (sceneGame != nullptr)
-	//{
-	//	for (auto* obj : sceneGame->GetInteractables())
-	//	{
-	//		// 더 자세한 디버깅 정보 출력
-	//		sf::FloatRect playerBounds = hitBox.rect.getGlobalBounds();
-	//		sf::FloatRect objBounds = obj->GetHitBox().rect.getGlobalBounds();
-
-	//	
-	//		// 실제 충돌 검사
-	//		bool isColliding = playerBounds.intersects(objBounds);
-	//		std::cout << "충돌 상태: " << (isColliding ? "TRUE" : "FALSE") << std::endl;
-
-	//		if (isColliding)
-	//		{
-	//			std::cout << ">>> 충돌 감지됨! <<<" << std::endl;
-	//			collidingWithPushable = true;
-
-	//			// X키를 눌렀다면 상호작용 이벤트 처리
-	//			if (wantsToInteract)
-	//			{
-	//				std::cout << ">>> 상호작용 이벤트 발생! <<<" << std::endl;
-	//				// 여기에 상호작용 로직 추가
-	//				obj->OnInteract(); // interactable 객체의 상호작용 메서드 호출
-	//				wantsToInteract = false; // 이벤트 처리 후 초기화
-	//			}
-	//			break; // 하나라도 충돌하면 루프 종료
-	//		}
-	//	}
-	//}
+	
 	bool nowPushing = collidingWithPushable && moveDir != sf::Vector2f(0.f, 0.f);
 	// 밀고 있는 시간 체크
 	if (nowPushing)

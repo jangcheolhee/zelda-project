@@ -539,14 +539,17 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
-	
+	texIds.push_back("data/HiddenPathToGarden.png");
+
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
+	FONT_MGR.Load("fonts/Neo.ttf");
+	TEXTURE_MGR.Load("graphics/HUD.png");
+	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
 	
-
 	hud = new HUD("HUD");
 	AddGameObject(hud);
 	player = new Player("Player");
@@ -558,15 +561,14 @@ void SceneGame::Init()
 	tileMapGame->Init();
 	TEXTURE_MGR.Load("graphics/Heart.png");
 	TEXTURE_MGR.Load("graphics/Heart_empty.png");
-
-	inventoryUI = new InventoryUI();
+	inventoryUI = new InventoryUI("InventoryUI");
 	inventoryUI->Init();
 	inventoryUI->sortingLayer = SortingLayers::UI;
 	inventoryUI->sortingOrder = 10;//우선순위높음
-	AddGameObject(inventoryUI);
+	
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
-
+	
 	InitZones();
 
 	endPos = tileMapGame->getPosition(4, 24590);

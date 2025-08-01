@@ -3,7 +3,8 @@
 #include "ResourceMgr.h"
 #include "Player.h"
 
-InventoryUI::InventoryUI()
+InventoryUI::InventoryUI(const std::string& name)
+    : GameObject(name)
 {
     sortingLayer = SortingLayers::UI;
 }   
@@ -23,8 +24,9 @@ void InventoryUI::Init()
         inventorySprite.setScale(2.f, 2.f);
     }
 
-    sf::Vector2f center = FRAMEWORK.GetWindow().getView().getCenter();
-
+    //sf::Vector2f center = FRAMEWORK.GetWindow().getView().getCenter();
+    sf::Vector2f size = FRAMEWORK.GetWindowSizeF();
+    sf::Vector2f center = size * 0.5f;
   
     shownPosition =
     {

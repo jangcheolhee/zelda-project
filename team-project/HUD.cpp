@@ -42,6 +42,7 @@ void HUD::Init()
 {
 	sortingLayer = SortingLayers::UI;
 	sortingOrder = 0;
+	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
 
 	sf::Font& font = FONT_MGR.Get("fonts/Neo.ttf");
 	rupeeText.setFont(font);

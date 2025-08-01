@@ -25,10 +25,10 @@ private:
     float animationSpeed = 5.f;
     std::vector<sf::RectangleShape> itemSlots;
 public:
-    InventoryUI();
+
+    InventoryUI(const std::string& name="");
 
     void Init() override;
-;
     void Update(float dt) override;
     void Draw(sf::RenderWindow& window) override;
 

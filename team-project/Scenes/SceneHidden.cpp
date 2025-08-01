@@ -16,6 +16,9 @@ SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
 	player = nullptr;
 	tileMapHidden = nullptr;
+	texIds.push_back("graphics/HUD.png");
+	texIds.push_back("data/HiddenPathToGarden.png");
+	texIds.push_back("graphics/inventory.png");
 }
 
 void SceneHidden::InitZones()
@@ -202,18 +205,32 @@ void SceneHidden::Init()
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
-	auto dad = new SpriteGo();
+	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
+
+	auto dad = new SpriteGo("Dad");
 	dad->Init();
+	dad->sortingLayer = SortingLayers::Background;
 	dad->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
-	//dad->GetSprite().getTextureRect({220,103,30,30});
-	//dad->SetActive
+	AddGameObject(dad);
+	
+	hud = new HUD("HUD");
+	hud->Init();
+	
+	AddGameObject(hud);
+
+	if (FindGameObject("InventoryUI") == nullptr) 
+	{
+		inventoryUI = new InventoryUI("InventoryUI");
+		inventoryUI->Init();
+		AddGameObject(inventoryUI);
+	}
 
 	AddGameObject(player);
 	AddGameObject(tileMapHidden);
 
 	InitZones();
 
-	endPos = tileMapHidden->getPosition(1, 5680);
+	endPos = tileMapHidden->getPosition(1, 5680);	
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
 	Scene::Init();
@@ -221,14 +238,20 @@ void SceneHidden::Init()
 
 void SceneHidden::Enter()
 {
+	Scene::Enter();
+	
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
 	uiView.setCenter(center);
 	worldView.setSize({ size.x * .5f, size.y * .5f });
+	if (inventoryUI)
+	{
+		inventoryUI->SetActive(false); // 처음 진입 시 숨김 처리
+		inventoryUI->Reset();          // 필요 시 초기화 상태도 같이
+	}
 
-	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapHidden->getPosition(1, 6206);
 	player->SetPosition(startPos);
@@ -256,14 +279,29 @@ void SceneHidden::Update(float dt)
 		
 		SCENE_MGR.ChangeScene(SceneIds::Game);
 	}
+
+	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
+	{
+		if (inventoryUI)
+		{
+			bool active = inventoryUI->GetActive();
+			inventoryUI->SetActive(!active);
+		}
+	}
 }
 
 void SceneHidden::Draw(sf::RenderWindow& window)
 {
-	Scene::Draw(window);
 	window.setView(worldView);
+
+	Scene::Draw(window);
 	for (auto& col : collisions)
 	{
 		col.Draw(window);
 	}
+	window.setView(uiView);
+	if (hud) hud->Draw(window);
+	if (inventoryUI && inventoryUI->GetActive())
+		inventoryUI->Draw(window);
+	
 }
