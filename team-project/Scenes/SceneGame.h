@@ -6,7 +6,6 @@
 #include "InventoryUI.h"
 #include "HUD.h"
 class Player;
-
 class TileMap;
 class HitBox;
 
@@ -30,7 +29,6 @@ struct MapZone
 class SceneGame : public Scene
 {
 protected:
-	
 	bool changeZone = false;
 	
 	Player* player;
@@ -77,8 +75,10 @@ public:
 	{
 		return std::vector<Interactable*>(interactList.begin(), interactList.end());
 	}
+
 	std::list<Interactable*> GetInteract(){return interactList;}
 	std::list<Enemy*> GetEnemy() { return enemyList; }
+
  	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);
