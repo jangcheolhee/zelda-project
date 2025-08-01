@@ -4,12 +4,13 @@
 void HitboxGenerator::SpawnSquareHitBox(
     TileMap* tileMapName,
     std::vector<HitBox>& collisions,
-    sf::RectangleShape& collisionBox)
+    sf::RectangleShape& collisionBox,
+    std::string name)
 {
     std::cout << "HitboxGenerator::SpawnSquareHitBox called" << std::endl;
 
     HitboxCorners corners;
-    if (!tileMapName->LoadHitboxLayer(corners))
+    if (!tileMapName->LoadHitboxLayer(corners, name))
     {
         std::cout << "LoadHitboxLayer failed!" << std::endl;
         return;

@@ -10,6 +10,7 @@ public:
     static void SpawnSquareHitBox(
         TileMap* tileMapName,
         std::vector<HitBox>& collisions,
-        sf::RectangleShape& collisionBox
+        sf::RectangleShape& collisionBox,
+        std::string name
     );
 };

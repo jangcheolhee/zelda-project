@@ -7,38 +7,19 @@
 class Player;
 class TileMap;
 
-struct HiddenZone
+class SceneBoss : public Scene
 {
-	sf::FloatRect bounds;
-	int zoneId;
-	// 추가 정보
-	std::function<void()> onEnter;
-	std::function<void()> onExit;
-	bool entered = false;
-
-	HiddenZone(const sf::FloatRect& b, int id,
-		std::function<void()> enter,
-		std::function<void()> exit,
-		bool e = false)
-		: bounds(b), zoneId(id), onEnter(enter), onExit(exit), entered(e) {
-	}
-};
-
-class SceneHidden : public Scene
-{
-protected:	
+protected:
 	Player* player;
-	TileMap* tileMapHidden;
+	TileMap* tileMapBoss;
 
 	std::vector<Interactable*> interactables;
+
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
-
-	std::vector<HiddenZone> hiddenZones;
-	int zoneID = 1;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
@@ -51,25 +32,14 @@ protected:
 	float wallHeight = 0;
 	bool squareToggle = false;
 
-	SpriteGo* hiddenPathCover;
-
-	SpriteGo* dad;
-	bool dadSay = 0;
-	int sayCount = 0;
-
 public:
-	SceneHidden();
+	SceneBoss();
 	void SetPlayer(Player* p);
-	
-	void InitZones();
-	void UpdateZones();
-	void UpdateBehaviorZone();
 
 	void DeleteInteractables();
 
 	void CheckCollison();
 	void SpawnSquareHitBox();
-	void SpawnHiddenObject();
 
 	void Init() override;
 	void Enter() override;

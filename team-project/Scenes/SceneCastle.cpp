@@ -2,6 +2,8 @@
 #include "SceneCastle.h"
 #include "Player.h"
 #include "TileMap.h"
+#include "HitboxGenerator.h"
+#include "JumpWall.h"
 
 
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
@@ -75,6 +77,7 @@ void SceneCastle::UpdateZones()
 
 				changeZone = true;
 				zone.onEnter();
+				SpawnSquareHitBox();
 				SpawnFloorCovers();
 			}
 		}
@@ -120,27 +123,72 @@ void SceneCastle::CheckCollison()
 		}
 	}
 
-	for (auto& obj : interactables)
+	for (auto& obj : interactList)
 	{
-		if (player->GetGlobalBounds().intersects(obj->GetGlobalBounds()))
+		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
 		{
-			player->SetMovable(false);
-			// 플레이어가 obj가 충돌한 방향으로는 움직일 수 없게 하기
 			switch (obj->GetType())
 			{
-			case Interactable::Type::Throw: case Interactable::Type::Chest:
+			case Interactable::Type::Throw:
+			case Interactable::Type::Chest:
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
 					obj->OnInteract();
 				}
 				break;
 
-			case Interactable::Type::Heart: case Interactable::Type::JumpWall: case Interactable::Type::Rupee:
+			case Interactable::Type::Heart:
+			case Interactable::Type::Rupee:
+				obj->OnInteract();
+				break;
 
+			case Interactable::Type::JumpWall:
+				player->SetPosition(player->GetPos());
 				obj->OnInteract();
 				break;
 			}
-		}player->SetMovable(true);
+		}
+	}
+}
+
+void SceneCastle::SpawnSquareHitBox()
+{
+	std::cout << "SpawnSquareHitBox() called" << std::endl;
+
+	HitboxGenerator::SpawnSquareHitBox(
+		tileMapCastle,
+		collisions,
+		collisionBox,
+		"Castle"
+	);
+
+	std::cout << "After SpawnSquareHitBox, collisions size: " << collisions.size() << std::endl;
+
+	for (const auto& hitbox : collisions)
+	{
+		sf::FloatRect rect = hitbox.rect.getGlobalBounds();
+		wallX = rect.left;
+		wallY = rect.top;
+		wallWithdh = rect.width;
+		wallHeight = rect.height;
+
+		Interactable* inter = nullptr;
+		auto& pool = interactPool[Interactable::Type::JumpWall];
+		if (!pool.empty())
+		{
+			inter = pool.front();
+			pool.pop_front();
+		}
+		else inter = (Interactable*)AddGameObject(new JumpWall());
+		inter->Init();
+		if (dynamic_cast<JumpWall*>(inter))
+		{
+			dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+		}
+		inter->Reset();
+		inter->SetActive(true);
+		inter->SetPosition({ wallX,wallY });
+		interactList.push_back(inter);
 	}
 }
 
@@ -190,7 +238,7 @@ void SceneCastle::SpawnFloorCovers()
 		LeftBridge->Init();
 
 		LeftBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
-		LeftBridge->GetSprite().setTextureRect({ 88, 88, 41, 64 });
+		LeftBridge->GetSprite().setTextureRect({ 88, 88, 49, 64 });
 
 		LeftBridge->SetActive(!isSecondFloor);
 		LeftBridge->SetOrigin(Origins::TL);
@@ -255,6 +303,9 @@ void SceneCastle::Init()
 	}
 	isSecondFloor = 1;
 
+	endPos = tileMapCastle->getPosition(2, 8313);
+	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
+
 	Scene::Init();
 }
 
@@ -270,7 +321,7 @@ void SceneCastle::Enter()
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
-	player->SetPosition(startPos);
+	player->SetPosition({ startPos.x,startPos.y-30.f });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
@@ -289,7 +340,6 @@ void SceneCastle::Update(float dt)
 	{
 		if (fB.contains(player->GetGlobalBounds().getPosition()))
 		{
-			std::cout << "1 Floor" << std::endl;
 			isSecondFloor = 0;
 			LeftBridge->SetActive(1);
 			RightBridge->SetActive(1);
@@ -299,24 +349,45 @@ void SceneCastle::Update(float dt)
 	{
 		if (sB.contains(player->GetGlobalBounds().getPosition()))
 		{
-			std::cout << "2 Floor" << std::endl;
 			isSecondFloor = 1;
 			if (LeftBridge) LeftBridge->SetActive(0);
 			if (RightBridge) RightBridge->SetActive(0);
 		}
 	}
-	//if (endHole.contains(player->GetGlobalBounds().getPosition()))
-	//{
-	//	std::cout << "Caslte" << std::endl;
-	//	SCENE_MGR.ChangeScene(SceneIds::Hidden);
-	//}
+	if (endHole.contains(player->GetGlobalBounds().getPosition()))
+	{
+		std::cout << "Boss" << std::endl;
+		SCENE_MGR.ChangeScene(SceneIds::Boss);
+	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
-		
 		SCENE_MGR.ChangeScene(SceneIds::Game);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Hidden);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Castle);
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F4))
 	{
+		SCENE_MGR.ChangeScene(SceneIds::Boss);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F5))
+	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
+	}
+}
+
+void SceneCastle::Draw(sf::RenderWindow& window)
+{
+	Scene::Draw(window);
+	window.setView(worldView);
+
+	for (auto& col : collisions)
+	{
+		col.Draw(window);
 	}
 }

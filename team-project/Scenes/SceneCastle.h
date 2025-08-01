@@ -35,11 +35,22 @@ protected:
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
+	std::list<Interactable*>interactList;
+
 	std::vector<CastleZone> castleZones;
 	int zoneID = 1;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
+
+	std::vector<HitBox> collisions;
+	sf::RectangleShape collisionBox;
+	float wallX = 0;
+	float wallY = 0;
+	float wallWithdh = 0;
+	float wallHeight = 0;
+	bool squareToggle = false;
 
 	//floor
 	std::vector<SpriteGo*> floor1DoorPathCovers; //1Ãþ 2°³
@@ -66,10 +77,12 @@ public:
 	void DeleteInteractables();
 
 	void CheckCollison();
+	void SpawnSquareHitBox();
 
 	void SpawnFloorCovers();
 
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
+	void Draw(sf::RenderWindow& window) override;
 };

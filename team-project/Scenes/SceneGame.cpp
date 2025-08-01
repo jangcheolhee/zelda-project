@@ -309,7 +309,6 @@ void SceneGame::CheckCollison()
 		}
 	}
 
-
 	for (auto& obj : interactList)
 	{
 		for (auto& enemy : enemyList)
@@ -426,13 +425,13 @@ void SceneGame::CheckCollison()
 	}
 }
 
-
 void SceneGame::SpawnSquareHitBox()
 {
 	HitboxGenerator::SpawnSquareHitBox(
 		tileMapGame,
 		collisions,
-		collisionBox
+		collisionBox,
+		"Game"
 	);
 
 	for (const auto& hitbox : collisions)
@@ -503,16 +502,16 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 				default:
 					break;
 				}
-				//AddGameObject(inter);
-				//interactList.push_back(inter);
-				//inter->SetOrigin(Origins::TC);
-				//inter->Reset();
-				//inter->SetPosition(pos);
+				AddGameObject(inter);
+				interactList.push_back(inter);
+				inter->SetOrigin(Origins::TC);
+				inter->Reset();
+				inter->SetPosition(pos);
 
-				//HitBox hitbox;
-				//sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 16, 16);
-				//hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
-				//collisions.push_back(hitbox);
+				HitBox hitbox;
+				sf::FloatRect collisionRect(pos.x - 8, pos.y - 8, 1, 1);
+				hitbox.UpdateTransformCollision(collisionBox, collisionRect, pos);
+				collisions.push_back(hitbox);
 			}
 		}
 	}
@@ -652,20 +651,23 @@ void SceneGame::Update(float dt)
 		bool toggle = !inventoryUI->IsVisible();
 		inventoryUI->SetActive(toggle);
 	}
-	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
-	{
-		std::cout << "Hidden" << std::endl;
-		SCENE_MGR.ChangeScene(SceneIds::Hidden);
-	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F2))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Hidden);
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Castle);
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F4))
+	{
+		SCENE_MGR.ChangeScene(SceneIds::Boss);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F5))
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}

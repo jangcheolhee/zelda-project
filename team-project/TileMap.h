@@ -41,7 +41,7 @@ public:
     bool LoadTileMap(const std::string& tilePath);
     sf::Vector2f getPosition(int layerIndex, int targetGid); //return pos
     std::vector<sf::Vector2f> getPositions(int layerIndex, int targetGid); //return <vector>positions
-    bool LoadHitboxLayer(HitboxCorners& outCorners);
+    bool LoadHitboxLayer(HitboxCorners& outCorners, std::string sceneName);
 
     void Init() override;
     void Release() override;

@@ -4,6 +4,7 @@
 #include "SceneHidden.h"
 #include "SceneSelect.h"
 #include "SceneCastle.h"
+#include "SceneBoss.h"
 
 void SceneMgr::Init()
 {
@@ -11,6 +12,7 @@ void SceneMgr::Init()
 	scenes.push_back(new SceneGame());
 	scenes.push_back(new SceneHidden());
 	scenes.push_back(new SceneCastle());
+	scenes.push_back(new SceneBoss());
 
 	for (auto scene : scenes)
 	{
