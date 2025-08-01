@@ -13,6 +13,7 @@ void SceneSelect::Init()
 	texIds.push_back("graphics/Items.png");
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
+	soundIds.push_back("bgm/Select.flac");
 	
 	saveSloatUI = (SaveSlotUI*)AddGameObject(new SaveSlotUI());
 
@@ -40,6 +41,8 @@ void SceneSelect::Enter()
 	uiView.setCenter(center);
 
 	Scene::Enter();
+	SOUND_MGR.SetBgmVolume(20);
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Select.flac"));
 }
 
 void SceneSelect::Update(float dt)

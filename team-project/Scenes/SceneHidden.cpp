@@ -283,6 +283,7 @@ void SceneHidden::DeleteInteractables()
 void SceneHidden::Init()
 {
 	texIds.push_back("data/HiddenPathToGarden.png");
+	soundIds.push_back("bgm/Cave.flac");
 
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
@@ -301,6 +302,7 @@ void SceneHidden::Init()
 
 void SceneHidden::Enter()
 {
+
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
@@ -309,7 +311,7 @@ void SceneHidden::Enter()
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 
 	Scene::Enter();
-
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Cave.flac"));
 	sf::Vector2f startPos = tileMapHidden->getPosition(1, 6206);
 	player->SetPosition(startPos);
 	GAME_MGR.playerHp = player->GetMaxHp();

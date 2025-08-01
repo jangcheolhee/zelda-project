@@ -100,6 +100,8 @@ void HUD::AddRupee(int amount)
 {
 	rupeeCount += amount;
 	rupeeText.setString("0 0 " + std::to_string(rupeeCount));
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/rupee.wav"));
+
 }
 
 void HUD::AddHeart(int amount)

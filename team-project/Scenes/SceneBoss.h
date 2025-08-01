@@ -11,9 +11,12 @@ protected:
 	std::vector<sf::Vector2f> starts;
 
 
+
 public:
 	std::list<Enemy*> GetEnemy() { return bosses; }
 	SceneBoss();
+
+
 
 	void Init() override;
 	void Enter() override;

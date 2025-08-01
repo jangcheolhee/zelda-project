@@ -17,7 +17,7 @@ protected:
 	sf::Sprite shadow;
 	sf::Vector2f velocity;
 	sf::Vector2f gravity = { 0.f, 500.f };
-	sf::Vector2f startPos = {0.f, 0.f};
+	sf::Vector2f startPos = { 0.f, 0.f };
 	sf::Vector2f destinyPos = { 0.f, 0.f };
 	sf::Vector2f direction = { 0,0 };
 	float timer = 0;
@@ -29,7 +29,7 @@ public:
 	virtual ~BossEnemy() = default;
 	HitBox GetHitBox()override { return hitBox; }
 	sf::Vector2f GetPos() { return pastPos; }
-	void StartPos(sf::Vector2f pos) { startPos = pos;}
+	void StartPos(sf::Vector2f pos) { startPos = pos; }
 	void DesPos(sf::Vector2f pos) { destinyPos = pos; }
 	void SetPosition(const sf::Vector2f& pos) override;
 	void SetRotation(float rot) override;
@@ -50,6 +50,8 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
-	
-};
 
+	void OnDamage(int damage) override;
+
+
+};

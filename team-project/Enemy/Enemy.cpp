@@ -70,7 +70,7 @@ void Enemy::OnDamage(int damage)
 
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 
-
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/ennemy hit.wav"));
 	if (hp == 0)
 	{
 		DeathAnimation();
@@ -215,19 +215,12 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 		return;//공격 쿨타임이 남아 있으면 리턴
 
 	std::cout << "[Enemy] sword -1 damage" << std::endl;
-	OnHit(1);//데미지 처리
+	OnDamage(1);//데미지 처리
 	LastHit = 0.f;
 
 }
 
-void Enemy::OnHit(int damage)
-{
-	hp -= damage;
-	if (hp <= 0)
-	{
-		SetActive(false);
-	}
-}
+
 
 void Enemy::DeathAnimation()
 {

@@ -83,7 +83,6 @@ public:
 
 	
 	virtual void OnCollideBySword();
-	virtual void OnHit(int damage);
 
 	void DeathAnimation();
 	virtual HitBox GetHitBox() { return hitBox; };

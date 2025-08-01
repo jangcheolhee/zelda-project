@@ -17,6 +17,7 @@ void Player::OnCollide(Enemy* enemy)
 {
 	// 칼 히트박스가 활성화되어 있고,
 		// 현재 적의 바운딩박스와 충돌한다면
+	
 	if (swordHitBoxActive &&
 		swordHitBox.rect.getGlobalBounds().intersects(enemy->GetHitBox().rect.getGlobalBounds()))
 	{
@@ -90,6 +91,7 @@ void Player::Init()
 	if (!TEXTURE_MGR.Exists(swordTexPath))
 	{
 		TEXTURE_MGR.Load(swordTexPath);
+		
 	}
 	swordTexture = &TEXTURE_MGR.Get(swordTexPath);
 
@@ -505,6 +507,7 @@ void Player::Draw(sf::RenderWindow& window)
 	if (swordHitBoxActive)
 	{
 		swordHitBox.Draw(window);
+
 	}
 
 }
@@ -578,7 +581,7 @@ void Player::OnDamage(int damage)
 	//if (isInvincible) return;
 
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
-
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/link hurt.wav"));
 	std::cout << "[Player] damage! " << damage << " ▶ HP: " << hp << "\n";
 	if (hud != nullptr)
 	{
@@ -589,6 +592,7 @@ void Player::OnDamage(int damage)
 	if (hp <= 0)
 	{
 		std::cout << "[Player] Die!\n";
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/link dies.wav"));
 		SetActive(false); // 비활성화 또는 리스폰 처리
 		// 여기에 죽었을 때 상태 전환이나 UI 호출 가능
 	}
@@ -617,6 +621,7 @@ bool Player::IsAttacking() const
 void Player::Heal(int amount)
 {
 	hp = Utils::Clamp(hp + amount, 0, maxHp);
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/heart.wav"));
 	if (hud != nullptr)
 	{
 		hud->SetHeartCount(hp);

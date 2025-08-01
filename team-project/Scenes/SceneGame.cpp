@@ -481,8 +481,18 @@ void SceneGame::Init()
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
+	
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
+	
+	soundIds.push_back("bgm/Overworld.flac");
+	soundIds.push_back("effects/link hurt.wav");
+	soundIds.push_back("effects/throw.wav");
+	soundIds.push_back("effects/rupee.wav");
+	soundIds.push_back("effects/heart.wav");
+	soundIds.push_back("effects/enemy hit.wav");
+	soundIds.push_back("effects/link dies.wav");
+	soundIds.push_back("effects/sword.wav");
 
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
@@ -537,6 +547,9 @@ void SceneGame::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
 	Scene::Enter();
+
+	SOUND_MGR.SetSfxVolume(100);
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Overworld.flac"));
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;

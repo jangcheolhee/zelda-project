@@ -222,6 +222,8 @@ void SceneCastle::DeleteInteractables()
 
 void SceneCastle::Init()
 {
+
+	
 	texIds.push_back("data/59984.png");
 
 	player = new Player("Player");
@@ -253,6 +255,8 @@ void SceneCastle::Init()
 
 void SceneCastle::Enter()
 {
+
+	
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };

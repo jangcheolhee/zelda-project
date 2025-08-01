@@ -159,3 +159,13 @@ void BossEnemy::Draw(sf::RenderWindow& window)
 	window.draw(body);
 	hitBox.Draw(window);
 }
+
+void BossEnemy::OnDamage(int damage)
+{
+	hp -= damage;
+	if (hp <= 0)
+	{
+		SetActive(false);
+	}
+}
+

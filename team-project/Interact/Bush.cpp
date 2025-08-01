@@ -133,5 +133,5 @@ void Bush::Shoot()
 		break;
 	}
 	velocity = dir * speed;
-
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/throw.wav"));
 }
