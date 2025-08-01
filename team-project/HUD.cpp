@@ -70,9 +70,15 @@ void HUD::Release()
 
 void HUD::Reset()
 {
+
 	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
 	body.setTextureRect({ 0,0,256,224 });
 	SetScale({ 2.f,2.f });
+
+	sf::Font& font = FONT_MGR.Get("fonts/Neo.ttf");
+	rupeeText.setFont(font);
+
+
 }
 
 void HUD::Update(float dt)

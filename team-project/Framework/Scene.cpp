@@ -8,6 +8,7 @@ Scene::Scene(SceneIds id)
 
 void Scene::Init()
 {
+	
 	for (auto obj : gameObjects)
 	{
 		obj->Init();

@@ -20,10 +20,11 @@ SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/inventory.png");
+	fontIds.push_back("fonts/Neo.ttf");
 }
 
 void SceneHidden::SetPlayer(Player* p) {
-	
+
 	player = p;
 }
 
@@ -258,6 +259,7 @@ void SceneHidden::SpawnHiddenObject()
 		npc->SetPlayer(player);
 
 		dadInteractable->Init();
+		dadInteractable->sortingLayer = SortingLayers::Background;
 		dadInteractable->Reset();
 
 		if (auto npc = dynamic_cast<Npc*>(dadInteractable))
@@ -285,19 +287,21 @@ void SceneHidden::DeleteInteractables()
 void SceneHidden::Init()
 {
 	texIds.push_back("data/HiddenPathToGarden.png");
+	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
 	soundIds.push_back("bgm/Cave.flac");
 
-	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
-	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
-	
+	player = new Player("Player");
+	player->Init();
+	TEXTURE_MGR.Load("graphics/Link.png");
+
 	hud = new HUD("HUD");
 	hud->Init();
-	
+
 	AddGameObject(hud);
 
-	if (FindGameObject("InventoryUI") == nullptr) 
+	if (FindGameObject("InventoryUI") == nullptr)
 	{
 		inventoryUI = new InventoryUI("InventoryUI");
 		inventoryUI->Init();
@@ -309,20 +313,16 @@ void SceneHidden::Init()
 
 	InitZones();
 
-	endPos = tileMapHidden->getPosition(1, 5680);	
+	endPos = tileMapHidden->getPosition(1, 5680);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
-	Scene::Inithud = new HUD("HUD");
-	hud->Init();
-	
-	AddGameObject(hud);
 
-	if (FindGameObject("InventoryUI") == nullptr) 
+	if (FindGameObject("InventoryUI") == nullptr)
 	{
 		inventoryUI = new InventoryUI("InventoryUI");
 		inventoryUI->Init();
 		AddGameObject(inventoryUI);
-	}();
+	}
 }
 
 void SceneHidden::Enter()
@@ -347,7 +347,7 @@ void SceneHidden::Enter()
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
-	
+
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }
@@ -384,6 +384,7 @@ void SceneHidden::Update(float dt)
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 
+	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
 	{
 		if (inventoryUI)
@@ -393,7 +394,6 @@ void SceneHidden::Update(float dt)
 		}
 	}
 }
-
 void SceneHidden::Draw(sf::RenderWindow& window)
 {
 	window.setView(worldView);
@@ -407,5 +407,5 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	if (hud) hud->Draw(window);
 	if (inventoryUI && inventoryUI->GetActive())
 		inventoryUI->Draw(window);
-	
+
 }

@@ -11,6 +11,7 @@
 Player::Player(const std::string& name)
 	: GameObject(name)
 {
+	
 }
 
 void Player::OnCollide(Enemy* enemy)
@@ -73,7 +74,7 @@ void Player::Init()
 {
 	sf::FloatRect bounds = body.getLocalBounds();
 	body.setOrigin(bounds.width / 2.f, bounds.height);
-
+	
 	hp = maxHp; 
 
 	sortingLayer = SortingLayers::Foreground;
@@ -507,7 +508,6 @@ void Player::Draw(sf::RenderWindow& window)
 	if (swordHitBoxActive)
 	{
 		swordHitBox.Draw(window);
-
 	}
 
 }
