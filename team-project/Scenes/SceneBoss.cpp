@@ -173,7 +173,7 @@ void SceneBoss::Enter()
 	GAME_MGR.playerSpawnPosition = startPos;
 	GAME_MGR.Save();
 	worldView.setCenter({player->GetGlobalBounds().getPosition().x+5.f, player->GetGlobalBounds().getPosition().y - 90.f});
-
+	Scene::Enter();
 	SpawnSquareHitBox();
 }
 

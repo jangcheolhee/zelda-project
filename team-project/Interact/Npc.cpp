@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Defines.h"
 #include "Npc.h"
 #include "SpriteGo.h"
@@ -185,7 +185,7 @@ void Npc::HandleDadInteraction()
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
             sayCount++;
-            std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+            std::cout << "You Can Do It! 잘가." << sayCount << std::endl;
         }
         if (sayCount == 2)
         {
