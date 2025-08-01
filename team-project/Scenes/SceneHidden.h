@@ -37,7 +37,7 @@ protected:
 
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
-	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
+
 
 	std::vector<HiddenZone> hiddenZones;
 	int zoneID = 1;

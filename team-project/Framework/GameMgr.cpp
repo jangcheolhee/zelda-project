@@ -32,20 +32,6 @@ void GameMgr::SaveToSlot(int index)
 	}
 }
 
-void GameMgr::SaveToSlot2(int index)
-{
-	json j;
-	j["map"] = currentMapID2;
-	j["position"] = { {"x", playerSpawnPosition2.x}, {"y", playerSpawnPosition2.y} };
-	j["hp"] = playerHp2;
-
-	std::filesystem::create_directories("save");
-	std::ofstream out(GetSlotFileName(index));
-	if (out.is_open())
-	{
-		out << j.dump(4);
-	}
-}
 
 void GameMgr::LoadFromSlot(int index)
 {
@@ -54,8 +40,9 @@ void GameMgr::LoadFromSlot(int index)
 	if (!in.is_open()) 
 	{ 
 		
-		SaveToSlot2(index); 
+		SaveToSlot(index); 
 		return;
+		
 	}
 
 	json j;

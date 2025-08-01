@@ -67,6 +67,7 @@ void BossEnemy::Release()
 void BossEnemy::Reset()
 {
 	
+	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Boss.png"));
 	shadow.setTexture(TEXTURE_MGR.Get("graphics/Boss.png"));
 	body.setTextureRect({ 207, 39, 34, 34 });
@@ -130,11 +131,11 @@ void BossEnemy::Update(float dt)
 			
 		}
 		timer += dt;
-		//direction = Utils::GetNormal(player->GetPosition() - GetPosition());
+		direction = Utils::GetNormal(player->GetPosition() - GetPosition());
 		velocity += gravity * dt;
 		position += velocity * dt;
 		SetPosition(position);
-		SetPosition(GetPosition() + direction * dt * 50.f);
+		SetPosition(GetPosition() + direction * dt * 20.f);
 
 		if (velocity.y > 150)
 		{

@@ -155,10 +155,8 @@ void Player::Init()
 	{
 		std::cout << "[DEBUG] pushingAnimations[" << static_cast<int>(dir) << "] = " << frames.size() << " 프레임\n";
 	}
-	body.setScale(1.0f, 1.0f); // ũ�� ����
+	body.setScale(1.0f, 1.0f);
 
-	// ��Ʈ�ڽ� �ʱ�ȭ
-	//hitBox.UpdateTransform(body, body.getLocalBounds());
 }
 
 void Player::Release()
@@ -195,36 +193,7 @@ void Player::Update(float dt)
 			collidingWithPushable = true;
 		}
 	}
-	//if (sceneGame != nullptr)
-	//{
-	//	for (auto* obj : sceneGame->GetInteractables())
-	//	{
-	//		// 더 자세한 디버깅 정보 출력
-	//		sf::FloatRect playerBounds = hitBox.rect.getGlobalBounds();
-	//		sf::FloatRect objBounds = obj->GetHitBox().rect.getGlobalBounds();
 
-	//	
-	//		// 실제 충돌 검사
-	//		bool isColliding = playerBounds.intersects(objBounds);
-	//		std::cout << "충돌 상태: " << (isColliding ? "TRUE" : "FALSE") << std::endl;
-
-	//		if (isColliding)
-	//		{
-	//			std::cout << ">>> 충돌 감지됨! <<<" << std::endl;
-	//			collidingWithPushable = true;
-
-	//			// X키를 눌렀다면 상호작용 이벤트 처리
-	//			if (wantsToInteract)
-	//			{
-	//				std::cout << ">>> 상호작용 이벤트 발생! <<<" << std::endl;
-	//				// 여기에 상호작용 로직 추가
-	//				obj->OnInteract(); // interactable 객체의 상호작용 메서드 호출
-	//				wantsToInteract = false; // 이벤트 처리 후 초기화
-	//			}
-	//			break; // 하나라도 충돌하면 루프 종료
-	//		}
-	//	}
-	//}
 	bool nowPushing = collidingWithPushable && moveDir != sf::Vector2f(0.f, 0.f);
 	// 밀고 있는 시간 체크
 	if (nowPushing)
@@ -448,8 +417,7 @@ void Player::Update(float dt)
 
 	moveDir = { 0.f, 0.f };
 	bool moving = false;
-	//bool isMovingLeft = false;
-	// 방향 키 입력 시 방향 결정
+
 
 	// 2. 이동 방향은 3개까지 입력 가능 (움직임만)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
@@ -594,7 +562,6 @@ void Player::TriggerInteraction(GameObject* obj)
 	if (obj == nullptr) return;
 
 	std::cout << ">>> interact ok! <<<" << std::endl;
-
 
 }
 
