@@ -14,7 +14,7 @@ protected:
 
 	std::vector<Interactable*> interactables;
 
-	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
+	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
 	std::list<Enemy*> enemyList;
 
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;

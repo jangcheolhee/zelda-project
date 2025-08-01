@@ -120,7 +120,6 @@ void BossEnemy::Update(float dt)
 		if (velocity.y >150)
 		{
 			timer = 0;
-			
 		}
 		
 		break;
@@ -137,18 +136,9 @@ void BossEnemy::Update(float dt)
 		SetPosition(position);
 		SetPosition(GetPosition() + direction * dt * 20.f);
 
-		if (velocity.y > 150)
-		{
-			timer = 0;
-
-		}
-
+		if (velocity.y > 150) timer = 0;
 		break;
 	}
-	
-	
-
-	
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
