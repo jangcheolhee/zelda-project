@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "TileMap.h"
 #include "BasicEnemy.h"
+#include "Enemy.h"
 #include "Bush.h"
 #include "Npc.h"
 #include "Chest.h"
@@ -15,7 +16,7 @@
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
 	player = nullptr;
-	dad = nullptr;
+	//dad = nullptr;
 	tileMapHidden = nullptr;
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
@@ -114,7 +115,6 @@ void SceneHidden::UpdateZones()
 	}
 }
 
-
 void SceneHidden::UpdateBehaviorZone()
 {
 	if (!player || zoneID < 1 || zoneID > 4) return;
@@ -155,7 +155,6 @@ void SceneHidden::UpdateBehaviorZone()
 void SceneHidden::CheckCollison()
 {
 	if (!player) return;
-
 
 	for (auto& obj : interactList)
 	{
@@ -225,7 +224,6 @@ void SceneHidden::SpawnSquareHitBox()
 
 void SceneHidden::SpawnHiddenObject()
 {
-
 	//Hidden Door Path
 	sf::Vector2f hiddenPathPos = tileMapHidden->getPosition(1, 6168);
 
@@ -284,12 +282,69 @@ void SceneHidden::DeleteInteractables()
 	interactables.clear();
 }
 
+void SceneHidden::RecycleEnemy(Enemy* enemy)
+{
+	if (enemy)
+	{
+		enemy->SetActive(false);
+		enemyPools[enemy->GetType()].push_back(enemy);
+	}
+}
+
+void SceneHidden::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
+{
+	Enemy* enemy = nullptr;
+
+	auto& pool = enemyPools[type];
+	if (!pool.empty())
+	{
+		enemy = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		switch (type)
+		{
+		case Enemy::Types::Basic:
+			enemy = (Enemy*)AddGameObject(new BasicEnemy());
+			break;
+		case Enemy::Types::Count:
+			break;
+		default:
+			break;
+		}
+		enemy->Init();
+	}
+	enemy->Reset();
+	enemy->SetPosition(pos);
+	enemy->SetActive(true);
+
+	enemyList.push_back(enemy);
+}
+
+void SceneHidden::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
+{
+	std::vector<sf::Vector2f> positions = tileMapHidden->getPositions(layerIndex, targetGid);
+	for (const auto& pos : positions)
+	{
+		SpawnEnemy(pos, type);
+	}
+}
+
 void SceneHidden::Init()
 {
+	texIds.push_back("graphics/Enemy_sheet.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
-	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
+
+	fontIds.push_back("fonts/DS-DIGIT.ttf");
+	fontIds.push_back("fonts/Neo.ttf");
+
 	soundIds.push_back("bgm/Cave.flac");
 
+	ANI_CLIP_MGR.Load("animations/bush2.csv");
+	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
+
+	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
 	player = new Player("Player");
@@ -327,7 +382,6 @@ void SceneHidden::Init()
 
 void SceneHidden::Enter()
 {
-
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
@@ -350,15 +404,29 @@ void SceneHidden::Enter()
 
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
+
+	SpawnEnemyAtTile(1, 6149, Enemy::Types::Basic);
 }
 
 void SceneHidden::Update(float dt)
 {
 	Scene::Update(dt);
 
+	auto it = enemyList.begin();
+	while (it != enemyList.end())
+	{
+		if (!(*it)->GetActive())
+		{
+			RecycleEnemy(*it);
+			it = enemyList.erase(it);
+		}
+		else ++it;
+	}
+
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();
+
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Castle" << std::endl;

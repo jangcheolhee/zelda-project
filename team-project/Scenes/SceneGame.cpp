@@ -297,14 +297,10 @@ void SceneGame::FlowerBreath(float dt)
 	}
 }
 
-
 void SceneGame::CheckCollison()
 {
-	
-
 	for (auto& obj : interactList)
 	{
-
 		if (dynamic_cast<Bush*> (obj))
 		{
 			if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetBoundBox().rect))
@@ -559,9 +555,6 @@ void SceneGame::Enter()
 
 	player->SetPosition(startPos);
 }
-
-
-
 
 void SceneGame::Update(float dt)
 {

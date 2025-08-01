@@ -94,7 +94,7 @@ void Npc::DaddySprite()
 {
     body.setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
     body.setTextureRect({ 218, 102, 28, 29 }); 
-    SetOrigin(Origins::TL); 
+    SetOrigin(Origins::MC); 
     SetScale({ 1, 1 });
 }
 

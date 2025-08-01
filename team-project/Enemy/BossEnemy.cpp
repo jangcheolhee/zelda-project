@@ -47,15 +47,18 @@ void BossEnemy::SetOrigin(Origins preset)
 
 void BossEnemy::Init()
 {
+	animator.SetTarget(&body);
+	animator.AddEvent("BossDie", 5,
+		[this]()
+		{
+			SetActive(false);
+		}
+	);
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = 0;
 
-	Utils::SetOrigin(body, Origins::BC);
-	Utils::SetOrigin(shadow, Origins::BC);
-
-
-	
-
+	Utils::SetOrigin(body, Origins::MC);
+	Utils::SetOrigin(shadow, Origins::MC);
 }
 
 void BossEnemy::Release()
@@ -78,10 +81,12 @@ void BossEnemy::Reset()
 
 void BossEnemy::Update(float dt)
 {
-	
+	animator.Update(dt);
+	hitTimer += dt;
 	switch (state)
 	{
 	case BossState::Stop:
+		hitTimer = 0;
 		pastPos = body.getPosition();
 		timer += dt;
 		if (Utils::RandomRange(0, 2) == 0)
@@ -102,6 +107,7 @@ void BossEnemy::Update(float dt)
 		}
 		break;
 	case BossState::Idle:
+		hitTimer = 0;
 		if (timer == 0)
 		{
 			velocity.y = -151;
@@ -120,7 +126,6 @@ void BossEnemy::Update(float dt)
 		if (velocity.y >150)
 		{
 			timer = 0;
-			
 		}
 		
 		break;
@@ -137,18 +142,9 @@ void BossEnemy::Update(float dt)
 		SetPosition(position);
 		SetPosition(GetPosition() + direction * dt * 20.f);
 
-		if (velocity.y > 150)
-		{
-			timer = 0;
-
-		}
-
+		if (velocity.y > 150) timer = 0;
 		break;
 	}
-	
-	
-
-	
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
 
@@ -162,10 +158,22 @@ void BossEnemy::Draw(sf::RenderWindow& window)
 
 void BossEnemy::OnDamage(int damage)
 {
-	hp -= damage;
-	if (hp <= 0)
+	if (hitTimer > 1)
 	{
-		SetActive(false);
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss hit.wav"));
+		hp -= damage;
+		OnHit = true;
+		if (hp <= 0)
+		{
+			Change();
+		}
+		hitTimer = 0;
 	}
+	
+}
+
+void BossEnemy::Change()
+{
+	animator.Play("animations/bossDie.csv");
 }
 

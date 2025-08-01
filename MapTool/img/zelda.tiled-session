@@ -53,11 +53,11 @@
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInner.tmj": {
-            "scale": 3,
-            "selectedLayer": 3,
+            "scale": 5.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 496.99999999999994,
-                "y": 147.16666666666669
+                "x": 507.6363636363636,
+                "y": 24.63636363636364
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInside.tsj": {
@@ -89,11 +89,11 @@
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/hiddenPath.tmj": {
-            "scale": 1.669921875,
-            "selectedLayer": 2,
+            "scale": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 256.2994152046784,
-                "y": 256
+                "x": 394.25,
+                "y": 273.5
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/home_background.tsj": {
@@ -109,16 +109,16 @@
             "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 512,
-                "y": 768.3333333333333
+                "x": 512.3333333333334,
+                "y": 768.6666666666666
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/untitled.tmj": {
             "scale": 1,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 512,
-                "y": 768.5
+                "x": 511.5,
+                "y": 769
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/zelda_house_outdoor.tsj": {
