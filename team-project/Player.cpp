@@ -124,6 +124,17 @@ void Player::Init()
 	animations[Direction::Right] = AnimationIO::loadFromCSV("animations/Link_right.csv");
 	// Left
 	animations[Direction::Left] = animations[Direction::Right];
+	// Push 애니메이션
+	pushingAnimations[Direction::Up] = AnimationIO::loadFromCSV("animations/Link_push_up.csv");
+	pushingAnimations[Direction::Down] = AnimationIO::loadFromCSV("animations/Link_push_down.csv");
+	pushingAnimations[Direction::Right] = AnimationIO::loadFromCSV("animations/Link_push_right.csv");
+	// Left는 Right 반전으로 재활용
+	pushingAnimations[Direction::Left] = pushingAnimations[Direction::Right];
+
+	for (auto& [dir, frames] : pushingAnimations)
+	{
+		std::cout << "[DEBUG] pushingAnimations[" << static_cast<int>(dir) << "] = " << frames.size() << " 프레임\n";
+	}
 
 	currentDirection = Direction::Down;
 	currentFrame = 0;
@@ -140,7 +151,10 @@ void Player::Init()
 			<< static_cast<int>(currentDirection)
 			<< "\n";
 	}
-
+	for (auto& [dir, frames] : pushingAnimations)
+	{
+		std::cout << "[DEBUG] pushingAnimations[" << static_cast<int>(dir) << "] = " << frames.size() << " 프레임\n";
+	}
 	body.setScale(1.0f, 1.0f); // ũ�� ����
 
 	// ��Ʈ�ڽ� �ʱ�ȭ
@@ -165,12 +179,129 @@ void Player::Reset()
 void Player::Update(float dt)
 {
 	if (isNpcTalk) return;
+	CheckInteractions();
+	bool collidingWithPushable = false;
+
+	if (currentInteractable != nullptr)
+	{
+		sf::Vector2f playerPos = GetPosition();
+		sf::Vector2f objPos = currentInteractable->GetPosition();
+		float distance = std::sqrt(std::pow(playerPos.x - objPos.x, 2) +
+			std::pow(playerPos.y - objPos.y, 2));
+
+		// 밀기는 더 가까운 거리에서만 가능
+		if (distance <= 25.0f)
+		{
+			collidingWithPushable = true;
+		}
+	}
+	//if (sceneGame != nullptr)
+	//{
+	//	for (auto* obj : sceneGame->GetInteractables())
+	//	{
+	//		// 더 자세한 디버깅 정보 출력
+	//		sf::FloatRect playerBounds = hitBox.rect.getGlobalBounds();
+	//		sf::FloatRect objBounds = obj->GetHitBox().rect.getGlobalBounds();
+
+	//	
+	//		// 실제 충돌 검사
+	//		bool isColliding = playerBounds.intersects(objBounds);
+	//		std::cout << "충돌 상태: " << (isColliding ? "TRUE" : "FALSE") << std::endl;
+
+	//		if (isColliding)
+	//		{
+	//			std::cout << ">>> 충돌 감지됨! <<<" << std::endl;
+	//			collidingWithPushable = true;
+
+	//			// X키를 눌렀다면 상호작용 이벤트 처리
+	//			if (wantsToInteract)
+	//			{
+	//				std::cout << ">>> 상호작용 이벤트 발생! <<<" << std::endl;
+	//				// 여기에 상호작용 로직 추가
+	//				obj->OnInteract(); // interactable 객체의 상호작용 메서드 호출
+	//				wantsToInteract = false; // 이벤트 처리 후 초기화
+	//			}
+	//			break; // 하나라도 충돌하면 루프 종료
+	//		}
+	//	}
+	//}
+	bool nowPushing = collidingWithPushable && moveDir != sf::Vector2f(0.f, 0.f);
+	// 밀고 있는 시간 체크
+	if (nowPushing)
+	{
+		pushTimer += dt;
+		if (pushTimer >= pushThreshold)
+		{
+			isPushing = true;
+		}
+	}
+	else
+	{
+		pushTimer = 0.f;
+		isPushing = false;
+	}
+
+	// 상태 전환 처리
+	if (isPushing && !wasPushing)
+	{
+		playerState = PlayerState::Push;
+		currentFrame = 0;
+		elapsedTime = 0.f;
+		std::cout << "➡ 밀기 상태 진입! currentFrame 초기화\n";
+	}
+	else if (!isPushing && wasPushing)
+	{
+		// 이동 중이면 Walk, 아니면 Idle
+		playerState = (moveDir != sf::Vector2f(0.f, 0.f)) ? PlayerState::Walk : PlayerState::Idle;
+		currentFrame = 0;
+		elapsedTime = 0.f;
+		std::cout << "⬅ 밀기 상태 종료\n";
+	}
+	wasPushing = isPushing;
+	// 이전 상태 갱신
+	wasPushing = isPushing;
+	if (collidingWithPushable)
+	{
+		pushTimer += dt;
+		if (pushTimer >= pushThreshold)
+		{
+			if (!isPushing)
+				std::cout << "[밀기 상태 전환] 애니메이션 전환 시작!\n";
+
+			isPushing = true;
+		}
+	}
+	else
+	{
+		if (isPushing)
+			std::cout << "[밀기 해제] 더 이상 밀고 있지 않음\n";
+
+		pushTimer = 0.f;
+		isPushing = false;
+	}
 
 	
 
 
 	previousPosition = GetPosition();
 	timeSinceLastDamage += dt;
+	// 상태 판단
+	if (isAttacking)
+	{
+		playerState = PlayerState::Attack;
+	}
+	else if (isPushing)
+	{
+		playerState = PlayerState::Push;
+	}
+	else if (moveDir != sf::Vector2f(0.f, 0.f))
+	{
+		playerState = PlayerState::Walk;
+	}
+	else
+	{
+		playerState = PlayerState::Idle;
+	}
 	// 깜빡임 무적 처리
 	if (isInvincible)
 	{
@@ -190,13 +321,12 @@ void Player::Update(float dt)
 
 	if (!isAttacking && InputMgr::GetKeyDown(sf::Keyboard::Z))
 	{
-		state = PlayerState::Attack;
+		playerState = PlayerState::Attack;
 		isAttacking = true;
 		attackElapsed = 0.f;
 		attackFrameIndex = 0;
 
-		if (swordTexture)
-			body.setTexture(*swordTexture);
+		if (swordTexture) body.setTexture(*swordTexture);
 
 		auto& attackVec = attackAnimations[currentDirection];
 
@@ -209,13 +339,11 @@ void Player::Update(float dt)
 				rect.left += rect.width;
 				rect.width = -rect.width;
 			}
-
 			body.setTextureRect(rect);
 		}
-
 	}
 
-	if (state == PlayerState::Attack)
+	if (playerState == PlayerState::Attack)
 	{
 		attackElapsed += dt;
 
@@ -230,12 +358,10 @@ void Player::Update(float dt)
 				attackElapsed = 0.f;
 				attackFrameIndex++;
 
-
-
 				if (attackFrameIndex >= attackVec.size())
 				{
 					isAttacking = false;
-					state = PlayerState::Idle;
+					playerState = PlayerState::Idle;
 					currentFrame = 0;
 					elapsedTime = 0.f;
 
@@ -320,7 +446,7 @@ void Player::Update(float dt)
 	}
 	
 
-	sf::Vector2f movement(0.f, 0.f);
+	moveDir = { 0.f, 0.f };
 	bool moving = false;
 	//bool isMovingLeft = false;
 	// 방향 키 입력 시 방향 결정
@@ -329,25 +455,25 @@ void Player::Update(float dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) 
 	{
 		currentDirection = Direction::Left;
-		movement.x -= speed * dt;
+		moveDir.x -= speed * dt;
 		moving = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) 
 	{
 		currentDirection = Direction::Right;
-		movement.x += speed * dt;
+		moveDir.x += speed * dt;
 		moving = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
 	{
 		currentDirection = Direction::Up;
-		movement.y -= speed * dt;
+		moveDir.y -= speed * dt;
 		moving = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) 
 	{
 		currentDirection = Direction::Down;
-		movement.y += speed * dt;
+		moveDir.y += speed * dt;
 		moving = true;
 	}
 	// ================== 이동 애니메이션 프레임 처리 ==================
@@ -384,7 +510,7 @@ void Player::Update(float dt)
 	// 애니메이션 데이터 없으면 이동만 처리
 
 	
-	sf::Vector2f newPos = body.getPosition() + movement;
+	sf::Vector2f newPos = body.getPosition() + moveDir;
 	SetPosition(newPos);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
@@ -399,6 +525,7 @@ void Player::Update(float dt)
 	{
 		wantsToInteract = false;
 	}
+	UpdateAnimation(dt);
 }
 
 
@@ -417,6 +544,58 @@ void Player::Draw(sf::RenderWindow& window)
 bool Player::checkCollision(const HitBox& other)
 {
 	return hitBox.rect.getGlobalBounds().intersects(other.rect.getGlobalBounds());
+}
+
+void Player::CheckInteractions()
+{
+	if (sceneGame == nullptr)
+	{
+		currentInteractable = nullptr;
+		showInteractionUI = false;
+		return;
+	}
+
+	sf::Vector2f playerPos = GetPosition();
+	GameObject* nearestObj = nullptr;
+	float nearestDistance = std::numeric_limits<float>::max();
+
+	const float INTERACTION_RANGE = 50.0f;
+
+	for (auto* obj : sceneGame->GetInteractables())
+	{
+		sf::Vector2f objPos = obj->GetPosition();
+
+		// 거리 계산
+		float distance = std::sqrt(std::pow(playerPos.x - objPos.x, 2) +
+			std::pow(playerPos.y - objPos.y, 2));
+
+		if (distance <= INTERACTION_RANGE && distance < nearestDistance)
+		{
+			nearestDistance = distance;
+			nearestObj = obj;
+		}
+	}
+
+	// 상호작용 가능한 오브젝트 갱신
+	if (nearestObj != currentInteractable)
+	{
+		currentInteractable = nearestObj;
+		showInteractionUI = (currentInteractable != nullptr);
+
+		if (showInteractionUI)
+		{
+			std::cout << "interact ok! distance: " << nearestDistance << std::endl;
+		}
+	}
+}
+
+void Player::TriggerInteraction(GameObject* obj)
+{
+	if (obj == nullptr) return;
+
+	std::cout << ">>> interact ok! <<<" << std::endl;
+
+
 }
 
 void Player::TakeDamageIfPossible(int damage)
@@ -477,4 +656,74 @@ void Player::Heal(int amount)
 
 	}
 }
+
+void Player::UpdateAnimation(float dt)
+{
+	std::vector<sf::IntRect>* currentVec = nullptr;
+	auto& vec = pushingAnimations[currentDirection];
+	if (vec.empty())
+	{
+		std::cerr << "⚠️ Push 애니메이션 비어 있음: 방향 = " << static_cast<int>(currentDirection) << "\n";
+		return;
+	}
+
+	switch (playerState)
+	{
+	case PlayerState::Idle:
+		currentVec = &animations[currentDirection];
+		currentFrame = 0;
+		break;
+
+	case PlayerState::Walk:
+		currentVec = &animations[currentDirection];
+		break;
+
+	case PlayerState::Push:
+		currentVec = &pushingAnimations[currentDirection];
+		break;
+
+	case PlayerState::Attack:
+		return; // 공격 애니메이션은 Update()에서 따로 처리
+	}
+
+	// 벡터가 유효한지 확인
+	if (!currentVec || currentVec->empty())
+	{
+		std::cerr << "[애니메이션 오류] state = " << static_cast<int>(playerState)
+			<< ", currentDirection = " << static_cast<int>(currentDirection)
+			<< ", currentVec is empty or null!\n";
+		return;
+	}
+
+	// 프레임 시간 계산
+	if (playerState == PlayerState::Walk || playerState == PlayerState::Push)
+	{
+		elapsedTime += dt;
+		if (elapsedTime >= frameTime)
+		{
+			elapsedTime = 0.f;
+			currentFrame = (currentFrame + 1) % currentVec->size();
+		}
+	}
+
+	// 현재 프레임 유효성 확인
+	if (currentFrame >= currentVec->size()) currentFrame = 0;
+
+
+	// 텍스처 적용
+	sf::IntRect rect = (*currentVec)[currentFrame];
+	if (currentDirection == Direction::Left)
+	{
+		rect.left += rect.width;
+		rect.width = -rect.width;
+	}
+	body.setTextureRect(rect); 
+
+}
+
+void Player::SetSceneGame(SceneGame* scene)
+{
+	this->sceneGame = scene;
+}
+
 

@@ -8,7 +8,7 @@ class HitboxGenerator
 {
 public:
     static void SpawnSquareHitBox(
-        TileMap* tileMapGame,
+        TileMap* tileMapName,
         std::vector<HitBox>& collisions,
         sf::RectangleShape& collisionBox
     );

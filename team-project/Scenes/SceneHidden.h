@@ -12,7 +12,7 @@ struct HiddenZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
-	// Ãß°¡ Á¤º¸
+	// ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	std::function<void()> onEnter;
 	std::function<void()> onExit;
 	bool entered = false;
@@ -30,12 +30,12 @@ class SceneHidden : public Scene
 protected:	
 	Player* player;
 	TileMap* tileMapHidden;
-	SpriteGo* Dad;
 
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
 
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 
@@ -47,8 +47,22 @@ protected:
 
 	std::vector<HitBox> collisions;
 	sf::RectangleShape collisionBox;
+	float wallX = 0;
+	float wallY = 0;
+	float wallWithdh = 0;
+	float wallHeight = 0;
+	bool squareToggle = false;
+
+	SpriteGo* hiddenPathCover;
+
+	SpriteGo* dad;
+	bool dadSay = 0;
+	int sayCount = 0;
+
 public:
 	SceneHidden();
+	void SetPlayer(Player* p);
+	
 	std::list<Interactable*> GetInteract() { return interactList; }
 	std::list<Enemy*> GetEnemy() { return enemyList; }
 	void InitZones();
@@ -57,8 +71,10 @@ public:
 
 	void DeleteInteractables();
 
-	void CheckCollison();\
+	void CheckCollison();
 	void SpawnSquareHitBox();
+
+	void SpawnHiddenObject();
 
 	void Init() override;
 	void Enter() override;

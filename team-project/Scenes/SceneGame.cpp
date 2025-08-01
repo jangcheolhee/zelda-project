@@ -249,7 +249,6 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 	inter->SetActive(true);
 	inter->SetPosition(pos);
 	interactList.push_back(inter);
-
 }
 
 void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
@@ -479,20 +478,20 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
-	//texIds.push_back("graphics/Heart.png");
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
+	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
 
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
-	//ANI_CLIP_MGR.Load("animations/run.csv");
-	//ANI_CLIP_MGR.Load("animations/jump.csv");
-
+	
 	hud = new HUD("HUD");
 	AddGameObject(hud);
 	player = new Player("Player");
+	player->SetSceneGame(this);
+	
 	player->SetHUD(hud);
 	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
@@ -517,6 +516,7 @@ void SceneGame::Init()
 	flowerBool = true;
 
 	Scene::Init();
+
 }
 
 void SceneGame::Exit()
@@ -558,10 +558,7 @@ void SceneGame::Update(float dt)
 			RecycleEnemy(*it);
 			it = enemyList.erase(it);
 		}
-		else
-		{
-			++it;
-		}
+		else ++it;
 	}
 	auto it1 = interactList.begin();
 	while (it1 != interactList.end())
@@ -572,10 +569,7 @@ void SceneGame::Update(float dt)
 			interactPool[(*it1)->GetType()].push_back(*it1);
 			it1 = interactList.erase(it1);
 		}
-		else
-		{
-			++it1;
-		}
+		else ++it1;
 	}
 	CheckCollison();
 	UpdateZones();
@@ -604,6 +598,10 @@ void SceneGame::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F3))
 	{
+		SCENE_MGR.ChangeScene(SceneIds::Castle);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::F4))
+	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
 }
@@ -620,6 +618,9 @@ void SceneGame::Draw(sf::RenderWindow& window)
 	sf::View prev = window.getView();
 	window.setView(prev); // 원래 뷰로 복구
 	Scene::Draw(window);
+}
 
-
+const std::list<Interactable*>& SceneGame::GetInteractablesList() const
+{
+	return interactList;
 }
