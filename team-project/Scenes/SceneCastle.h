@@ -10,7 +10,7 @@ struct CastleZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
-	// Ãß°¡ Á¤º¸
+	// ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	std::function<void()> onEnter;
 	std::function<void()> onExit;
 	bool entered = false;
@@ -34,10 +34,8 @@ protected:
 	std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<std::unique_ptr<Enemy>>> enemyPools;
 	std::list<Enemy*> enemyList;
-
-	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
-
+	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::vector<CastleZone> castleZones;
 	int zoneID = 1;
 
@@ -53,8 +51,8 @@ protected:
 	bool squareToggle = false;
 
 	//floor
-	std::vector<SpriteGo*> floor1DoorPathCovers; //1Ãþ 2°³
-	SpriteGo* floor2DoorPathCover; //2Ãþ 1°³
+	std::vector<SpriteGo*> floor1DoorPathCovers; //1ï¿½ï¿½ 2ï¿½ï¿½
+	SpriteGo* floor2DoorPathCover; //2ï¿½ï¿½ 1ï¿½ï¿½
 	SpriteGo* LeftBridge;
 	SpriteGo* RightBridge;
 	bool isSecondFloor = 0;
@@ -68,6 +66,8 @@ protected:
 	sf::FloatRect firstBound;
 
 public:
+	std::list<Interactable*> GetInteract() { return interactList; }
+	std::list<Enemy*> GetEnemy() { return enemyList; }
 	SceneCastle();
 
 	void InitZones();

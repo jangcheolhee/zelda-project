@@ -77,6 +77,7 @@ public:
 	{
 		return std::vector<Interactable*>(interactList.begin(), interactList.end());
 	}
+	std::list<Interactable*> GetInteract(){return interactList;}
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();

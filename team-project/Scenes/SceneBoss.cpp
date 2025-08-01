@@ -11,6 +11,7 @@
 #include <istream>
 #include "SceneCastle.h"
 #include "HitboxGenerator.h"
+#include "BossEnemy.h"
 
 SceneBoss::SceneBoss() :Scene(SceneIds::Boss)
 {
@@ -118,6 +119,8 @@ void SceneBoss::DeleteInteractables()
 
 void SceneBoss::Init()
 {
+
+texIds.push_back("graphics/Boss.png");
 	player = new Player("Player");
 	tileMapBoss = new TileMap("TileMapBoss", "data/boss.tmj");
 	tileMapBoss->Init();
@@ -133,15 +136,36 @@ void SceneBoss::Init()
 
 void SceneBoss::Enter()
 {
-	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
-	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
-	uiView.setSize(size);
-	uiView.setCenter(center);
-	worldView.setSize({ size.x * 0.5f, size.y * 0.5f });
+	worldView.setSize({ size.x * .5f, size.y * .5f });
+	worldView.setCenter({ 0,0 });
+	points.resize(6);
+	starts.resize(6);
+	points.clear();
+	starts.clear();
 
-	Scene::Enter();
-
+	starts.push_back({ -75,-75 });
+	starts.push_back({ 0.f,-75 });
+	starts.push_back({ 75,-75 });
+	starts.push_back({ 75,0.f });
+	starts.push_back({ -75,0.f });
+	starts.push_back({ 0.f,0.f });
+	
+	points.push_back({ 0.f,-120 });
+	points.push_back({ 75,-75 });
+	points.push_back({ 75,0.f });
+	points.push_back({ 0.f,45.f });
+	points.push_back({ -75,-75 });
+	points.push_back({ -75,0.f });
+	for (int i = 0; i < 6; i++)
+	{
+		BossEnemy* b = new BossEnemy();
+		AddGameObject(b);
+		bosses.push_back(b);
+		b->StartPos(starts[i]);
+		b->DesPos(points[i]);
+	
+	}
 	sf::Vector2f startPos = tileMapBoss->getPosition(1, 1086);
 	player->SetPosition(startPos);
 	GAME_MGR.playerHp = player->GetMaxHp();

@@ -40,11 +40,11 @@ void HUD::SetOrigin(Origins preset)
 
 void HUD::Init()
 {
+	
 	sortingLayer = SortingLayers::UI;
 	sortingOrder = 0;
 
-	sf::Font& font = FONT_MGR.Get("fonts/Neo.ttf");
-	rupeeText.setFont(font);
+	rupeeText.setFont(FONT_MGR.Get("fonts/Neo.ttf"));
 	rupeeText.setCharacterSize(18);
 	rupeeText.setFillColor(sf::Color::White);
 	rupeeText.setPosition(134.f, 43.f);
@@ -100,6 +100,8 @@ void HUD::AddRupee(int amount)
 {
 	rupeeCount += amount;
 	rupeeText.setString("0 0 " + std::to_string(rupeeCount));
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/rupee.wav"));
+
 }
 
 void HUD::AddHeart(int amount)

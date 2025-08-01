@@ -6,7 +6,7 @@
 #include "HitBox.h" 
 class Player;
 class TileMap;
-
+class Enemy;
 class SceneBoss : public Scene
 {
 protected:
@@ -20,6 +20,10 @@ protected:
 
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
+
+std::list<Enemy*> bosses;
+	std::vector<sf::Vector2f> points;
+	std::vector<sf::Vector2f> starts;
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
@@ -35,6 +39,8 @@ protected:
 public:
 	SceneBoss();
 	void SetPlayer(Player* p);
+
+std::list<Enemy*> GetEnemy() { return bosses; }
 
 	void DeleteInteractables();
 

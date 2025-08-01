@@ -13,13 +13,15 @@ void SceneSelect::Init()
 	texIds.push_back("graphics/Items.png");
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
-
+	soundIds.push_back("bgm/Select.flac");
+	
 	saveSloatUI = (SaveSlotUI*)AddGameObject(new SaveSlotUI());
 
 	saveSloatUI->onSlotSelected = [](int slotIndex)
 		{
 			GAME_MGR.LoadFromSlot(slotIndex);
 			SCENE_MGR.ChangeScene((SceneIds)GAME_MGR.currentMapID);
+			GAME_MGR.slotIdx = slotIndex;
 		};
 
 	saveSloatUI->onSlotDelete = [](int slotIndex)
@@ -34,10 +36,13 @@ void SceneSelect::Enter()
 {
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
+	worldView.setSize({ 0,0 });
 	uiView.setSize(size);
 	uiView.setCenter(center);
 
 	Scene::Enter();
+	SOUND_MGR.SetBgmVolume(20);
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Select.flac"));
 }
 
 void SceneSelect::Update(float dt)

@@ -11,7 +11,7 @@ struct HiddenZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
-	// Ãß°¡ Á¤º¸
+	// ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	std::function<void()> onEnter;
 	std::function<void()> onExit;
 	bool entered = false;
@@ -37,6 +37,7 @@ protected:
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
 
+
 	std::vector<HiddenZone> hiddenZones;
 	int zoneID = 1;
 
@@ -61,6 +62,8 @@ public:
 	SceneHidden();
 	void SetPlayer(Player* p);
 	
+	std::list<Interactable*> GetInteract() { return interactList; }
+	std::list<Enemy*> GetEnemy() { return enemyList; }
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone();

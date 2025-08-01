@@ -114,14 +114,7 @@ void SceneCastle::CheckCollison()
 {
 	if (!player) return;
 
-	for (auto& enemy : enemyList)
-	{
-		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-		{
-			player->OnCollide(enemy);
-			enemy->OnCollide(player);
-		}
-	}
+	
 
 	for (auto& obj : interactList)
 	{
@@ -277,6 +270,8 @@ void SceneCastle::DeleteInteractables()
 
 void SceneCastle::Init()
 {
+
+	
 	texIds.push_back("data/59984.png");
 
 	player = new Player("Player");
@@ -311,6 +306,8 @@ void SceneCastle::Init()
 
 void SceneCastle::Enter()
 {
+
+	
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
@@ -325,6 +322,8 @@ void SceneCastle::Enter()
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
+
+	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 }
 
