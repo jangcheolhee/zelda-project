@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SceneBoss.h"
 #include "Player.h"
 #include "TileMap.h"
@@ -15,6 +15,9 @@
 
 SceneBoss::SceneBoss() :Scene(SceneIds::Boss)
 {
+	texIds.push_back("graphics/HUD.png");
+	texIds.push_back("graphics/inventory.png");
+	fontIds.push_back("fonts/Neo.ttf");
 	player = nullptr;
 	tileMapBoss = nullptr;
 }
@@ -120,11 +123,20 @@ void SceneBoss::DeleteInteractables()
 void SceneBoss::Init()
 {
 
-texIds.push_back("graphics/Boss.png");
+	texIds.push_back("graphics/Boss.png");
 	player = new Player("Player");
 	tileMapBoss = new TileMap("TileMapBoss", "data/boss.tmj");
 	tileMapBoss->Init();
+	hud = new HUD("HUD");
+	hud->Init();
+	AddGameObject(hud);
 
+	if (FindGameObject("InventoryUI") == nullptr)
+	{
+		inventoryUI = new InventoryUI("InventoryUI");
+		inventoryUI->Init();
+		AddGameObject(inventoryUI);
+	}
 	AddGameObject(player);
 	AddGameObject(tileMapBoss);
 
@@ -136,6 +148,7 @@ texIds.push_back("graphics/Boss.png");
 
 void SceneBoss::Enter()
 {
+
 	auto size = FRAMEWORK.GetWindowSizeF();
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter({ 0,0 });
@@ -150,7 +163,7 @@ void SceneBoss::Enter()
 	starts.push_back({ 75,0.f });
 	starts.push_back({ -75,0.f });
 	starts.push_back({ 0.f,0.f });
-	
+
 	points.push_back({ 0.f,-120 });
 	points.push_back({ 75,-75 });
 	points.push_back({ 75,0.f });
@@ -164,7 +177,7 @@ void SceneBoss::Enter()
 		bosses.push_back(b);
 		b->StartPos(starts[i]);
 		b->DesPos(points[i]);
-	
+
 	}
 	sf::Vector2f startPos = tileMapBoss->getPosition(1, 1086);
 	player->SetPosition(startPos);
@@ -172,9 +185,19 @@ void SceneBoss::Enter()
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
 	GAME_MGR.Save();
-	worldView.setCenter({player->GetGlobalBounds().getPosition().x+5.f, player->GetGlobalBounds().getPosition().y - 90.f});
+	worldView.setCenter({ player->GetGlobalBounds().getPosition().x + 5.f, player->GetGlobalBounds().getPosition().y - 90.f });
 	Scene::Enter();
 	SpawnSquareHitBox();
+	if (hud)
+	{
+		hud->SetScale({ 3.8f, 3.8f });         // 허브 배율 (원하는 만큼)
+		
+	}
+	if (inventoryUI)
+	{
+		inventoryUI->SetScale(3.8f, 3.8f); // 원하는 크기로!
+		inventoryUI->SetInventoryPosition({ 0.f, 0.f }); // 원하는 위치로!
+	}
 }
 
 void SceneBoss::Update(float dt)
@@ -207,6 +230,15 @@ void SceneBoss::Update(float dt)
 	{
 		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
 	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
+	{
+		if (inventoryUI)
+		{
+			bool active = inventoryUI->GetActive();
+			inventoryUI->SetActive(!active);
+		}
+	}
+
 }
 
 void SceneBoss::Draw(sf::RenderWindow& window)
@@ -218,4 +250,7 @@ void SceneBoss::Draw(sf::RenderWindow& window)
 	{
 		col.Draw(window);
 	}
+	window.setView(window.getDefaultView());
+	
+	hud->ApplyBossStyle();
 }

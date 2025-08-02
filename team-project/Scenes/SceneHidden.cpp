@@ -353,7 +353,6 @@ void SceneHidden::Init()
 
 	hud = new HUD("HUD");
 	hud->Init();
-
 	AddGameObject(hud);
 
 	if (FindGameObject("InventoryUI") == nullptr)
@@ -473,7 +472,10 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	}
 	window.setView(uiView);
 	if (hud) hud->Draw(window);
-	if (inventoryUI && inventoryUI->GetActive())
+	if (inventoryUI && inventoryUI->GetActive()) 
+	{
 		inventoryUI->Draw(window);
+
+	}
 
 }

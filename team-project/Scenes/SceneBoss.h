@@ -1,16 +1,20 @@
-#pragma once
+﻿#pragma once
 #include "Scene.h"
 #include "Enemy.h"
 #include "Interactable.h"
 #include "SpriteGo.h"
-#include "HitBox.h" 
+#include "HitBox.h"
+#include "HUD.h"
 class Player;
 class TileMap;
+
 class SceneBoss : public Scene
 {
 protected:
 	Player* player;
 	TileMap* tileMapBoss;
+	HUD* hud;
+	InventoryUI* inventoryUI;
 
 	std::vector<Interactable*> interactables;
 
@@ -38,7 +42,7 @@ std::list<Enemy*> bosses;
 public:
 	SceneBoss();
 	void SetPlayer(Player* p);
-
+	sf::RectangleShape background;
 	std::list<Enemy*> GetEnemy() { return bosses; }
 	std::list<Interactable*> GetInteract() { return interactList; }
 
@@ -51,4 +55,5 @@ public:
 	void Enter() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+	
 };

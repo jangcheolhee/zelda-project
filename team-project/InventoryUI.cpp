@@ -49,9 +49,7 @@ void InventoryUI::Init()
 
 void InventoryUI::Update(float dt)
 {
-  /*  if (!IsActive())
-        return;*/
-    //if (!GetActive()) return;
+  
     if (!isAnimating && !isShowing)
         return;
     // 현재 목표 위치 설정
@@ -76,12 +74,17 @@ void InventoryUI::Update(float dt)
 
 void InventoryUI::Draw(sf::RenderWindow& window)
 {
-    if (!isShowing && !isAnimating) return;
+    //if (!isShowing && !isAnimating) return;
 
-    window.draw(inventorySprite);
+    if (!GetActive()) return; 
+    window.draw(background);
 
-    //for (auto& slot : itemSlots)
-      //  window.draw(slot);
+    if (isShowing || isAnimating)
+    {
+        window.draw(inventorySprite);
+    }
+
+   
 }
 
 void InventoryUI::Release()
@@ -102,4 +105,23 @@ void InventoryUI::SetActive(bool active)
 bool InventoryUI::IsVisible() const
 {
     return isShowing;
+}
+
+void InventoryUI::SetSize(const sf::Vector2f& size)
+{
+    background.setSize(size);
+}
+void InventoryUI::SetPosition(const sf::Vector2f& pos)
+{
+    background.setPosition(pos);
+}
+
+void InventoryUI::SetScale(float sx, float sy)
+{
+    inventorySprite.setScale(sx, sy);
+}
+
+void InventoryUI::SetInventoryPosition(const sf::Vector2f& pos)
+{
+    inventorySprite.setPosition(pos);
 }

@@ -8,6 +8,7 @@
 class Player;
 class TileMap;
 class HitBox;
+class TextGo;
 
 struct MapZone
 {

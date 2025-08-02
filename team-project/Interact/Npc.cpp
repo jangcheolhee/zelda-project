@@ -191,17 +191,19 @@ void Npc::HandleDadInteraction()
         if (sayCount == 0)
         {
             sayCount++;
-            std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+            if (dialogText != nullptr)
+            {
+                dialogText->SetString(L"Hi, 검을 내게 맡기마...링크");
+
+            }
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
             sayCount++;
-            std::cout << "You Can Do It! 잘가." << sayCount << std::endl;
-        }
-        if (sayCount == 2)
-        {
-            npcSay = !npcSay;
-            player->isNpcTalk = 0;
+            if (dialogText != nullptr)
+            {
+                dialogText->SetString(L"링크...젤다공주를 부탁한다");
+            }
         }
     }
 }

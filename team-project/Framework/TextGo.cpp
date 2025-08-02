@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TextGo.h"
 
 TextGo::TextGo(const std::string& fontId, const std::string& name)
