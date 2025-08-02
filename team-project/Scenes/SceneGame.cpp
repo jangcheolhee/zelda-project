@@ -100,10 +100,13 @@ void SceneGame::UpdateZones()
 				zoneID = zone.zoneId;
 				changeZone = true;
 				zone.onEnter();
+				DeleteInteractables();
 				SpawnInteractableObject(zone.bounds);
-				SpawnFlowers(zone.bounds);
+				if (flowers.empty())
+				{
+					SpawnFlowers(zone.bounds);
+				}
 				SpawnSquareHitBox();
-
 			}
 		}
 		else if (!nowInZone && zone.entered)
@@ -115,11 +118,13 @@ void SceneGame::UpdateZones()
 			}
 			DeleteInteractables();
 
-			for (auto f : flowers)
+			for (auto flower : flowers)
 			{
-				RemoveGameObject(f);
+				if (flower != nullptr)
+				{
+					flower->SetActive(false);
+				}
 			}
-			flowers.clear();
 		}
 	}
 }
@@ -155,6 +160,7 @@ void SceneGame::DeleteInteractables()
 		interactPool[inter->GetType()].push_back(inter);
 	}
 	interactList.clear();
+	collisions.clear();
 }
 
 void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
@@ -218,6 +224,9 @@ void SceneGame::SpawnFlowers(sf::FloatRect zone)
 
 			flower->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 });
+
+			flower->sortingLayer = SortingLayers::Background;
+			flower->sortingOrder = 1;
 
 			flower->SetActive(flowerBool);
 			flower->SetOrigin(Origins::TL);
@@ -330,19 +339,28 @@ void SceneGame::SpawnSquareHitBox()
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {
 	//layer 1 : bush
-	int layer1Gid[] = { 24670, 24590 };
-	for (int id : layer1Gid)
+	std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, 24670);
+	for (const auto& pos : positions)
 	{
-		//layer 1 : bush
-		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
-		for (const auto& pos : positions)
-		{
-			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
-			{//bush
-				SpawnInteractable(pos, Interactable::Type::Throw);
-			}
+		if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
+		{//bush
+			SpawnInteractable(pos, Interactable::Type::Throw);
 		}
 	}
+	//hole
+	sf::Vector2f holePops = tileMapGame->getPosition(1, 24590);
+	if ((holePops.x >= zone.left && holePops.x <= (zone.left + zone.width)) && (holePops.y >= zone.top && holePops.y <= zone.top + zone.height))
+	{
+		Interactable* bush = new Bush();       
+		bush->Init();
+		bush->Reset();
+		bush->SetActive(true);
+		bush->SetPosition(holePops);
+		bush->SetOrigin(Origins::TL);   
+		AddGameObject(bush);
+		interactList.push_back(bush);
+	}
+
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
@@ -352,7 +370,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{//npc
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-				SpawnInteractable(pos, Interactable::Type::Npc);
+				SpawnInteractable({pos.x+10.f, pos.y}, Interactable::Type::Npc);
 			}
 		}
 	}
@@ -470,6 +488,14 @@ void SceneGame::Exit()
 	GAME_MGR.playerHp = player->GetHp();
 	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
 
+	for (auto flower : flowers)
+	{
+		if (flower != nullptr)
+		{
+			flower->SetActive(false);
+		}
+	}
+
 	Scene::Exit();
 }
 
@@ -491,6 +517,17 @@ void SceneGame::Enter()
 	GAME_MGR.playerSpawnPosition = startPos;
 
 	player->SetPosition(startPos);
+
+	for (auto flower : flowers)
+	{
+		if (flower != nullptr)
+		{
+			flower->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
+			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 });
+			flower->SetActive(flowerBool);
+		}
+	}
+
 }
 
 void SceneGame::Update(float dt)

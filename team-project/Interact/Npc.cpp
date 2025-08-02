@@ -7,10 +7,16 @@
 #include <cmath>
 #include "Scene.h"
 
+int Npc::nextNpcId = 0;
+std::unordered_map<int, int> Npc::npcDialogueIndices;
+
 Npc::Npc(const std::string& name)
 {
     conversation = nullptr;
     dialogText = nullptr;
+    npcId = nextNpcId++;
+    dialogueIndex = 0; 
+    InitDialogues();
 }
 
 Npc::~Npc()
@@ -106,7 +112,9 @@ void Npc::HandleBasicNpcInteraction()
     rect.width += 4.f;
     rect.height += 4.f;
 
-    if (rect.intersects(GetGlobalBounds()) && npcSay == 0 && sayCount < 2)
+    sf::FloatRect npcRect = GetGlobalBounds();
+
+    if (rect.intersects(npcRect) && npcSay == 0 && sayCount < 2)
     {
         player->isNpcTalk = 1;
 
@@ -126,18 +134,20 @@ void Npc::HandleBasicNpcInteraction()
             dialogText->Reset();
             dialogText->SetActive(1);
             dialogText->SetOrigin(Origins::MC);
-            dialogText->SetCharacterSize(24);
-            dialogText->SetFillColor(sf::Color::Black);
+            dialogText->SetCharacterSize(18);
+            dialogText->SetFillColor(sf::Color::White);
             dialogText->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+            dialogText->SetOutlineThickness(1.5f);
+            dialogText->SetOutlineColor(sf::Color(0, 0, 150));
         }
 
         if (sayCount == 0)
         {
             sayCount++;
-            if (dialogText != nullptr)
+            if (dialogText != nullptr && !dialogues.empty())
             {
-                std::cout << "You Can Do It! 잘가." << std::endl;
-                dialogText->SetString("물건에 가까이 가서 X 버튼을 누르면 물건을 들어 올릴 수 있어...");
+                int currentDialogueIndex = npcDialogueIndices[npcId];
+                dialogText->SetString(dialogues[currentDialogueIndex]);
             }
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
@@ -145,7 +155,7 @@ void Npc::HandleBasicNpcInteraction()
             sayCount++;
             if (dialogText != nullptr)
             {
-                dialogText->SetString("You Can Do It! Bye.");
+                dialogText->SetString(L"잘 가");
             }
         }
         if (sayCount == 2)
@@ -153,6 +163,7 @@ void Npc::HandleBasicNpcInteraction()
             sayCount = 0;
             npcSay = !npcSay;
             player->isNpcTalk = 0;
+            npcDialogueIndices[npcId] = (npcDialogueIndices[npcId] + 1) % 6;
             if (player->isNpcTalk == 0)
             {
                 delete conversation;
@@ -194,6 +205,17 @@ void Npc::HandleDadInteraction()
         }
     }
 }
+void Npc::InitDialogues()
+{
+    dialogues = {
+        L"물건에 가까이 가서 X 버튼을\n누르면 물건을 들어 올릴 수\n있어...",
+        L"밥은 먹고 다니니?",
+        L"풀 들어봤어?",
+        L"어린아이는 이 시간에 돌아다니면\n안돼",
+        L"위로 가면 성이 있단다.",
+        L"모험을 떠날 때는 항상\n준비물을 챙기는 걸 잊지마"
+    };
+}
 
 void Npc::OnInteract()
 {
@@ -223,14 +245,11 @@ void Npc::Init()
 void Npc::Reset()
 {
     Interactable::Reset();
+    npcId = static_cast<int>(GetPosition().x) * 1000 + static_cast<int>(GetPosition().y);
     currentDirection = Direction::Down;
     DirectionSprite(currentDirection);
-
-    if (npcType != Type::Dad)
-    {
-        DirectionSprite(currentDirection);
-    }
-
+    if (dialogues.empty()) InitDialogues();
+    if (npcType != Type::Dad) DirectionSprite(currentDirection);
     if (conversation != nullptr)
     {
         delete conversation;

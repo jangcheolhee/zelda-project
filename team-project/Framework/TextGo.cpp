@@ -12,6 +12,24 @@ void TextGo::SetString(const std::string& str)
 	Utils::SetOrigin(text, originPreset);
 }
 
+void TextGo::SetString(const std::wstring& str)
+{
+	text.setString(str);
+	Utils::SetOrigin(text, originPreset);
+}
+
+void TextGo::SetString(const wchar_t* str)
+{
+	text.setString(str);
+	Utils::SetOrigin(text, originPreset);
+}
+
+void TextGo::SetString(const sf::String& str)
+{
+	text.setString(str);
+	Utils::SetOrigin(text, originPreset);
+}
+
 void TextGo::SetCharacterSize(unsigned int size)
 {
 	text.setCharacterSize(size);
@@ -26,6 +44,16 @@ void TextGo::SetFillColor(const sf::Color& color)
 std::string TextGo::GetString() const
 {
 	return text.getString();
+}
+
+void TextGo::SetOutlineThickness(float thickness)
+{
+	text.setOutlineThickness(thickness);
+}
+
+void TextGo::SetOutlineColor(const sf::Color& color)
+{
+	text.setOutlineColor(color);
 }
 
 void TextGo::SetPosition(const sf::Vector2f& pos)
