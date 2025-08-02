@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TextGo.h"
 
 TextGo::TextGo(const std::string& fontId, const std::string& name)
@@ -7,6 +7,25 @@ TextGo::TextGo(const std::string& fontId, const std::string& name)
 }
 
 void TextGo::SetString(const std::string& str)
+{
+	text.setString(str);
+	Utils::SetOrigin(text, originPreset);
+}
+
+void TextGo::SetString(const std::wstring& str)
+{ 
+	text.setString(str);
+    Utils::SetOrigin(text, originPreset);
+	
+}
+
+void TextGo::SetString(const wchar_t* str)
+{
+	text.setString(str);
+	Utils::SetOrigin(text, originPreset);
+}
+
+void TextGo::SetString(const sf::String& str)
 {
 	text.setString(str);
 	Utils::SetOrigin(text, originPreset);

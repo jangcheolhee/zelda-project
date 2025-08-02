@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "GameObject.h"
 
 class Player;
@@ -15,11 +15,11 @@ private:
     sf::Texture inventoryTexture;
     sf::Sprite inventorySprite;
     std::string texturePath;
-    bool isShowing = false; // ÇöÀç º¸¿©Áö´Â »óÅÂ
-    bool isAnimating = false; // ¾Ö´Ï¸ŞÀÌ¼Ç ÁßÀÎÁö
-    sf::Vector2f shownPosition;    // È­¸é Áß¾Ó (º¸ÀÌ´Â À§Ä¡)
-    sf::Vector2f hiddenPosition;   // È­¸é ¹Û À§ÂÊ
-    sf::Vector2f currentPosition;  // ÇöÀç À§Ä¡ (º¸°£¿ë)
+    bool isShowing = false; // í˜„ì¬ ë³´ì—¬ì§€ëŠ” ìƒíƒœ
+    bool isAnimating = false; // ì• ë‹ˆë©”ì´ì…˜ ì¤‘ì¸ì§€
+    sf::Vector2f shownPosition;    // í™”ë©´ ì¤‘ì•™ (ë³´ì´ëŠ” ìœ„ì¹˜)
+    sf::Vector2f hiddenPosition;   // í™”ë©´ ë°– ìœ„ìª½
+    sf::Vector2f currentPosition;  // í˜„ì¬ ìœ„ì¹˜ (ë³´ê°„ìš©)
     
     float slideSpeed = 300.f;
     float animationSpeed = 5.f;
@@ -32,7 +32,7 @@ public:
     void Update(float dt) override;
     void Draw(sf::RenderWindow& window) override;
 
-    // GameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+    // GameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
     void Release() override;
     void Reset() override;
     void SetPlayer(Player* p) { player = p; }
@@ -40,5 +40,11 @@ public:
     void Toggle() { SetActive(!IsActive()); }
     void SetActive(bool active);
     bool IsVisible() const;
+    void SetSize(const sf::Vector2f& size);
+    void SetPosition(const sf::Vector2f& pos);
+
+    void SetScale(float sx, float sy);
+    void SetInventoryPosition(const sf::Vector2f& pos);
+
 };
 

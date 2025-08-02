@@ -1,0 +1,13 @@
+{
+    "frames": [
+        {
+            "duration": 0.10000000149011612,
+            "h": 20,
+            "w": 16,
+            "x": 70,
+            "y": 4
+        }
+    ],
+    "loop": true,
+    "name": "Link_down_fall"
+}

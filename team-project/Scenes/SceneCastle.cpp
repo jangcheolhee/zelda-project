@@ -10,7 +10,6 @@
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 {
 	texIds.push_back("graphics/HUD.png");
-	
 	texIds.push_back("graphics/inventory.png");
 	fontIds.push_back("fonts/Neo.ttf");
 	player = nullptr;
@@ -481,10 +480,5 @@ void SceneCastle::Draw(sf::RenderWindow& window)
 	{
 		col.Draw(window);
 	}
-	/*if (hud) hud->Draw(window);
-	if (inventoryUI && inventoryUI->GetActive())
-	{
-		inventoryUI->Draw(window);
-
-	}*/
+	
 }
