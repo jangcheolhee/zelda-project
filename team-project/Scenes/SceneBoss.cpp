@@ -116,32 +116,33 @@ void SceneBoss::Enter()
 	points.clear();
 	starts.clear();
 
-	starts.push_back({ -75,-75 });
-	starts.push_back({ 0.f,-75 });
-	starts.push_back({ 75,-75 });
-	starts.push_back({ 75,0.f });
-	starts.push_back({ -75,0.f });
+	starts.push_back({ -55,-55 });
+	starts.push_back({ 0.f,-55 });
+	starts.push_back({ 55,-55 });
+	starts.push_back({ 55,0.f });
+	starts.push_back({ -55,0.f });
 	starts.push_back({ 0.f,0.f });
 
-	points.push_back({ 0.f,-120 });
-	points.push_back({ 75,-75 });
-	points.push_back({ 75,0.f });
+	points.push_back({ 0.f,-100 });
+	points.push_back({ 55,-55 });
+	points.push_back({ 55,0.f });
 	points.push_back({ 0.f,45.f });
-	points.push_back({ -75,-75 });
-	points.push_back({ -75,0.f });
+	points.push_back({ -55,-55 });
+	points.push_back({ -55,0.f });
 	for (int i = 0; i < 6; i++)
 	{
 		SpawnEnemy(starts[i], points[i], sf::Vector2f(-75 + 35 * i, -65), Enemy::Types::Boss);
 
 	}
 	sf::Vector2f startPos = tileMapBoss->getPosition(1, 1086);
-	player->SetPosition({ -8,-50 });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = startPos;
+	GAME_MGR.playerSpawnPosition = { -12, 85 };
 	GAME_MGR.Save();
+	player->SetPosition({ -12, 85 });
+	worldView.setCenter({ 0, 0 });
 	Scene::Enter();
-	worldView.setCenter({ player->GetGlobalBounds().getPosition().x + 5.f, player->GetGlobalBounds().getPosition().y - 90.f });
+	
 	player->SetHp(10);
 	SpawnSquareHitBox();
 }

@@ -28,6 +28,7 @@ protected:
 	float timer = 0;
 	float hitTimer = 0;
 	HitBox hitBox;
+	HitBox shadowBox;
 	BossState state;
 	bool onHit = false;
 
@@ -65,5 +66,6 @@ public:
 	void OnDamage(int damage) override;
 
 	void Change();
+	void CheckCollide(HitBox box) override;
 
 };

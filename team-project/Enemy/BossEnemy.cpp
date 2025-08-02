@@ -82,6 +82,7 @@ void BossEnemy::Reset()
 
 void BossEnemy::Update(float dt)
 {
+	pastPosition = GetPosition();
 	animator.Update(dt);
 	hitTimer += dt;
 	switch (state)
@@ -190,7 +191,7 @@ void BossEnemy::Update(float dt)
 		}
 
 		SetPosition(GetPosition() + direction * dt * 80.f);
-		if (Utils::Distance({ point1.x, -point1.y }, position) < 5)
+		if (Utils::Distance({ point1.x, -point1.y }, position) < 20)
 		{
 			page1 = true;
 		}
@@ -198,8 +199,31 @@ void BossEnemy::Update(float dt)
 		break;
 	case BossState::Berserk:
 		body.setColor(sf::Color::Red);
+
+		if (timer == 0)
+		{
+			velocity.y = -151;
+		}
+		timer += dt;
+		hitTimer += dt;
+
+		SetPosition(GetPosition() + direction * dt * 150.f);
+	
+		if (velocity.y > 150) timer = 0;
+
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
+	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
+	Enemy::Update(dt);
+	for (auto& obj : interList)
+	{
+		if (Utils::CheckCollision(shadowBox.rect, obj->GetHitBox().rect))
+		{
+			CheckCollide(obj->GetHitBox());
+
+		}
+	}
+	
 }
 
 void BossEnemy::Draw(sf::RenderWindow& window)
@@ -231,7 +255,29 @@ void BossEnemy::OnDamage(int damage)
 
 void BossEnemy::Change()
 {
-
+	hitBox.rect.setSize({ 0,0 });
 	animator.Play("animations/bossDie.csv");
+}
+
+void BossEnemy::CheckCollide(HitBox box)
+{
+	sf::Vector2f position = GetPosition();
+	SetPosition({ pastPosition.x, position.y });
+	shadowBox.SetPosition({ pastPosition.x, position.y });
+	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
+		position.y = pastPosition.y;
+	}
+	SetPosition({ pastPosition.x, position.y });
+	shadowBox.SetPosition({ position.x, pastPosition.y });
+	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
+		position.x = pastPosition.x;
+	}
+	SetPosition(position);
+
+	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
+	if (state == BossState::Berserk)
+	{
+		direction = sf::Vector2f(Utils::RandomValue()*(Utils::RandomRange(0,2) % 2 == 0 ? -1:1), Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1 : 1));
+	}
 }
 
