@@ -304,7 +304,7 @@ void SceneCastle::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 	enemy->Reset();
 	enemy->SetPosition(pos);
 	enemy->SetActive(true);
-
+	enemy->SetInitPosition(pos);
 	enemyList.push_back(enemy);
 }
 

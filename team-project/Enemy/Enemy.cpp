@@ -116,7 +116,7 @@ void Enemy::Update(float dt)
 	// 매 프레임마다 피격 가능 상태로 초기화
 	isHitThisFrame = false;
 
-	if (!player->IsAttacking() && player->checkCollision(hitBox))
+	if (!player->IsAttacking() && player->checkCollision(hitBox) && !isDie)
 	{
 		player->TakeDamageIfPossible(1);
 	}
@@ -159,7 +159,7 @@ void Enemy::CheckCollide(HitBox box)
 	SetPosition(position);
 	
 	hitBox.UpdateTransform(body, body.getLocalBounds());
-
+	hitBox.rect.setSize({ 20,26 });
 }
 
 
@@ -181,6 +181,7 @@ void Enemy::OnDamage(int damage)
 		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/enemy hit.wav"));
 		if (hp == 0)
 		{
+			isDie = true;
 			DeathAnimation();
 		}
 		timer = 0;

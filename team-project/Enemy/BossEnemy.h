@@ -15,6 +15,7 @@ protected:
 	
 	bool page1 = false;
 	bool page2 = false;
+	
 	int hp = 5;
 	sf::Vector2f pastPos;
 	sf::Sprite body;

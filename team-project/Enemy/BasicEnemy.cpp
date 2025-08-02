@@ -31,18 +31,39 @@ void BasicEnemy::Update(float dt)
 	pastPosition = GetPosition();
 	moveTimer += dt;
 
-	//if (moveTimer > 3)
-	//{
-	//	direction = (Direction)Utils::RandomRange(0, 4);
-	//	moveTimer = 0;
-	//	ChangeSprite();
-	//}
-	dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+	if (Utils::Distance(player->GetPosition() ,GetPosition()) < 80)
+	{
+		state = EnemyState::Chase;
+	}
+	else
+	{
+		state = EnemyState::Patrol;
+	}
 
-	position += dir * dt * 30.f;
+	switch (state)
+	{
+	case EnemyState::Patrol:
+		if (moveTimer > 3.f)
+		{
+			direction = (Direction)Utils::RandomRange(0, 4);
+			ChangeSprite();
+			moveTimer = 0.f;
+		}
+		break;
+
+	case EnemyState::Chase:
+		dir = player->GetPosition() - GetPosition();
+		Utils::Normalize(dir);
+
+		
+		break;
+	}
+
+	position += dir * speed * dt;
 	SetPosition(position);
 
 	hitBox.UpdateTransform(body, GetLocalBounds());
+	hitBox.rect.setSize({ 20,26 });
 	Enemy::Update(dt);
 	for (auto& obj : interList)
 	{

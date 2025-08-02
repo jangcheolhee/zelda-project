@@ -142,7 +142,7 @@ void SceneBoss::Enter()
 	player->SetPosition({ -12, 85 });
 	worldView.setCenter({ 0, 0 });
 	Scene::Enter();
-	
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/boss.flac"));
 	player->SetHp(10);
 	SpawnSquareHitBox();
 }

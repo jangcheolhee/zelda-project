@@ -208,13 +208,17 @@ void BossEnemy::Update(float dt)
 		hitTimer += dt;
 
 		SetPosition(GetPosition() + direction * dt * 150.f);
-	
+
 		if (velocity.y > 150) timer = 0;
 
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
 	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
-	Enemy::Update(dt);
+
+
+	
+		Enemy::Update(dt);	
+
 	for (auto& obj : interList)
 	{
 		if (Utils::CheckCollision(shadowBox.rect, obj->GetHitBox().rect))
@@ -223,7 +227,8 @@ void BossEnemy::Update(float dt)
 
 		}
 	}
-	
+
+
 }
 
 void BossEnemy::Draw(sf::RenderWindow& window)
@@ -244,6 +249,10 @@ void BossEnemy::OnDamage(int damage)
 		onHit = true;
 		if (hp <= 0)
 		{
+
+			isDie = true;
+			hitBox.rect.setSize({ 0,0 });
+
 			body.setColor(sf::Color(0xffffffff));
 			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss dies.wav"));
 			Change();
@@ -255,7 +264,7 @@ void BossEnemy::OnDamage(int damage)
 
 void BossEnemy::Change()
 {
-	hitBox.rect.setSize({ 0,0 });
+
 	animator.Play("animations/bossDie.csv");
 }
 
@@ -277,7 +286,7 @@ void BossEnemy::CheckCollide(HitBox box)
 	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
 	if (state == BossState::Berserk)
 	{
-		direction = sf::Vector2f(Utils::RandomValue()*(Utils::RandomRange(0,2) % 2 == 0 ? -1:1), Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1 : 1));
+		direction = sf::Vector2f(Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1 : 1), Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1 : 1));
 	}
 }
 

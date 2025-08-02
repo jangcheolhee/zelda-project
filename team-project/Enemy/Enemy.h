@@ -16,6 +16,7 @@ public:
 		Count,
 	};
 protected:
+	bool isDie = false;
 	float hitCooldown = 0.5f;     // 피격 간 최소 시간 (초)
 	float LastHit = 0.f; // 마지막 피격 이후 시간
 
