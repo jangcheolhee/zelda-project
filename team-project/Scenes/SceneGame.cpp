@@ -448,7 +448,7 @@ void SceneGame::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 
-	text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
+	//text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
 
 
 	ANI_CLIP_MGR.Load("animations/bush2.csv");

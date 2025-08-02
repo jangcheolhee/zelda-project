@@ -180,7 +180,7 @@ void Npc::HandleDadInteraction()
     if (!player) return;
 
     sf::Vector2f playerPos = player->GetPosition();
-    sf::Vector2f dadPos = { GetPosition().x, GetPosition().y };
+    sf::Vector2f dadPos = GetPosition();
 
     float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
 
@@ -188,21 +188,62 @@ void Npc::HandleDadInteraction()
     {
         player->isNpcTalk = 1;
 
+        if (conversation == nullptr)
+        {
+            conversation = new SpriteGo("graphics/conversation.png", "Conversation");
+            conversation->Init();
+            conversation->Reset();
+            conversation->SetActive(1);
+            conversation->SetOrigin(Origins::MC);
+            conversation->SetScale({ 2.5f, 2.5f });
+            auto size = FRAMEWORK.GetWindowSizeF();
+            conversation->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+
+            dialogText = new TextGo("fonts/DungGeunMo.ttf", "DialogText");
+            dialogText->Init();
+            dialogText->Reset();
+            dialogText->SetActive(1);
+            dialogText->SetOrigin(Origins::MC);
+            dialogText->SetCharacterSize(18);
+            dialogText->SetFillColor(sf::Color::White);
+            dialogText->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+            dialogText->SetOutlineThickness(1.5f);
+            dialogText->SetOutlineColor(sf::Color(0, 0, 150));
+        }
+
         if (sayCount == 0)
         {
             sayCount++;
             if (dialogText != nullptr)
             {
                 dialogText->SetString(L"Hi, 검을 내게 맡기마...링크");
-
             }
         }
+
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
             sayCount++;
             if (dialogText != nullptr)
             {
                 dialogText->SetString(L"링크...젤다공주를 부탁한다");
+            }
+        }
+
+        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 2)
+        {
+            sayCount = 0;
+            player->isNpcTalk = 0;
+
+            // UI 정리
+            if (conversation != nullptr)
+            {
+                delete conversation;
+                conversation = nullptr;
+            }
+            if (dialogText != nullptr)
+            {
+                delete dialogText;
+                dialogText = nullptr;
             }
         }
     }
@@ -249,8 +290,9 @@ void Npc::Reset()
     Interactable::Reset();
     npcId = static_cast<int>(GetPosition().x) * 1000 + static_cast<int>(GetPosition().y);
     currentDirection = Direction::Down;
-    DirectionSprite(currentDirection);
+
     if (dialogues.empty()) InitDialogues();
+    if (npcType == Type::Dad) DaddySprite();
     if (npcType != Type::Dad) DirectionSprite(currentDirection);
     if (conversation != nullptr)
     {
@@ -261,6 +303,9 @@ void Npc::Reset()
     auto size = FRAMEWORK.GetWindowSizeF();
     talkUi.setSize(size);
     talkUi.setCenter({ size.x * 0.5f, size.y * 0.5f });
+
+    sayCount = 0;
+    npcSay = 0;
 }
 
 void Npc::Update(float dt)

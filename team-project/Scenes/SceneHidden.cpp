@@ -260,13 +260,8 @@ void SceneHidden::SpawnHiddenObject()
 		dadInteractable->sortingLayer = SortingLayers::Background;
 		dadInteractable->Reset();
 
-		if (auto npc = dynamic_cast<Npc*>(dadInteractable))
-		{
-			npc->DaddySprite();
-		}
-
 		dadInteractable->SetActive(true);
-		dadInteractable->SetPosition({dadPos.x+20.f, dadPos.y+20.f});
+		dadInteractable->SetPosition({ dadPos.x + 20.f, dadPos.y + 20.f });
 		interactList.push_back(dadInteractable);
 	}
 }
@@ -335,9 +330,11 @@ void SceneHidden::Init()
 {
 	texIds.push_back("graphics/Enemy_sheet.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
+	texIds.push_back("graphics/conversation.png");
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
+	fontIds.push_back("fonts/DungGeunMo.ttf");
 
 	soundIds.push_back("bgm/Cave.flac");
 
