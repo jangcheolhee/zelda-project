@@ -18,7 +18,7 @@ public:
 	virtual const HitBox& GetHitBox() const { return hitBox; }
 
 	SortingLayers sortingLayer = SortingLayers::Default;
-	int sortingOrder = 0;
+	int sortingOrder = 4;
 
 	GameObject(const std::string& name = "");
 	virtual ~GameObject();

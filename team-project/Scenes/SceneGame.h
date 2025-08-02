@@ -36,13 +36,10 @@ protected:
 	HUD* hud;
 	TileMap* tileMapGame;
 	InventoryUI* inventoryUI;
-	TextGo* text;
-	//std::vector<Interactable*> interactables;
-	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
-	std::list<Enemy*> enemyList;
 	
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
+	std::vector<Interactable*> interactables;
 
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
@@ -59,8 +56,6 @@ protected:
 	HitBox collision;
 	std::vector<HitBox> collisions;
 	sf::RectangleShape collisionBox;
-	bool squareToggle = 0;
-
 	float wallX =  0;
 	float wallY = 0;
 	float wallWithdh = 0;
@@ -78,23 +73,17 @@ public:
 	}
 
 	std::list<Interactable*> GetInteract(){return interactList;}
-	std::list<Enemy*> GetEnemy() { return enemyList; }
 
  	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);
 	void DeleteInteractables();
 	
-	void RecycleEnemy(Enemy* enemy);
-	void DeleteEnemy(); 
-	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
-	void SpawnInteractable(sf::Vector2f pos, Interactable::Type type);
-	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
-	
 	void SpawnFlowers(sf::FloatRect zone);
 	void FlowerBreath(float dt);
 
 	void SpawnInteractableObject(sf::FloatRect zone);
+	void SpawnInteractable(sf::Vector2f pos, Interactable::Type type);
 	void CheckCollison();
 	void SpawnSquareHitBox();
 

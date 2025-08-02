@@ -64,8 +64,8 @@ void AniPlayer::Release()
 
 void AniPlayer::Reset()
 {
-	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = 0;
+	sortingLayer = SortingLayers::Player;
+	sortingOrder = 2;
 
 	//animator.Play("animations/Link_idle.csv");
 	SetOrigin(Origins::BC);

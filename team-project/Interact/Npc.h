@@ -24,6 +24,12 @@ protected:
 
 	Type npcType = Type::Basic;
 
+	int dialogueIndex = 0; 
+	std::vector<std::wstring> dialogues;
+	int npcId = 0;  
+	static int nextNpcId;  
+	static std::unordered_map<int, int> npcDialogueIndices;
+
 public:
 
 	Npc(const std::string& name = "");
@@ -39,6 +45,8 @@ public:
 
 	void HandleBasicNpcInteraction();
 	void HandleDadInteraction();
+
+	void InitDialogues();
 
 	// Interactable
 	void OnInteract() override;

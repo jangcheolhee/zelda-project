@@ -115,7 +115,6 @@ void Bush::Update(float dt)
 }
 void Bush::Shoot()
 {
-	enemyList = sceneGame->GetEnemy();
 	state = BushState::Thrown;
 	lifeTime = 0.f;
 	switch (player->GetDirection())

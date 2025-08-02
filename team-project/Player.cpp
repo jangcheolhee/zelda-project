@@ -77,8 +77,8 @@ void Player::Init()
 	
 	hp = maxHp; 
 
-	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = 0;
+	sortingLayer = SortingLayers::Player;
+	sortingOrder = 2;
 
 	std::string texPath = "graphics/Link.png";
 	if (!TEXTURE_MGR.Exists(texPath))

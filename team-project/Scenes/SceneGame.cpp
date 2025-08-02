@@ -2,7 +2,6 @@
 #include "SceneGame.h"
 #include "Player.h"
 #include "TileMap.h"
-#include "BasicEnemy.h"
 #include "Bush.h"
 #include "Npc.h"
 #include "Chest.h"
@@ -33,15 +32,12 @@ void SceneGame::InitZones()
 		[this]()
 		  {
 			  std::cout << "Zone 1 Enter" << std::endl;
-			  sf::Vector2f enemyPos = tileMapGame->getPosition(2, 18585);
-			  SpawnEnemy(enemyPos, Enemy::Types::Basic);
 
 		  },
 		[this]()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
-			
-			 
+			  DeleteInteractables();
 		  },
 		false
 		});
@@ -56,7 +52,6 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
-		
 		},
 		false
 		});
@@ -71,7 +66,6 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
-			
 		},
 		false
 		});
@@ -86,7 +80,6 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 4 Exit" << std::endl;
-			
 		},
 		false
 		});
@@ -109,10 +102,13 @@ void SceneGame::UpdateZones()
 				zoneID = zone.zoneId;
 				changeZone = true;
 				zone.onEnter();
+				DeleteInteractables();
 				SpawnInteractableObject(zone.bounds);
-				SpawnFlowers(zone.bounds);
+				if (flowers.empty())
+				{
+					SpawnFlowers(zone.bounds);
+				}
 				SpawnSquareHitBox();
-
 			}
 		}
 		else if (!nowInZone && zone.entered)
@@ -125,11 +121,13 @@ void SceneGame::UpdateZones()
 				DeleteEnemy();
 			}
 
-			for (auto f : flowers)
+			for (auto flower : flowers)
 			{
-				RemoveGameObject(f);
+				if (flower != nullptr)
+				{
+					flower->SetActive(false);
+				}
 			}
-			flowers.clear();
 		}
 	}
 }
@@ -165,45 +163,7 @@ void SceneGame::DeleteInteractables()
 		interactPool[inter->GetType()].push_back(inter);
 	}
 	interactList.clear();
-}
-void SceneGame::RecycleEnemy(Enemy* enemy)
-{
-	if (enemy)
-	{
-		enemy->SetActive(false);
-		enemyPools[enemy->GetType()].push_back(enemy);
-	}
-}
-
-void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
-{
-	Enemy* enemy = nullptr;
-
-	auto& pool = enemyPools[type];
-	if (!pool.empty())
-	{
-		enemy = pool.front();
-		pool.pop_front();
-	}
-	else
-	{
-		switch (type)
-		{
-		case Enemy::Types::Basic:
-			enemy = (Enemy*)AddGameObject(new BasicEnemy());
-			break;
-		case Enemy::Types::Count:
-			break;
-		default:
-			break;
-		}
-		enemy->Init();
-	}
-	enemy->Reset();
-	enemy->SetPosition(pos);
-	enemy->SetActive(true);
-
-	enemyList.push_back(enemy);
+	collisions.clear();
 }
 
 void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
@@ -254,15 +214,6 @@ void SceneGame::SpawnInteractable(sf::Vector2f pos, Interactable::Type type)
 	interactList.push_back(inter);
 }
 
-void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
-{
-	std::vector<sf::Vector2f> positions = tileMapGame->getPositions(layerIndex, targetGid);
-	for (const auto& pos : positions)
-	{
-		SpawnEnemy(pos, type);
-	}
-}
-
 void SceneGame::SpawnFlowers(sf::FloatRect zone)
 {
 	std::vector<sf::Vector2f> positions = tileMapGame->getPositions(4, 24696);
@@ -276,6 +227,9 @@ void SceneGame::SpawnFlowers(sf::FloatRect zone)
 
 			flower->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
 			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 });
+
+			flower->sortingLayer = SortingLayers::Background;
+			flower->sortingOrder = 1;
 
 			flower->SetActive(flowerBool);
 			flower->SetOrigin(Origins::TL);
@@ -388,19 +342,28 @@ void SceneGame::SpawnSquareHitBox()
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {
 	//layer 1 : bush
-	int layer1Gid[] = { 24670, 24590 };
-	for (int id : layer1Gid)
+	std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, 24670);
+	for (const auto& pos : positions)
 	{
-		//layer 1 : bush
-		std::vector <sf::Vector2f> positions = tileMapGame->getPositions(1, id);
-		for (const auto& pos : positions)
-		{
-			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
-			{//bush
-				SpawnInteractable(pos, Interactable::Type::Throw);
-			}
+		if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
+		{//bush
+			SpawnInteractable(pos, Interactable::Type::Throw);
 		}
 	}
+	//hole
+	sf::Vector2f holePops = tileMapGame->getPosition(1, 24590);
+	if ((holePops.x >= zone.left && holePops.x <= (zone.left + zone.width)) && (holePops.y >= zone.top && holePops.y <= zone.top + zone.height))
+	{
+		Interactable* bush = new Bush();       
+		bush->Init();
+		bush->Reset();
+		bush->SetActive(true);
+		bush->SetPosition(holePops);
+		bush->SetOrigin(Origins::TL);   
+		AddGameObject(bush);
+		interactList.push_back(bush);
+	}
+
 	//layer 2 : npc
 	int layer2Gid[] = { 24638 };
 	for (int id : layer2Gid)
@@ -410,7 +373,7 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 		{//npc
 			if ((pos.x >= zone.left && pos.x <= (zone.left + zone.width)) && (pos.y >= zone.top && pos.y <= zone.top + zone.height))
 			{
-				SpawnInteractable(pos, Interactable::Type::Npc);
+				SpawnInteractable({pos.x+10.f, pos.y}, Interactable::Type::Npc);
 			}
 		}
 	}
@@ -456,15 +419,6 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	}
 }
 
-void SceneGame::DeleteEnemy()
-{
-	for (Enemy* e : enemyList)
-	{
-		RecycleEnemy(e);
-	}
-	enemyList.clear();
-}
-
 void SceneGame::Init()
 {
 	texIds.push_back("graphics/sprite_sheet.png");
@@ -484,6 +438,7 @@ void SceneGame::Init()
 	
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
+	fontIds.push_back("fonts/DungGeunMo.ttf");
 	
 	soundIds.push_back("bgm/Overworld.flac");
 	soundIds.push_back("effects/link hurt.wav");
@@ -494,7 +449,7 @@ void SceneGame::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 
-	text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
+	//text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
 
 
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
@@ -539,6 +494,13 @@ void SceneGame::Exit()
 	GAME_MGR.playerHp = player->GetHp();
 	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
 
+	for (auto flower : flowers)
+	{
+		if (flower != nullptr)
+		{
+			flower->SetActive(false);
+		}
+	}
 	DeleteInteractables();
 	DeleteEnemy();
 
@@ -563,21 +525,22 @@ void SceneGame::Enter()
 	GAME_MGR.playerSpawnPosition = startPos;
 
 	player->SetPosition(startPos);
+
+	for (auto flower : flowers)
+	{
+		if (flower != nullptr)
+		{
+			flower->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Overworld.png"));
+			flower->GetSprite().setTextureRect({ 760, 41, 8, 8 });
+			flower->SetActive(flowerBool);
+		}
+	}
+
 }
 
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
-	auto it = enemyList.begin();
-	while (it != enemyList.end())
-	{
-		if (!(*it)->GetActive())
-		{
-			RecycleEnemy(*it);
-			it = enemyList.erase(it);
-		}
-		else ++it;
-	}
 	auto it1 = interactList.begin();
 	while (it1 != interactList.end())
 	{

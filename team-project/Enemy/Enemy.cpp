@@ -53,8 +53,11 @@ void Enemy::Init()
 	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
 
-	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = -1;
+
+
+
+	sortingLayer = SortingLayers::Enemy;
+	sortingOrder = 3;
 	animator.SetTarget(&body);
 
 	animator.AddEvent("Death", 6,

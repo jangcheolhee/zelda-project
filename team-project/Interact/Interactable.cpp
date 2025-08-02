@@ -43,7 +43,7 @@ void Interactable::SetOrigin(Origins preset)
 void Interactable::Init()
 {
 	sortingLayer = SortingLayers::Foreground;
-	sortingOrder = 0;
+	sortingOrder = 1;
 	SetOrigin(Origins::BR);
 	animator.SetTarget(&body);
 	hitBox.SetOrigin(Origins::BL);

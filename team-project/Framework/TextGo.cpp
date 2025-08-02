@@ -13,10 +13,9 @@ void TextGo::SetString(const std::string& str)
 }
 
 void TextGo::SetString(const std::wstring& str)
-{ 
+{
 	text.setString(str);
-    Utils::SetOrigin(text, originPreset);
-	
+	Utils::SetOrigin(text, originPreset);
 }
 
 void TextGo::SetString(const wchar_t* str)
@@ -45,6 +44,16 @@ void TextGo::SetFillColor(const sf::Color& color)
 std::string TextGo::GetString() const
 {
 	return text.getString();
+}
+
+void TextGo::SetOutlineThickness(float thickness)
+{
+	text.setOutlineThickness(thickness);
+}
+
+void TextGo::SetOutlineColor(const sf::Color& color)
+{
+	text.setOutlineColor(color);
 }
 
 void TextGo::SetPosition(const sf::Vector2f& pos)

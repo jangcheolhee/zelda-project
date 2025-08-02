@@ -53,11 +53,11 @@
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInner.tmj": {
-            "scale": 5.5,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 507.6363636363636,
-                "y": 24.63636363636364
+                "x": 787,
+                "y": 211.33333333333337
             }
         },
         "C:/KMJ/zelda-link-to-the-past_TeamProject/zelda-project/team-project-bin/data/castleInside.tsj": {

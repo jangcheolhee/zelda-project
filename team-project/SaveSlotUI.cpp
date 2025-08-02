@@ -76,7 +76,7 @@ void SaveSlotUI::Init()
 {
 
 	sortingLayer = SortingLayers::UI;
-	sortingOrder = 0;
+	sortingOrder = 5;
 
 }
 
