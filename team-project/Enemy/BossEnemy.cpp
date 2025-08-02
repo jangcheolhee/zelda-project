@@ -270,23 +270,37 @@ void BossEnemy::Change()
 
 void BossEnemy::CheckCollide(HitBox box)
 {
-	sf::Vector2f position = GetPosition();
-	SetPosition({ pastPosition.x, position.y });
-	shadowBox.SetPosition({ pastPosition.x, position.y });
-	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
-		position.y = pastPosition.y;
-	}
-	SetPosition({ pastPosition.x, position.y });
-	shadowBox.SetPosition({ position.x, pastPosition.y });
-	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
-		position.x = pastPosition.x;
-	}
-	SetPosition(position);
+	sf::Vector2f newPosition = GetPosition();
 
+	
+	newPosition.x = pastPosition.x;
+	SetPosition({ newPosition.x, newPosition.y });
+	shadowBox.SetPosition(GetPosition());
+
+	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
+		newPosition.x = pastPosition.x;
+	}
+
+
+	newPosition.y = pastPosition.y;
+	SetPosition({ newPosition.x, newPosition.y });
+	shadowBox.SetPosition(GetPosition());
+
+	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
+		newPosition.y = pastPosition.y;
+	}
+
+
+	SetPosition(newPosition);
+	shadowBox.SetPosition(newPosition);
 	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
+
 	if (state == BossState::Berserk)
 	{
-		direction = sf::Vector2f(Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1 : 1), Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1 : 1));
+		direction = sf::Vector2f(
+			Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1.f : 1.f),
+			Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1.f : 1.f)
+		);
 	}
 }
 

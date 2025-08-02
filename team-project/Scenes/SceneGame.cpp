@@ -200,7 +200,6 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 	enemy->Reset();
 	enemy->SetPosition(pos);
 	enemy->SetActive(true);
-	enemy->SetInitPosition(pos);
 
 	enemyList.push_back(enemy);
 }
@@ -353,7 +352,7 @@ void SceneGame::CheckCollison()
 				obj->OnInteract(); // 아이템 제거
 				continue;
 			}
-			player->SetPosition(player->GetPos());
+			player->CollideMoving(obj->GetHitBox());
 			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
 			{
 				obj->OnInteract();
@@ -581,11 +580,11 @@ void SceneGame::Update(float dt)
 		}
 		else ++it1;
 	}
-	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone(dt);
 	FlowerBreath(dt);
 
+	CheckCollison();
 
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{

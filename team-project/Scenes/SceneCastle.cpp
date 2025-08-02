@@ -128,6 +128,7 @@ void SceneCastle::CheckCollison()
 			{
 			case Interactable::Type::Throw:
 			case Interactable::Type::Chest:
+				player->CollideMoving(obj->GetHitBox());
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
 					obj->OnInteract();
@@ -140,7 +141,7 @@ void SceneCastle::CheckCollison()
 				break;
 
 			case Interactable::Type::JumpWall:
-				player->SetPosition(player->GetPos());
+				player->CollideMoving(obj->GetHitBox());
 				obj->OnInteract();
 				break;
 			}

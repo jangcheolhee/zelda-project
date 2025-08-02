@@ -175,6 +175,7 @@ void Player::Reset()
 	bool isMovingLeft = false;
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
+	SetOrigin(Origins::BC);
 }
 void Player::Update(float dt)
 {
@@ -395,6 +396,7 @@ void Player::Update(float dt)
 		if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
 		{
 			enemyList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+
 		}
 		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Castle)
 		{
@@ -481,8 +483,17 @@ void Player::Update(float dt)
 	// 애니메이션 데이터 없으면 이동만 처리
 
 	
-	sf::Vector2f newPos = body.getPosition() + moveDir;
-	SetPosition(newPos);
+	float h = InputMgr::GetAxis(Axis::Horizontal);
+	float v = InputMgr::GetAxis(Axis::Vertical);
+
+	velocity.x = h * speed;
+	velocity.y = v * speed;
+
+	position += velocity * dt;
+	SetPosition(position);
+	UpdateFixedHitBox();
+	
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		hitBox.visible = !hitBox.visible;
@@ -569,6 +580,43 @@ void Player::TriggerInteraction(GameObject* obj)
 
 }
 
+void Player::CollideMoving(HitBox box)
+{
+	
+	sf::Vector2f position = GetPosition();
+	sf::Vector2f newPos = position;
+	sf::Vector2f deltaMove = position - previousPosition;
+
+	
+	newPos.x = previousPosition.x + deltaMove.x;
+	SetPosition(newPos);
+	UpdateFixedHitBox();
+	hitBox.SetPosition(newPos);
+
+	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
+		newPos.x = previousPosition.x; 
+		UpdateFixedHitBox();
+		hitBox.SetPosition(newPos);
+	}
+
+	
+	newPos.y = previousPosition.y + deltaMove.y;
+	SetPosition(newPos);
+	UpdateFixedHitBox();
+	hitBox.SetPosition(newPos);
+
+	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
+		newPos.y = previousPosition.y; 
+		SetPosition(newPos);
+		UpdateFixedHitBox();
+		hitBox.SetPosition(newPos);
+	}
+
+	SetPosition(newPos);
+	UpdateFixedHitBox();
+	
+}
+
 void Player::TakeDamageIfPossible(int damage)
 {
 	if (timeSinceLastDamage >= damageCooldown)
@@ -606,11 +654,11 @@ void Player::OnDamage(int damage)
 
 void Player::UpdateFixedHitBox()
 {
+	hitBox.UpdateTransform(body, GetLocalBounds());
 	sf::Vector2f fixedSize = { 8.f, 8.f };              // 원하는 히트박스 크기
 	hitBox.rect.setSize(fixedSize);
-	hitBox.rect.setOrigin(fixedSize * 0.5f);
 
-	sf::Vector2f offset(8.f, 15.f);
+	sf::Vector2f offset(4.f, 8.f);
 	hitBox.rect.setPosition(GetPosition() + offset);
 }
 
