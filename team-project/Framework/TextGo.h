@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 class TextGo : public GameObject
@@ -14,7 +14,7 @@ public:
 	const std::string& GetFontId() const { return fontId; }
 	void SetFontId(const std::string& fId) { fontId = fId; }
 
-	void SetString(const std::string& str);
+	
 	void SetCharacterSize(unsigned int size);
 	void SetFillColor(const sf::Color& color);
 	std::string GetString() const;
@@ -27,6 +27,11 @@ public:
 	void SetScale(const sf::Vector2f& s) override;
 	void SetOrigin(const sf::Vector2f& o) override;
 	void SetOrigin(Origins preset) override;
+
+	void SetString(const std::string& str);
+	void SetString(const std::wstring& str);
+	void SetString(const wchar_t* str);
+	void SetString(const sf::String& str);
 
 	void Init() override;
 	void Release() override;

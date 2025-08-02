@@ -8,6 +8,7 @@
 class Player;
 class TileMap;
 class HitBox;
+class TextGo;
 
 struct MapZone
 {
@@ -35,7 +36,7 @@ protected:
 	HUD* hud;
 	TileMap* tileMapGame;
 	InventoryUI* inventoryUI;
-
+	TextGo* text;
 	//std::vector<Interactable*> interactables;
 	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
 	std::list<Enemy*> enemyList;

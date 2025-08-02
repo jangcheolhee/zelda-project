@@ -4,6 +4,8 @@
 #include "Interactable.h"
 #include "SpriteGo.h"
 #include "HitBox.h" 
+#include "HUD.h"
+
 class Player;
 class TileMap;
 
@@ -61,6 +63,8 @@ protected:
 	//bool dadSay = 0;
 	//int sayCount = 0;
 
+	HUD* hud = nullptr;
+	InventoryUI* inventoryUI = nullptr;
 public:
 	SceneHidden();
 	void SetPlayer(Player* p);

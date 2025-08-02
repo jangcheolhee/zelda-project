@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Defines.h"
 #include "Npc.h"
 #include "SpriteGo.h"
@@ -137,7 +137,7 @@ void Npc::HandleBasicNpcInteraction()
             sayCount++;
             if (dialogText != nullptr)
             {
-                dialogText->SetString("Hi, Don't Do That!");
+                dialogText->SetString(L"Hi, 검을 내게 맡기마...링크");
             }
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
@@ -145,7 +145,7 @@ void Npc::HandleBasicNpcInteraction()
             sayCount++;
             if (dialogText != nullptr)
             {
-                dialogText->SetString("You Can Do It! Bye.");
+                dialogText->SetString(L"링크...젤다공주를 부탁한다");
             }
         }
         if (sayCount == 2)
@@ -180,12 +180,13 @@ void Npc::HandleDadInteraction()
         if (sayCount == 0)
         {
             sayCount++;
-            std::cout << "Hi, Don't Do That!" << sayCount << std::endl;
+            std::cout << "Hi,검을 내게 맡기마...링크!" << sayCount << std::endl;
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+
         {
             sayCount++;
-            std::cout << "You Can Do It! Bye." << sayCount << std::endl;
+            std::cout << "You Can Do It! 잘가." << sayCount << std::endl;
         }
         if (sayCount == 2)
         {

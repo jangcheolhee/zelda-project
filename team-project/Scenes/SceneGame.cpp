@@ -15,6 +15,8 @@
 #include "InventoryUI.h"
 
 
+#include "TextGo.h"
+
 SceneGame::SceneGame()
 	:Scene(SceneIds::Game)
 {
@@ -474,6 +476,8 @@ void SceneGame::Init()
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("graphics/flower.png");
 	texIds.push_back("graphics/inventory.png");
+	texIds.push_back("data/HiddenPathToGarden.png");
+
 	texIds.push_back("graphics/Effects.png");
 	texIds.push_back("graphics/Death.png");
 	texIds.push_back("graphics/conversation.png");
@@ -490,8 +494,14 @@ void SceneGame::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 
+	text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
+
+
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
+	FONT_MGR.Load("fonts/Neo.ttf");
+	TEXTURE_MGR.Load("graphics/HUD.png");
+	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
 	
 	hud = new HUD("HUD");
 	AddGameObject(hud);
@@ -504,15 +514,14 @@ void SceneGame::Init()
 	tileMapGame->Init();
 	TEXTURE_MGR.Load("graphics/Heart.png");
 	TEXTURE_MGR.Load("graphics/Heart_empty.png");
-
-	inventoryUI = new InventoryUI();
+	inventoryUI = new InventoryUI("InventoryUI");
 	inventoryUI->Init();
 	inventoryUI->sortingLayer = SortingLayers::UI;
 	inventoryUI->sortingOrder = 10;
 	AddGameObject(inventoryUI);
 	AddGameObject(player);
 	AddGameObject(tileMapGame);
-
+	
 	InitZones();
 
 	endPos = tileMapGame->getPosition(4, 24590);
@@ -621,6 +630,8 @@ void SceneGame::Update(float dt)
 void SceneGame::Draw(sf::RenderWindow& window)
 {
 	window.setView(window.getDefaultView());
+	sf::Vector2f winSize(window.getSize().x, window.getSize().y);
+	hud->SetSize(winSize);
 	hud->Draw(window);
 	// 💡 UI는 기본 뷰로 바꿔서 그리기
 	if (inventoryUI->IsActive())

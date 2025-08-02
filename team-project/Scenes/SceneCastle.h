@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "Scene.h"
 #include "Enemy.h"
 #include "Interactable.h"
 #include "SpriteGo.h"
+#include "HUD.h"
 class Player;
 class TileMap;
 
@@ -10,7 +11,7 @@ struct CastleZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
-	// �߰� ����
+	// 占쌩곤옙 占쏙옙占쏙옙
 	std::function<void()> onEnter;
 	std::function<void()> onExit;
 	bool entered = false;
@@ -30,6 +31,8 @@ protected:
 
 	Player* player;
 	TileMap* tileMapCastle;
+	HUD* hud = nullptr;
+	InventoryUI* inventoryUI = nullptr;
 
 	//inter
 	std::vector<Interactable*> interactables;
@@ -53,8 +56,8 @@ protected:
 	float wallHeight = 0;
 	bool squareToggle = false;
 	//floor
-	std::vector<SpriteGo*> floor1DoorPathCovers; //1�� 2��
-	SpriteGo* floor2DoorPathCover; //2�� 1��
+	std::vector<SpriteGo*> floor1DoorPathCovers; //1占쏙옙 2占쏙옙
+	SpriteGo* floor2DoorPathCover; //2占쏙옙 1占쏙옙
 	SpriteGo* LeftBridge;
 	SpriteGo* RightBridge;
 	bool isSecondFloor = 0;
@@ -91,4 +94,5 @@ public:
 	void Enter() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
+
 };

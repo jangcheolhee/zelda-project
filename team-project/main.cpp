@@ -5,7 +5,7 @@
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
-
+    
     FRAMEWORK.Init(512, 478, "Zelda!!");
     FRAMEWORK.Do();
     FRAMEWORK.Release();

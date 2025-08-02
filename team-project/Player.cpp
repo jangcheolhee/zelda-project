@@ -11,6 +11,7 @@
 Player::Player(const std::string& name)
 	: GameObject(name)
 {
+	
 }
 
 void Player::OnCollide(Enemy* enemy)
@@ -73,7 +74,7 @@ void Player::Init()
 {
 	sf::FloatRect bounds = body.getLocalBounds();
 	body.setOrigin(bounds.width / 2.f, bounds.height);
-
+	
 	hp = maxHp; 
 
 	sortingLayer = SortingLayers::Foreground;
@@ -196,7 +197,7 @@ void Player::Update(float dt)
 			collidingWithPushable = true;
 		}
 	}
-
+	
 	bool nowPushing = collidingWithPushable && moveDir != sf::Vector2f(0.f, 0.f);
 	// 밀고 있는 시간 체크
 	if (nowPushing)
@@ -519,7 +520,6 @@ void Player::Draw(sf::RenderWindow& window)
 	if (swordHitBoxActive)
 	{
 		swordHitBox.Draw(window);
-
 	}
 
 }

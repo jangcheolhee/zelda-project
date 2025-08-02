@@ -43,6 +43,7 @@ void HUD::Init()
 	
 	sortingLayer = SortingLayers::UI;
 	sortingOrder = 0;
+	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
 
 	rupeeText.setFont(FONT_MGR.Get("fonts/Neo.ttf"));
 	rupeeText.setCharacterSize(18);
@@ -69,9 +70,15 @@ void HUD::Release()
 
 void HUD::Reset()
 {
+
 	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
 	body.setTextureRect({ 0,0,256,224 });
 	SetScale({ 2.f,2.f });
+
+	sf::Font& font = FONT_MGR.Get("fonts/Neo.ttf");
+	rupeeText.setFont(font);
+
+
 }
 
 void HUD::Update(float dt)
@@ -80,6 +87,7 @@ void HUD::Update(float dt)
 
 void HUD::Draw(sf::RenderWindow& window)
 {
+	window.draw(hudSprite);
 	window.draw(body);
 	window.draw(rupeeText);  // 루피 텍스트 같이 그리기
 
@@ -123,5 +131,27 @@ void HUD::UpdateHeartSprites()
 		{
 			heartSprites[i].setTexture(TEXTURE_MGR.Get("graphics/Heart_empty.png"));
 		}
+	}
+}
+void HUD::SetSize(const sf::Vector2f& size)
+{
+	if (!hudSprite.getTexture()) return;
+	auto texSize = hudSprite.getTexture()->getSize();
+	float scaleX = size.x / texSize.x;
+	float scaleY = size.y / texSize.y;
+	hudSprite.setScale(scaleX, scaleY);
+}
+
+void HUD::ApplyBossStyle()
+{
+	// 텍스트 크기, 위치(보스씬에 맞게 커짐)
+	rupeeText.setCharacterSize(37);    // 글자 크기 키움
+	rupeeText.setPosition(255.f, 87.f); // 창 위치 조정
+
+	// 하트도 크기/위치 커지게 조정
+	for (int i = 0; i < heartSprites.size(); ++i)
+	{
+		heartSprites[i].setScale(1.9f, 1.9f); // 하트 크기 두배
+		heartSprites[i].setPosition(632.f + i * 30.f, 89.f); // 가로로 넓게!
 	}
 }

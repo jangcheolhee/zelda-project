@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Scene.h"
 
 Scene::Scene(SceneIds id)
@@ -8,6 +8,7 @@ Scene::Scene(SceneIds id)
 
 void Scene::Init()
 {
+	
 	for (auto obj : gameObjects)
 	{
 		obj->Init();
@@ -70,18 +71,17 @@ void Scene::Update(float dt)
 
 void Scene::Draw(sf::RenderWindow& window)
 {
-	
 	std::list<GameObject*> sortedObjects(gameObjects);
 	sortedObjects.sort(DrawOrderComparer());
 
 	window.setView(worldView);
 	bool isUiView = false;
 
-	for (auto obj : gameObjects)
+	/*for (auto obj : gameObjects)
 	{
 		if (obj->IsActive())
 			obj->Draw(window);
-	}
+	}*/
 
 	for (auto obj : sortedObjects)
 	{
@@ -89,10 +89,13 @@ void Scene::Draw(sf::RenderWindow& window)
 		{
 			window.setView(uiView);
 			isUiView = true;
+	
 		}
 
 		if (obj->GetActive())
 		{
+			sf::Vector2f pos = obj->GetPosition();
+			
 			obj->Draw(window);
 		}
 	}
