@@ -38,8 +38,8 @@ void SceneGame::InitZones()
 		[this]()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
-			  DeleteInteractables();
-			  DeleteEnemy();
+			
+			 
 		  },
 		false
 		});
@@ -54,7 +54,7 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
-			DeleteEnemy();
+		
 		},
 		false
 		});
@@ -69,7 +69,7 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
-			DeleteEnemy();
+			
 		},
 		false
 		});
@@ -84,7 +84,7 @@ void SceneGame::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 4 Exit" << std::endl;
-			DeleteEnemy();
+			
 		},
 		false
 		});
@@ -119,8 +119,9 @@ void SceneGame::UpdateZones()
 			if (zone.onExit)
 			{
 				zone.onExit();
+				DeleteInteractables();
+				DeleteEnemy();
 			}
-			DeleteInteractables();
 
 			for (auto f : flowers)
 			{
@@ -528,6 +529,9 @@ void SceneGame::Exit()
 {
 	GAME_MGR.playerHp = player->GetHp();
 	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
+
+	DeleteInteractables();
+	DeleteEnemy();
 
 	Scene::Exit();
 }

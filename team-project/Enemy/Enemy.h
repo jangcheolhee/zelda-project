@@ -12,6 +12,7 @@ public:
 	enum class Types
 	{
 		Basic,
+		Boss,
 		Count,
 	};
 protected:
@@ -68,7 +69,6 @@ public:
 		return body.getGlobalBounds();
 	}
 	
-	virtual void OnCollide(Direction direction);
 
 	int GetDamage() { return damage; }
 
@@ -82,6 +82,7 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 	
 	virtual void OnCollideBySword();
+	virtual void CheckCollide(HitBox box);
 
 	void DeathAnimation();
 	virtual HitBox GetHitBox() { return hitBox; };

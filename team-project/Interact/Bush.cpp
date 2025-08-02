@@ -92,7 +92,7 @@ void Bush::Update(float dt)
 		for (auto& enemy : enemyList)
 		{
 
-			if (Utils::CheckCollision(enemy->GetBoundBox().rect, boundBox.rect))
+			if (Utils::CheckCollision(enemy->GetHitBox().rect, boundBox.rect))
 			{
 				isHit = true;
 				enemy->OnDamage(1);

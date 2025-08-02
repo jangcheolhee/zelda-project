@@ -45,45 +45,6 @@ void Enemy::SetOrigin(Origins preset)
 
 
 
-void Enemy::OnCollide(Direction direction)
-{
-	switch (direction)
-	{
-	case Direction::Left:
-		position.x += 0.2;
-		break;
-	case Direction::Right:
-		position.x -= 0.2;
-		break;
-	case Direction::Up:
-		position.y += 0.2;
-		break;
-	case Direction::Down:
-		position.y -= 0.2;
-		break;
-	}
-}
-
-
-
-
-
-void Enemy::OnDamage(int damage)
-{
-	
-	if (timer > 1)
-	{
-		hp = Utils::Clamp(hp - damage, 0, maxHp);
-
-		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/enemy hit.wav"));
-		if (hp == 0)
-		{
-			DeathAnimation();
-		}
-		timer = 0;
-	}
-	
-}
 
 void Enemy::Init()
 {
@@ -92,14 +53,9 @@ void Enemy::Init()
 	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
 
-
-
-
 	sortingLayer = SortingLayers::Foreground;
 	sortingOrder = -1;
 	animator.SetTarget(&body);
-	SetOrigin(Origins::TL);
-	
 
 	animator.AddEvent("Death", 6,
 		[this]()
@@ -129,19 +85,14 @@ void Enemy::Reset()
 
 	SetActive(true);
 	SetPosition(initPosition);
-	boundBox.rect.setSize({ 16,24 });
-	boundBox.SetOrigin(Origins::TL);
-	hitBox.rect.setSize({ 8,12 });
-	hitBox.SetOrigin(Origins::TL);
+	
 }
 
 void Enemy::Update(float dt)
 {
+	
 	timer += dt;
-	if (timer < 2)
-	{
-		SetPosition(pastPosition);
-	}
+
 	switch (SCENE_MGR.GetCurrentSceneId())
 	{
 	case SceneIds::Game:
@@ -158,61 +109,8 @@ void Enemy::Update(float dt)
 		break;
 	}
 	
-	for (auto& obj : interList)
-	{
+	
 
-		if (Utils::CheckCollision(obj->GetHitBox().rect, GetBoundBox().rect))
-		{
-			//enemy->SetPosition(enemy->GetPos());
-
-			sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
-			sf::FloatRect enemyRect = GetBoundBox().rect.getGlobalBounds();
-
-			float objX = objRect.left + objRect.width / 2.f;
-			float objY = objRect.top + objRect.height / 2.f;
-
-			float enemyX = enemyRect.left + enemyRect.width / 2.f;
-			float enemyY = enemyRect.top + enemyRect.height / 2.f;
-
-			float dx = objX - enemyX;
-			float dy = objY - enemyY;
-
-			float combinedHalfWidth = (objRect.width + enemyRect.width) / 2.f;
-			float combinedHalfHeight = (objRect.height + enemyRect.height) / 2.f;
-
-			float overlapX = combinedHalfWidth - std::abs(dx);
-			float overlapY = combinedHalfHeight - std::abs(dy);
-
-			if (overlapX < overlapY)
-			{
-
-				if (dx < 0)
-				{
-					//왼쪽
-					OnCollide(Direction::Left);
-				}
-
-				else
-				{
-					OnCollide(Direction::Right);
-					//오른쪽
-				}
-				if (dy < 0)
-				{
-					//왼쪽
-					OnCollide(Direction::Up);
-				}
-
-				else
-				{
-					OnCollide(Direction::Down);
-					//오른쪽
-				}
-
-
-			}
-		}
-	}
 	animator.Update(dt);
 	LastHit += dt;
 	// 매 프레임마다 피격 가능 상태로 초기화
@@ -223,11 +121,7 @@ void Enemy::Update(float dt)
 		player->TakeDamageIfPossible(1);
 	}
 
-
-	hitBox.rect.setScale(GetScale());
-	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{ 4 * GetScale().x,6 * GetScale().y });
-	boundBox.rect.setScale(GetScale());
-	boundBox.rect.setPosition(GetPosition());
+	
 }
 
 void Enemy::Draw(sf::RenderWindow& window)
@@ -248,6 +142,26 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 
 }
 
+void Enemy::CheckCollide(HitBox box)
+{
+	
+	sf::Vector2f position = GetPosition();
+	SetPosition({ pastPosition.x, position.y });
+	hitBox.SetPosition({ pastPosition.x, position.y });
+	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
+		position.y = pastPosition.y;
+	}
+	SetPosition({ pastPosition.x, position.y });
+	hitBox.SetPosition({ position.x, pastPosition.y });
+	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
+		position.x = pastPosition.x;
+	}
+	SetPosition(position);
+	
+	hitBox.UpdateTransform(body, body.getLocalBounds());
+
+}
+
 
 
 void Enemy::DeathAnimation()
@@ -257,3 +171,19 @@ void Enemy::DeathAnimation()
 	animator.Play("animations/EnemyDeath.csv");
 }
 
+void Enemy::OnDamage(int damage)
+{
+	
+	if (timer > 1)
+	{
+		hp = Utils::Clamp(hp - damage, 0, maxHp);
+
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/enemy hit.wav"));
+		if (hp == 0)
+		{
+			DeathAnimation();
+		}
+		timer = 0;
+	}
+	
+}

@@ -107,6 +107,7 @@ void SceneHidden::UpdateZones()
 			zone.entered = false;
 			if (zone.onExit) zone.onExit();
 			DeleteInteractables();
+			DeleteEnemy();
 		}
 	}
 }
@@ -285,7 +286,14 @@ void SceneHidden::RecycleEnemy(Enemy* enemy)
 		enemyPools[enemy->GetType()].push_back(enemy);
 	}
 }
-
+void SceneHidden::DeleteEnemy()
+{
+	for (Enemy* e : enemyList)
+	{
+		RecycleEnemy(e);
+	}
+	enemyList.clear();
+}
 void SceneHidden::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 {
 	Enemy* enemy = nullptr;

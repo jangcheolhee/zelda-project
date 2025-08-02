@@ -131,11 +131,6 @@ void BossEnemy::Update(float dt)
 
 		break;
 	case BossState::Jump:
-		if (timer == 0)
-		{
-			velocity.y = -151;
-
-		}
 		if (onHit)
 		{
 			body.setColor(Utils::RandomColor());
@@ -147,8 +142,10 @@ void BossEnemy::Update(float dt)
 
 			}
 		}
-		
-
+		if (timer == 0)
+		{
+			velocity.y = -151;
+		}
 		timer += dt;
 		hitTimer += dt;
 		direction = Utils::GetNormal(player->GetPosition() - GetPosition());
@@ -159,6 +156,48 @@ void BossEnemy::Update(float dt)
 
 		if (velocity.y > 150) timer = 0;
 		break;
+	case BossState::Skill1:
+
+		if (onHit)
+		{
+			body.setColor(Utils::RandomColor());
+			if (hitTimer > 1)
+			{
+				onHit = false;
+
+				body.setColor(sf::Color(0xffffffff));
+			}
+		}
+		if (timer == 0)
+		{
+			velocity.y = -151;
+		}
+		timer += dt;
+		hitTimer += dt;
+
+		if (page1)
+		{
+			direction = Utils::GetNormal(point1 - GetPosition());
+
+			if (Utils::Distance(point1, position) < 5)
+			{
+				page1 = false;
+			}
+		}
+		else
+		{
+			direction = sf::Vector2f(0, 1);
+		}
+
+		SetPosition(GetPosition() + direction * dt * 80.f);
+		if (Utils::Distance({ point1.x, -point1.y }, position) < 5)
+		{
+			page1 = true;
+		}
+		if (velocity.y > 150) timer = 0;
+		break;
+	case BossState::Berserk:
+		body.setColor(sf::Color::Red);
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
 }
@@ -180,7 +219,8 @@ void BossEnemy::OnDamage(int damage)
 		hp -= damage;
 		onHit = true;
 		if (hp <= 0)
-		{body.setColor(sf::Color(0xffffffff));
+		{
+			body.setColor(sf::Color(0xffffffff));
 			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss dies.wav"));
 			Change();
 		}
@@ -191,7 +231,7 @@ void BossEnemy::OnDamage(int damage)
 
 void BossEnemy::Change()
 {
-	body.setColor(sf::Color(0xffffffff));
+
 	animator.Play("animations/bossDie.csv");
 }
 

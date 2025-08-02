@@ -24,46 +24,6 @@ void SceneBoss::SetPlayer(Player* p) {
 	player = p;
 }
 
-void SceneBoss::CheckCollison()
-{
-	if (!player) return;
-
-	for (auto& enemy : enemyList)
-	{
-		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
-		{
-			player->OnCollide(enemy);
-			//enemy->OnCollide(player);
-		}
-	}
-
-	for (auto& obj : interactList)
-	{
-		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
-		{
-			switch (obj->GetType())
-			{
-			case Interactable::Type::Throw:
-			case Interactable::Type::Chest:
-				if (player->WantsToInteract() && !player->IsInteract())
-				{
-					obj->OnInteract();
-				}
-				break;
-
-			case Interactable::Type::Heart:
-			case Interactable::Type::Rupee:
-				obj->OnInteract();
-				break;
-
-			case Interactable::Type::JumpWall:
-				player->SetPosition(player->GetPos());
-				obj->OnInteract();
-				break;
-			}
-		}
-	}
-}
 
 void SceneBoss::SpawnSquareHitBox()
 {
@@ -162,7 +122,7 @@ void SceneBoss::Enter()
 	starts.push_back({ 75,0.f });
 	starts.push_back({ -75,0.f });
 	starts.push_back({ 0.f,0.f });
-	
+
 	points.push_back({ 0.f,-120 });
 	points.push_back({ 75,-75 });
 	points.push_back({ 75,0.f });
@@ -171,29 +131,53 @@ void SceneBoss::Enter()
 	points.push_back({ -75,0.f });
 	for (int i = 0; i < 6; i++)
 	{
-		BossEnemy* b = new BossEnemy();
-		AddGameObject(b);
-		b->Init();
-		bosses.push_back(b);
-		b->StartPos(starts[i]);
-		b->DesPos(points[i]);
-	
+		SpawnEnemy(starts[i], points[i], sf::Vector2f(-75 + 35 * i, -65), Enemy::Types::Boss);
+
 	}
 	sf::Vector2f startPos = tileMapBoss->getPosition(1, 1086);
-	player->SetPosition(startPos);
+	player->SetPosition({ -8,-50 });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
 	GAME_MGR.Save();
-	worldView.setCenter({player->GetGlobalBounds().getPosition().x+5.f, player->GetGlobalBounds().getPosition().y - 90.f});
 	Scene::Enter();
-
+	worldView.setCenter({ player->GetGlobalBounds().getPosition().x + 5.f, player->GetGlobalBounds().getPosition().y - 90.f });
+	player->SetHp(10);
 	SpawnSquareHitBox();
 }
 
 void SceneBoss::Update(float dt)
 {
 	Scene::Update(dt);
+
+	auto it = enemyList.begin();
+	while (it != enemyList.end())
+	{
+		if (!(*it)->GetActive())
+		{
+			RecycleEnemy(*it);
+			it = enemyList.erase(it);
+		}
+		else ++it;
+	}
+	if (enemyList.size() == 3)
+	{
+		for (auto enemy : enemyList)
+		{
+			if (dynamic_cast<BossEnemy*>(enemy)->GetState() != BossState::Skill1)
+			{
+				dynamic_cast<BossEnemy*>(enemy)->SetPage1(true);
+			}
+		}
+	}
+	else if (enemyList.size() == 1)
+		for (auto enemy : enemyList)
+		{
+			if (dynamic_cast<BossEnemy*>(enemy)->GetState() != BossState::Berserk)
+			{
+				dynamic_cast<BossEnemy*>(enemy)->SetPage2(true);
+			}
+		}
 
 	CheckCollison();
 	//if (endHole.contains(player->GetGlobalBounds().getPosition()))
@@ -231,5 +215,87 @@ void SceneBoss::Draw(sf::RenderWindow& window)
 	for (auto& col : collisions)
 	{
 		col.Draw(window);
+	}
+}
+
+void SceneBoss::RecycleEnemy(Enemy* enemy)
+{
+	if (enemy)
+	{
+		enemy->SetActive(false);
+		enemyPools[enemy->GetType()].push_back(enemy);
+	}
+}
+void SceneBoss::DeleteEnemy()
+{
+	for (Enemy* e : enemyList)
+	{
+		RecycleEnemy(e);
+	}
+	enemyList.clear();
+}
+
+void SceneBoss::SpawnEnemy(sf::Vector2f pos1, sf::Vector2f pos2, sf::Vector2f pos3, Enemy::Types type)
+{
+	Enemy* enemy = nullptr;
+
+	auto& pool = enemyPools[type];
+	if (!pool.empty())
+	{
+		enemy = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		switch (type)
+		{
+		case Enemy::Types::Basic:
+			enemy = (Enemy*)AddGameObject(new BasicEnemy());
+			break;
+		case Enemy::Types::Boss:
+			enemy = (Enemy*)AddGameObject(new BossEnemy());
+			break;
+		default:
+			break;
+		}
+		enemy->Init();
+	}
+	enemy->Reset();
+	enemy->SetPosition(pos1);
+	enemy->SetActive(true);
+	if (dynamic_cast<BossEnemy*>(enemy))
+	{
+		dynamic_cast<BossEnemy*>(enemy)->StartPos(pos1);
+		dynamic_cast<BossEnemy*>(enemy)->DesPos(pos2);
+		dynamic_cast<BossEnemy*>(enemy)->SetPoint1(pos3);
+	}
+
+	enemyList.push_back(enemy);
+}
+void SceneBoss::CheckCollison()
+{
+	if (!player) return;
+
+	for (auto& enemy : enemyList)
+	{
+		player->OnCollide(enemy);
+		if (player->GetGlobalBounds().intersects(enemy->GetGlobalBounds()))
+		{
+			player->TakeDamageIfPossible(0);
+		}
+	}
+
+	for (auto& obj : interactList)
+	{
+		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
+		{
+			switch (obj->GetType())
+			{
+			case Interactable::Type::JumpWall:
+				player->SetPosition(player->GetPos());
+				obj->OnInteract();
+				break;
+			}
+		}
 	}
 }

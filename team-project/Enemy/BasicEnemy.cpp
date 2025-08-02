@@ -28,37 +28,31 @@ void BasicEnemy::Reset()
 
 void BasicEnemy::Update(float dt)
 {
-	Enemy::Update(dt);
 	pastPosition = GetPosition();
-	if (Utils::Distance(GetPosition(), player->GetPosition()) < 50)
-	{
-		state = EnemyState::Chase;
-	}
-	else
-	{
-		state = EnemyState::Patrol;
-	}
-	if (state == EnemyState::Patrol)
-	{
-		moveTimer += dt;
-	
-		if (moveTimer > 3)
-		{
-			direction = (Direction)Utils::RandomRange(0, 4);
-			moveTimer = 0;
-			ChangeSprite();
-		}
-	
-	}
-	else if (state == EnemyState::Chase)
-	{
-		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
-		moveTimer = 0;
-	}
-	velocity = dir * speed;
-	position += velocity *dt;
+	moveTimer += dt;
+
+	//if (moveTimer > 3)
+	//{
+	//	direction = (Direction)Utils::RandomRange(0, 4);
+	//	moveTimer = 0;
+	//	ChangeSprite();
+	//}
+	dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+
+	position += dir * dt * 30.f;
 	SetPosition(position);
-	boundBox.rect.setPosition(GetPosition());
+
+	hitBox.UpdateTransform(body, GetLocalBounds());
+	Enemy::Update(dt);
+	for (auto& obj : interList)
+	{
+		if (Utils::CheckCollision(hitBox.rect, obj->GetHitBox().rect))
+		{
+			CheckCollide(obj->GetHitBox());
+
+		}
+	}
+
 }
 
 void BasicEnemy::ChangeSprite()
@@ -68,20 +62,20 @@ void BasicEnemy::ChangeSprite()
 	switch (direction)
 	{
 	case  Direction::Up:
-		body.setTextureRect({ 7,924,24,25 });
+		body.setTextureRect({ 7,924,22,28 });
 		dir = { 0.f,-1.f };
 		break;
 	case Direction::Down:
-		body.setTextureRect({ 12,728,22,26 });
+		body.setTextureRect({ 12,728,22,28 });
 		dir = { 0.f,1.f };
 		break;
 	case Direction::Right:
-		body.setTextureRect({ 12,825,18,28 });
+		body.setTextureRect({ 12,825,22,28 });
 		dir = { 1.f,0.f };
 		SetScale({ 1.f,1.f });
 		break;
 	case Direction::Left:
-		body.setTextureRect({ 12,825,18,28 });
+		body.setTextureRect({ 12,825,22,28 });
 		dir = { -1.f,0.f };
 		SetScale({ -1.f,1.f });
 		break;

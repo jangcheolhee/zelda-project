@@ -42,6 +42,10 @@ public:
 	std::list<Enemy*> GetEnemy() { return bosses; }
 	std::list<Interactable*> GetInteract() { return interactList; }
 
+	void RecycleEnemy(Enemy* enemy);
+	void DeleteEnemy();
+	void SpawnEnemy(sf::Vector2f pos1, sf::Vector2f pos2, sf::Vector2f pos3, Enemy::Types type);
+
 	void DeleteInteractables();
 
 	void CheckCollison();

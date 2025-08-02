@@ -92,6 +92,7 @@ void SceneCastle::UpdateZones()
 			zone.entered = false;
 			if (zone.onExit) zone.onExit();
 			DeleteInteractables();
+			DeleteEnemy();
 		}
 	}
 }
