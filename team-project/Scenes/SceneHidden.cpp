@@ -376,6 +376,7 @@ void SceneHidden::Init()
 
 	soundIds.push_back("bgm/Cave.flac");
 
+	TEXTURE_MGR.Load("graphics/sword_get.png");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 
@@ -534,7 +535,6 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	if (inventoryUI && inventoryUI->GetActive()) 
 	{
 		inventoryUI->Draw(window);
-
 	}
 
 }

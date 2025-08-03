@@ -450,12 +450,12 @@ void SceneGame::Init()
 	soundIds.push_back("effects/sword.wav");
 
 	//text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
-
-
+	
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	FONT_MGR.Load("fonts/Neo.ttf");
 	TEXTURE_MGR.Load("graphics/HUD.png");
+	
 	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
 	
 	hud = new HUD("HUD");

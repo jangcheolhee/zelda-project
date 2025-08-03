@@ -29,7 +29,14 @@ protected:
 	int npcId = 0;  
 	static int nextNpcId;  
 	static std::unordered_map<int, int> npcDialogueIndices;
-
+	
+	//검 애니메이션
+	SpriteGo* swordGetImg = nullptr;
+	bool showSwordGet = false;
+	float swordGetTimer = 0.f;
+	//대사 관련
+	bool swordGetAfterPrincess = false; 
+	float swordAfterTimer = 0.0f;
 public:
 
 	Npc(const std::string& name = "");

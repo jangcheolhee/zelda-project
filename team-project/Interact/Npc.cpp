@@ -174,11 +174,11 @@ void Npc::HandleBasicNpcInteraction()
         }
     }
 }
-
 void Npc::HandleDadInteraction()
 {
     if (!player) return;
-
+   
+  
     sf::FloatRect rect = player->GetGlobalBounds();
     rect.left -= 2.f;
     rect.top -= 2.f;
@@ -187,74 +187,107 @@ void Npc::HandleDadInteraction()
 
     sf::FloatRect npcRect = GetGlobalBounds();
 
-    if (rect.intersects(npcRect) && npcSay == 0 && sayCount < 3)
+    if (rect.intersects(npcRect) && npcSay == 0 && sayCount < 4)
     {
         player->isNpcTalk = 1;
-
-        if (player->isNpcTalk == 1 && conversation == nullptr)
-        {
-            conversation = new SpriteGo("graphics/conversation.png", "Conversation");
-            conversation->Init();
-            conversation->Reset();
-            conversation->SetActive(1);
-            conversation->SetOrigin(Origins::MC);
-            conversation->SetScale({ 2.5f, 2.5f });
-            auto size = FRAMEWORK.GetWindowSizeF();
-            conversation->SetPosition({ size.x * 0.5f, size.y * 0.8f }); 
-
-            dialogText = new TextGo("fonts/DungGeunMo.ttf", "DialogText");
-            dialogText->Init();
-            dialogText->Reset();
-            dialogText->SetActive(1);
-            dialogText->SetOrigin(Origins::MC);
-            dialogText->SetCharacterSize(18);
-            dialogText->SetFillColor(sf::Color::White);
-            dialogText->SetPosition({ size.x * 0.5f, size.y * 0.8f }); 
-            dialogText->SetOutlineThickness(1.5f);
-            dialogText->SetOutlineColor(sf::Color(0, 0, 150));
+        sf::Texture testTex;
+        if (!testTex.loadFromFile("graphics/sword_get.png")) {
+            std::cout << "sf::Texture 직접로드 실패!" << std::endl;
         }
-
+        else {
+            std::cout << "sf::Texture 직접로드 성공!" << std::endl;
+        }
+        // 1. 최초 대사
         if (sayCount == 0)
         {
-            sayCount++;
-            if (dialogText != nullptr)
+            // 대화창, 텍스트 생성
+            if (conversation == nullptr)
             {
-                dialogText->SetString(L"검을 네게 맡기마...링크");
-            }
-        }
-        else if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
-        {
-            sayCount++;
-            if (dialogText != nullptr)
-            {
-                dialogText->SetString(L"링크...젤다공주를 부탁한다");
-            }
-        }
-        else if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 2)
-        {
-            sayCount++;
-            if (dialogText != nullptr)
-            {
-                dialogText->SetString(L"잘 가");
-            }
-        }
+                conversation = new SpriteGo("graphics/conversation.png", "Conversation");
+                conversation->Init();
+                conversation->Reset();
+                conversation->SetActive(1);
+                conversation->SetOrigin(Origins::MC);
+                conversation->SetScale({ 2.5f, 2.5f });
+                auto size = FRAMEWORK.GetWindowSizeF();
+                conversation->SetPosition({ size.x * 0.5f, size.y * 0.8f });
 
-        if (sayCount == 3)
+                dialogText = new TextGo("fonts/DungGeunMo.ttf", "DialogText");
+                dialogText->Init();
+                dialogText->Reset();
+                dialogText->SetActive(1);
+                dialogText->SetOrigin(Origins::MC);
+                dialogText->SetCharacterSize(18);
+                dialogText->SetFillColor(sf::Color::White);
+                dialogText->SetPosition({ size.x * 0.5f, size.y * 0.8f });
+                dialogText->SetOutlineThickness(1.5f);
+                dialogText->SetOutlineColor(sf::Color(0, 0, 150));
+            }
+            if (dialogText)
+                dialogText->SetString(L"검을 네게 맡기마...링크");
+                sayCount = 1;
+        }
+        // 2. "젤다공주를 부탁한다"
+        else if (sayCount == 1 && InputMgr::GetKeyDown(sf::Keyboard::N))
+        {
+            sayCount = 2;
+            if (dialogText)
+                dialogText->SetString(L"링크...젤다공주를 부탁한다");
+        }
+        // 3. N키 한번 더 누르면 → 검 애니메이션 시작
+        else if (sayCount == 2 && InputMgr::GetKeyDown(sf::Keyboard::N))
+        {
+            // 검 PNG 준비
+            if (swordGetImg == nullptr)
+            {
+                // swordGetImg 생성 직전
+                swordGetImg = new SpriteGo("graphics/sword_get.png", "SwordGet");
+                swordGetImg->Init();
+                swordGetImg->Reset();
+                swordGetImg->SetActive(true);
+                swordGetImg->SetOrigin(Origins::MC);
+
+                if (!swordGetImg->GetTexture() || swordGetImg->GetTexture()->getSize().x == 0)
+                {
+                    std::cout << "sword_get.png 로드 실패!" << std::endl;
+                }
+
+                player->SetActive(false);
+                
+                sf::Vector2f playerPos = player->GetPosition();
+                float offsetY = -18.f; // 위로 32픽셀 (음수면 위, 양수면 아래)
+                swordGetImg->SetPosition(sf::Vector2f(playerPos.x, playerPos.y + offsetY));
+            }
+            swordGetAfterPrincess = true;
+            swordAfterTimer = 2.0f;
+            sayCount = 99; // 특별한 값으로 잠시 동결!
+        }
+        // 4. 검 연출 후 → "잘 가"
+        else if (sayCount == 3 && InputMgr::GetKeyDown(sf::Keyboard::N))
         {
             sayCount = 0;
             npcSay = !npcSay;
             player->isNpcTalk = 0;
 
-            if (player->isNpcTalk == 0)
+            if (conversation)
             {
                 delete conversation;
                 conversation = nullptr;
                 delete dialogText;
                 dialogText = nullptr;
             }
+            if (swordGetImg)
+            {
+                delete swordGetImg;
+                swordGetImg = nullptr;
+            }
+            swordGetAfterPrincess = false;
+            showSwordGet = false;
         }
     }
 }
+
+
 void Npc::InitDialogues()
 {
     dialogues = {
@@ -283,6 +316,7 @@ void Npc::OnInteract()
     }
 }
 
+
 void Npc::Init()
 {
     Interactable::Init();
@@ -291,7 +325,6 @@ void Npc::Init()
     talkUi.setSize(size);
     talkUi.setCenter({ size.x * 0.5f, size.y * 0.5f });
 }
-
 void Npc::Reset()
 {
     Interactable::Reset();
@@ -318,6 +351,39 @@ void Npc::Reset()
 void Npc::Update(float dt)
 {
     Interactable::Update(dt);
+    // 검 연출 중이면 타이머로 showSwordGet 관리
+    if (swordGetAfterPrincess)
+    {
+        swordAfterTimer -= dt;
+        if (swordAfterTimer <= 0.f)
+        {
+            swordGetAfterPrincess = false;
+            //showSwordGet = false;
+
+            if (swordGetImg)
+            {
+                delete swordGetImg;
+                swordGetImg = nullptr;
+            }
+
+            sayCount = 3;
+            if (dialogText)
+            {
+                dialogText->SetString(L"잘 가");
+                player->SetActive(true);
+            }
+        }
+        // 애니메이션 중에는 다른 업데이트 스킵
+        if (swordGetImg)
+        {
+            swordGetImg->Update(dt);
+        }
+        if (conversation)
+        {
+            conversation->Update(dt);
+        }
+        return;
+    }
 
     if (player != nullptr && npcType != Type::Dad)
     {
@@ -327,7 +393,9 @@ void Npc::Update(float dt)
             currentDirection = newDirection;
             DirectionSprite(currentDirection);
         }
+       
     }
+    
 
     OnInteract();
 
@@ -340,12 +408,38 @@ void Npc::Update(float dt)
 void Npc::Draw(sf::RenderWindow& window)
 {
     Interactable::Draw(window);
+    sf::View originalView = window.getView();
+    window.setView(talkUi);
     if (player->isNpcTalk == 1 && conversation != nullptr)
     {
-        sf::View originalView = window.getView();
-        window.setView(talkUi);
+        // window.setView(talkUi);
         conversation->Draw(window);
         if (dialogText != nullptr) dialogText->Draw(window);
-        window.setView(originalView);
     }
+    window.setView(originalView);
+
+    if (showSwordGet && swordGetImg != nullptr)
+    {
+        swordGetImg->Draw(window);
+        if (conversation != nullptr)
+            conversation->Draw(window);
+        if (dialogText != nullptr)
+            dialogText->Draw(window);
+
+        window.setView(originalView);
+        return;
+    }
+    // 젤다공주를 부탁한다 → 검 PNG 애니(대화창/텍스트도 같이)
+    if (swordGetAfterPrincess && swordGetImg != nullptr)
+    {
+        swordGetImg->Draw(window);
+        if (conversation != nullptr)
+            conversation->Draw(window);
+        if (dialogText != nullptr)
+            dialogText->Draw(window);
+
+        window.setView(originalView);
+        return;
+    }
+    
 }

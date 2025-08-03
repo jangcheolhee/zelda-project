@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "BasicEnemy.h""
 #include "Player.h"
 
@@ -15,7 +15,7 @@ void BasicEnemy::Init()
 void BasicEnemy::Reset()
 {
 
-	// ���⼭ sprite texture �����ϱ�
+	// 占쏙옙占썩서 sprite texture 占쏙옙占쏙옙占싹깍옙
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
 	direction = (Direction)Utils::RandomRange(0, 4);
@@ -62,12 +62,12 @@ void BasicEnemy::Update(float dt)
 
 	velocity = dir * speed;
 
-	// Enemy::Update()���� canMove�� Ȯ���� �Ŀ��� ��ġ ������Ʈ
-	// Enemy::Update() ȣ�� ���� velocity�� �����ؾ� ��
+	// Enemy::Update()占쏙옙占쏙옙 canMove占쏙옙 확占쏙옙占쏙옙 占식울옙占쏙옙 占쏙옙치 占쏙옙占쏙옙占쏙옙트
+	// Enemy::Update() 호占쏙옙 占쏙옙占쏙옙 velocity占쏙옙 占쏙옙占쏙옙占쌔억옙 占쏙옙
 	Enemy::Update(dt);
 
-	// Enemy::Update()���� �� �浹�� üũ�����Ƿ�, 
-	// ���⼭�� velocity�� �����Ǿ��� �� ������ ���
+	// Enemy::Update()占쏙옙占쏙옙 占쏙옙 占썸돌占쏙옙 체크占쏙옙占쏙옙占실뤄옙, 
+	// 占쏙옙占썩서占쏙옙 velocity占쏙옙 占쏙옙占쏙옙占실억옙占쏙옙 占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占?
 	position += velocity * dt;
 	SetPosition(position);
 
