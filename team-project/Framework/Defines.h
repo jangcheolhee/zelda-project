@@ -27,6 +27,7 @@ enum class SceneIds
 	Hidden,
 	Castle,
 	Boss,
+	GameOver,
 	Count,
 };
 

@@ -353,7 +353,7 @@ void SceneHidden::Init()
 	player = new Player("Player");
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	tileMapHidden->Init();
-	player = new Player("Player");
+
 	player->Init();
 	TEXTURE_MGR.Load("graphics/Link.png");
 

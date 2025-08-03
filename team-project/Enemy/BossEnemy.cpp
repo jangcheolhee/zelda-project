@@ -82,7 +82,7 @@ void BossEnemy::Reset()
 
 void BossEnemy::Update(float dt)
 {
-	pastPosition = GetPosition();
+	previousPosition = GetPosition();
 	animator.Update(dt);
 	hitTimer += dt;
 	switch (state)
@@ -273,21 +273,21 @@ void BossEnemy::CheckCollide(HitBox box)
 	sf::Vector2f newPosition = GetPosition();
 
 	
-	newPosition.x = pastPosition.x;
+	newPosition.x = previousPosition.x;
 	SetPosition({ newPosition.x, newPosition.y });
 	shadowBox.SetPosition(GetPosition());
 
 	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
-		newPosition.x = pastPosition.x;
+		newPosition.x = previousPosition.x;
 	}
 
 
-	newPosition.y = pastPosition.y;
+	newPosition.y = previousPosition.y;
 	SetPosition({ newPosition.x, newPosition.y });
 	shadowBox.SetPosition(GetPosition());
 
 	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
-		newPosition.y = pastPosition.y;
+		newPosition.y = previousPosition.y;
 	}
 
 

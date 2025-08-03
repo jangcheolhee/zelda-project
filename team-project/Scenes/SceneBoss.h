@@ -56,6 +56,7 @@ public:
 	void SpawnSquareHitBox();
 
 	void Init() override;
+	void Exit() override;
 	void Enter() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;

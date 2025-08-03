@@ -7,6 +7,7 @@
 #include "BasicEnemy.h"
 #include "Enemy.h"
 #include "HUD.h"
+
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 {
 	texIds.push_back("graphics/HUD.png");
@@ -331,6 +332,13 @@ void SceneCastle::DeleteEnemy()
 	enemyList.clear();
 }
 
+void SceneCastle::Exit()
+{
+	DeleteEnemy();
+	DeleteInteractables();
+	Scene::Exit();
+}
+
 void SceneCastle::Init()
 {
 	texIds.push_back("graphics/Enemy_sheet.png");
@@ -342,8 +350,16 @@ void SceneCastle::Init()
 	soundIds.push_back("effects/enemy hit.wav");
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
+	soundIds.push_back("bgm/Castle.flac");
 	texIds.push_back("data/59984.png");
 
+
+	texIds.push_back("graphics/Items.png");
+
+	fontIds.push_back("fonts/DS-DIGIT.ttf");
+	soundIds.push_back("bgm/Select.flac");
+
+	
 	player = new Player("Player");
 	tileMapCastle = new TileMap("TileMapCastle", "data/castleInner.tmj");
 	tileMapCastle->Init();
@@ -351,6 +367,7 @@ void SceneCastle::Init()
 	hud = new HUD("HUD");
 	hud->Init();
 	AddGameObject(hud);
+	
 
 	if (FindGameObject("InventoryUI") == nullptr)
 	{
@@ -399,7 +416,7 @@ void SceneCastle::Enter()
 		inventoryUI->SetActive(false); // 처음 진입 시 숨김 처리
 		inventoryUI->Reset();          // 필요 시 초기화 상태도 같이
 	}
-
+	
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
@@ -410,6 +427,7 @@ void SceneCastle::Enter()
 
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Castle.flac"));
 }
 
 void SceneCastle::Update(float dt)

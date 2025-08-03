@@ -220,6 +220,7 @@
   <ItemGroup>
     <ClCompile Include="Enemy\BossEnemy.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="GameOverUI.cpp" />
     <ClCompile Include="HitboxGenerator.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Interact\Heart.cpp" />
@@ -246,6 +247,7 @@
     <ClCompile Include="Interact\Npc.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Interact\Rupee.cpp" />
+    <ClCompile Include="Scenes\SceneGameOver.cpp" />
     <ClCompile Include="Scenes\SceneBoss.cpp" />
     <ClCompile Include="Scenes\SceneCastle.cpp" />
     <ClCompile Include="SaveSlotUI.cpp" />
@@ -266,6 +268,7 @@
   <ItemGroup>
     <ClInclude Include="Enemy\BossEnemy.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="GameOverUI.h" />
     <ClInclude Include="HitboxGenerator.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Interact\Heart.h" />
@@ -297,6 +300,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Interact\Rupee.h" />
     <ClInclude Include="SaveSlotUI.h" />
+    <ClInclude Include="Scenes\SceneGameOver.h" />
     <ClInclude Include="Scenes\SceneBoss.h" />
     <ClInclude Include="Scenes\SceneCastle.h" />
     <ClInclude Include="Scenes\SceneHidden.h" />

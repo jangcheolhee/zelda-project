@@ -152,23 +152,23 @@ void Enemy::CheckCollide(HitBox box)
 	sf::Vector2f newPosition = position;
 
 	// X축 이동 먼저 시도
-	newPosition.x = pastPosition.x;
+	newPosition.x = previousPosition.x;
 	SetPosition({ newPosition.x, position.y });
 	hitBox.UpdateTransform(body, body.getLocalBounds());
 	hitBox.rect.setSize({ 20, 26 });
 
 	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
-		newPosition.x = pastPosition.x;
+		newPosition.x = previousPosition.x;
 	}
 
 	// Y축 이동 시도
-	newPosition.y = pastPosition.y;
+	newPosition.y = previousPosition.y;
 	SetPosition({ newPosition.x, newPosition.y });
 	hitBox.UpdateTransform(body, body.getLocalBounds());
 	hitBox.rect.setSize({ 20, 26 });
 
 	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
-		newPosition.y = pastPosition.y;
+		newPosition.y = previousPosition.y;
 	}
 
 	// 최종 위치 반영
@@ -182,7 +182,7 @@ void Enemy::CheckCollide(HitBox box)
 void Enemy::DeathAnimation()
 {
 	hitBox.rect.setSize({ 0,0 });
-	SetPosition(pastPosition);
+	SetPosition(previousPosition);
 	animator.Play("animations/EnemyDeath.csv");
 }
 

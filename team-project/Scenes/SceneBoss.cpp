@@ -106,6 +106,13 @@ void SceneBoss::Init()
 	Scene::Init();
 }
 
+void SceneBoss::Exit()
+{
+	DeleteEnemy();
+	DeleteInteractables();
+	Scene::Exit();
+}
+
 void SceneBoss::Enter()
 {
 	auto size = FRAMEWORK.GetWindowSizeF();
@@ -229,6 +236,7 @@ void SceneBoss::RecycleEnemy(Enemy* enemy)
 }
 void SceneBoss::DeleteEnemy()
 {
+
 	for (Enemy* e : enemyList)
 	{
 		RecycleEnemy(e);
@@ -262,8 +270,7 @@ void SceneBoss::SpawnEnemy(sf::Vector2f pos1, sf::Vector2f pos2, sf::Vector2f po
 		enemy->Init();
 	}
 	enemy->Reset();
-	enemy->SetPosition(pos1);
-	enemy->SetActive(true);
+
 	if (dynamic_cast<BossEnemy*>(enemy))
 	{
 		dynamic_cast<BossEnemy*>(enemy)->StartPos(pos1);

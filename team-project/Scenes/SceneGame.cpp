@@ -118,7 +118,7 @@ void SceneGame::UpdateZones()
 			{
 				zone.onExit();
 				DeleteInteractables();
-				DeleteEnemy();
+			
 			}
 
 			for (auto flower : flowers)
@@ -502,7 +502,7 @@ void SceneGame::Exit()
 		}
 	}
 	DeleteInteractables();
-	DeleteEnemy();
+
 
 	Scene::Exit();
 }

@@ -177,6 +177,7 @@ void Player::Reset()
 	bool isRightPressed = false;
 	bool isLeftPressed = false;
 	SetOrigin(Origins::BC);
+	SetActive(true);
 }
 void Player::Update(float dt)
 {
@@ -396,7 +397,7 @@ void Player::Update(float dt)
 		//------------------------------
 		if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
 		{
-			enemyList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
+			
 
 		}
 		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Castle)
@@ -642,6 +643,7 @@ void Player::OnDamage(int damage)
 	{
 		std::cout << "[Player] Die!\n";
 		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/link dies.wav"));
+		SCENE_MGR.ChangeScene(SceneIds::GameOver);
 		SetActive(false); // 비활성화 또는 리스폰 처리
 		// 여기에 죽었을 때 상태 전환이나 UI 호출 가능
 	}

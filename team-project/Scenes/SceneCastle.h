@@ -90,6 +90,7 @@ public:
 	void CheckCollison();
 	void SpawnSquareHitBox();
 	//Scene
+	void Exit() override;
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;

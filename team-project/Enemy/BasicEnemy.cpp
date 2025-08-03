@@ -21,14 +21,16 @@ void BasicEnemy::Reset()
 	direction = (Direction)Utils::RandomRange(0, 4);
 	ChangeSprite();
 
+	
 	state = EnemyState::Patrol;
 	maxHp = 5;
 	hp = maxHp;
+	moveTimer = 0;
 }
 
 void BasicEnemy::Update(float dt)
 {
-	pastPosition = GetPosition();
+	previousPosition = GetPosition();
 	moveTimer += dt;
 
 	if (Utils::Distance(player->GetPosition() ,GetPosition()) < 80)
@@ -48,13 +50,14 @@ void BasicEnemy::Update(float dt)
 			direction = (Direction)Utils::RandomRange(0, 4);
 			ChangeSprite();
 			moveTimer = 0.f;
+			body.setColor(sf::Color (0xffffffff));
 		}
 		break;
 
 	case EnemyState::Chase:
 		dir = player->GetPosition() - GetPosition();
 		Utils::Normalize(dir);
-
+		body.setColor(sf::Color::Green);
 		
 		break;
 	}
