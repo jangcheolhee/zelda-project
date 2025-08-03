@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Enemy.h"
+#include "BasicEnemy.h"
 #include "SceneGame.h"
 #include "SceneHidden.h"
 #include "SceneBoss.h"
@@ -43,8 +44,36 @@ void Enemy::SetOrigin(Origins preset)
 	}
 }
 
+void Enemy::OnCollide(Direction direction)
+{
+	switch (direction)
+	{
+	case Direction::Left:
+		position.x += 0.2;
+		break;
+	case Direction::Right:
+		position.x -= 0.2;
+		break;
+	case Direction::Up:
+		position.y += 0.2;
+		break;
+	case Direction::Down:
+		position.y -= 0.2;
+		break;
+	}
+}
 
+void Enemy::OnDamage(int damage)
+{
 
+	hp = Utils::Clamp(hp - damage, 0, maxHp);
+
+	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/ennemy hit.wav"));
+	if (hp == 0)
+	{
+		DeathAnimation();
+	}
+}
 
 void Enemy::Init()
 {
@@ -52,9 +81,6 @@ void Enemy::Init()
 	sf::FloatRect bodyBounds = body.getLocalBounds();
 	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
-
-
-
 
 	sortingLayer = SortingLayers::Enemy;
 	sortingOrder = 3;
@@ -111,8 +137,92 @@ void Enemy::Update(float dt)
 		interList = dynamic_cast<SceneBoss*>(SCENE_MGR.GetCurrentScene())->GetInteract();
 		break;
 	}
-	
-	
+
+	// JumpWall과의 충돌 체크 (움직이기 전에)
+	bool canMove = true;
+	for (auto& obj : interList)
+	{
+		if (obj->GetType() == Interactable::Type::JumpWall)
+		{
+			// 다음 위치에서 충돌하는지 미리 체크
+			sf::Vector2f nextPosition = GetPosition() + velocity * dt;
+			sf::RectangleShape nextBounds = GetBoundBox().rect;
+			nextBounds.setPosition(nextPosition);
+
+			if (Utils::CheckCollision(obj->GetHitBox().rect, nextBounds))
+			{
+				canMove = false;
+				// BasicEnemy의 경우 방향 바꾸기
+				if (auto basicEnemy = dynamic_cast<BasicEnemy*>(this))
+				{
+					// 현재 방향의 반대 방향으로 설정
+					switch (direction)
+					{
+					case Direction::Up:
+						direction = Direction::Down;
+						break;
+					case Direction::Down:
+						direction = Direction::Up;
+						break;
+					case Direction::Left:
+						direction = Direction::Right;
+						break;
+					case Direction::Right:
+						direction = Direction::Left;
+						break;
+					}
+					basicEnemy->ChangeSprite();
+				}
+				break;
+			}
+		}
+	}
+
+	// 다른 오브젝트들과의 기존 충돌 처리
+	for (auto& obj : interList)
+	{
+		if (obj->GetType() != Interactable::Type::JumpWall &&
+			Utils::CheckCollision(obj->GetHitBox().rect, GetBoundBox().rect))
+		{
+			sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
+			sf::FloatRect enemyRect = GetBoundBox().rect.getGlobalBounds();
+
+			float objX = objRect.left + objRect.width / 2.f;
+			float objY = objRect.top + objRect.height / 2.f;
+
+			float enemyX = enemyRect.left + enemyRect.width / 2.f;
+			float enemyY = enemyRect.top + enemyRect.height / 2.f;
+
+			float dx = objX - enemyX;
+			float dy = objY - enemyY;
+
+			float combinedHalfWidth = (objRect.width + enemyRect.width) / 2.f;
+			float combinedHalfHeight = (objRect.height + enemyRect.height) / 2.f;
+
+			float overlapX = combinedHalfWidth - std::abs(dx);
+			float overlapY = combinedHalfHeight - std::abs(dy);
+
+			if (overlapX < overlapY)
+			{
+				if (dx < 0)
+				{
+					OnCollide(Direction::Left);
+				}
+				else
+				{
+					OnCollide(Direction::Right);
+				}
+				if (dy < 0)
+				{
+					OnCollide(Direction::Up);
+				}
+				else
+				{
+					OnCollide(Direction::Down);
+				}
+			}
+		}
+	}
 
 	animator.Update(dt);
 	LastHit += dt;
@@ -124,7 +234,10 @@ void Enemy::Update(float dt)
 		player->TakeDamageIfPossible(1);
 	}
 
-	
+	hitBox.rect.setScale(GetScale());
+	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{ 4 * GetScale().x,6 * GetScale().y });
+	boundBox.rect.setScale(GetScale());
+	boundBox.rect.setPosition(GetPosition());
 }
 
 void Enemy::Draw(sf::RenderWindow& window)
@@ -144,40 +257,6 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 	LastHit = 0.f;
 
 }
-
-void Enemy::CheckCollide(HitBox box)
-{
-	
-	sf::Vector2f position = GetPosition();
-	sf::Vector2f newPosition = position;
-
-	// X축 이동 먼저 시도
-	newPosition.x = previousPosition.x;
-	SetPosition({ newPosition.x, position.y });
-	hitBox.UpdateTransform(body, body.getLocalBounds());
-	hitBox.rect.setSize({ 20, 26 });
-
-	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
-		newPosition.x = previousPosition.x;
-	}
-
-	// Y축 이동 시도
-	newPosition.y = previousPosition.y;
-	SetPosition({ newPosition.x, newPosition.y });
-	hitBox.UpdateTransform(body, body.getLocalBounds());
-	hitBox.rect.setSize({ 20, 26 });
-
-	if (Utils::CheckCollision(hitBox.rect, box.rect)) {
-		newPosition.y = previousPosition.y;
-	}
-
-	// 최종 위치 반영
-	SetPosition(newPosition);
-	hitBox.UpdateTransform(body, body.getLocalBounds());
-	hitBox.rect.setSize({ 20, 26 });
-}
-
-
 
 void Enemy::DeathAnimation()
 {

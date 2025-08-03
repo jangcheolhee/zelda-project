@@ -179,16 +179,19 @@ void Npc::HandleDadInteraction()
 {
     if (!player) return;
 
-    sf::Vector2f playerPos = player->GetPosition();
-    sf::Vector2f dadPos = GetPosition();
+    sf::FloatRect rect = player->GetGlobalBounds();
+    rect.left -= 2.f;
+    rect.top -= 2.f;
+    rect.width += 4.f;
+    rect.height += 4.f;
 
-    float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
+    sf::FloatRect npcRect = GetGlobalBounds();
 
-    if (distance < 30.0f)
+    if (rect.intersects(npcRect) && npcSay == 0 && sayCount < 3)
     {
         player->isNpcTalk = 1;
 
-        if (conversation == nullptr)
+        if (player->isNpcTalk == 1 && conversation == nullptr)
         {
             conversation = new SpriteGo("graphics/conversation.png", "Conversation");
             conversation->Init();
@@ -197,7 +200,7 @@ void Npc::HandleDadInteraction()
             conversation->SetOrigin(Origins::MC);
             conversation->SetScale({ 2.5f, 2.5f });
             auto size = FRAMEWORK.GetWindowSizeF();
-            conversation->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+            conversation->SetPosition({ size.x * 0.5f, size.y * 0.8f }); 
 
             dialogText = new TextGo("fonts/DungGeunMo.ttf", "DialogText");
             dialogText->Init();
@@ -206,7 +209,7 @@ void Npc::HandleDadInteraction()
             dialogText->SetOrigin(Origins::MC);
             dialogText->SetCharacterSize(18);
             dialogText->SetFillColor(sf::Color::White);
-            dialogText->SetPosition({ size.x * 0.5f, size.y * 0.5f });
+            dialogText->SetPosition({ size.x * 0.5f, size.y * 0.8f }); 
             dialogText->SetOutlineThickness(1.5f);
             dialogText->SetOutlineColor(sf::Color(0, 0, 150));
         }
@@ -216,11 +219,10 @@ void Npc::HandleDadInteraction()
             sayCount++;
             if (dialogText != nullptr)
             {
-                dialogText->SetString(L"Hi, 검을 내게 맡기마...링크");
+                dialogText->SetString(L"검을 네게 맡기마...링크");
             }
         }
-
-        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+        else if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
             sayCount++;
             if (dialogText != nullptr)
@@ -228,20 +230,25 @@ void Npc::HandleDadInteraction()
                 dialogText->SetString(L"링크...젤다공주를 부탁한다");
             }
         }
+        else if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 2)
+        {
+            sayCount++;
+            if (dialogText != nullptr)
+            {
+                dialogText->SetString(L"잘 가");
+            }
+        }
 
-        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 2)
+        if (sayCount == 3)
         {
             sayCount = 0;
+            npcSay = !npcSay;
             player->isNpcTalk = 0;
 
-            // UI 정리
-            if (conversation != nullptr)
+            if (player->isNpcTalk == 0)
             {
                 delete conversation;
                 conversation = nullptr;
-            }
-            if (dialogText != nullptr)
-            {
                 delete dialogText;
                 dialogText = nullptr;
             }
@@ -252,10 +259,10 @@ void Npc::InitDialogues()
 {
     dialogues = {
         L"물건에 가까이 가서 X 버튼을\n누르면 물건을 들어 올릴 수\n있어...",
-        L"밥은 먹고 다니니?",
+        L"X 버튼을 오랫동안 누르면?",
         L"풀 들어봤어?",
-        L"어린아이는 이 시간에 돌아다니면\n안돼",
         L"위로 가면 성이 있단다.",
+        L"어린아이는 이 시간에 돌아다니면\n안돼",
         L"모험을 떠날 때는 항상\n준비물을 챙기는 걸 잊지마"
     };
 }

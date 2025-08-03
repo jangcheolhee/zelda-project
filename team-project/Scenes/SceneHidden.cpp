@@ -33,56 +33,44 @@ void SceneHidden::InitZones()
 {
 	hiddenZones.clear();
 
+	// 화면 크기 기반으로 Zone 계산 (worldView가 50% 크기이므로) - 원래 설정 복원
+	auto size = FRAMEWORK.GetWindowSizeF();
+	float halfWidth = size.x * 0.25f;   // worldView 절반 너비
+	float halfHeight = size.y * 0.25f;  // worldView 절반 높이
+
+	// Zone 1: 왼쪽 아래 (y 좌표 수정)
 	hiddenZones.push_back({
-		sf::FloatRect(-96, 128, 192, 256),
+		sf::FloatRect(-halfWidth, 0, halfWidth * 2, halfHeight * 2),
 		1,
-		[this]()
-		  {
-			  std::cout << "Zone 1 Enter" << std::endl;
-		  },
-		[this]()
-		  {
-			  std::cout << "Zone 1 Exit" << std::endl;
-		  },
+		[this]() { std::cout << "Zone 1 Enter (Left Bottom)" << std::endl; },
+		[this]() { std::cout << "Zone 1 Exit" << std::endl; },
 		false
 		});
+
+	// Zone 2: 왼쪽 위 (y 좌표 수정)
 	hiddenZones.push_back({
-		sf::FloatRect(-96, -128, 192, 256),
+		sf::FloatRect(-halfWidth, -halfHeight * 2, halfWidth * 2, halfHeight * 2),
 		2,
-		[this]()
-		{
-			std::cout << "Zone 2 Enter" << std::endl;
-		},
-		[this]()
-		{
-			std::cout << "Zone 2 Exit" << std::endl;
-		},
+		[this]() { std::cout << "Zone 2 Enter (Left Top)" << std::endl; },
+		[this]() { std::cout << "Zone 2 Exit" << std::endl; },
 		false
 		});
+
+	// Zone 3: 오른쪽 아래 (y 좌표 수정)
 	hiddenZones.push_back({
-		sf::FloatRect(96, 384, 128, 384),
+		sf::FloatRect(0, 0, halfWidth * 2, halfHeight * 2),
 		3,
-		[this]()
-		{
-			std::cout << "Zone 3 Enter" << std::endl;
-		},
-		[this]()
-		{
-			std::cout << "Zone 3 Exit" << std::endl;
-		},
+		[this]() { std::cout << "Zone 3 Enter (Right Bottom)" << std::endl; },
+		[this]() { std::cout << "Zone 3 Exit" << std::endl; },
 		false
 		});
+
+	// Zone 4: 오른쪽 위 (y 좌표 수정)
 	hiddenZones.push_back({
-		sf::FloatRect(128, -128, 256, 256),
+		sf::FloatRect(0, -halfHeight * 2, halfWidth * 2, halfHeight * 2),
 		4,
-		[this]()
-		{
-			std::cout << "Zone 4 Enter" << std::endl;
-		},
-		[this]()
-		{
-			std::cout << "Zone 4 Exit" << std::endl;
-		},
+		[this]() { std::cout << "Zone 4 Enter (Right Top)" << std::endl; },
+		[this]() { std::cout << "Zone 4 Exit" << std::endl; },
 		false
 		});
 }
@@ -102,16 +90,20 @@ void SceneHidden::UpdateZones()
 			if (zone.onEnter)
 			{
 				zone.onEnter();
-				SpawnSquareHitBox();
+				// Zone 변경 시에는 NPC와 특별한 오브젝트만 재생성
+				DeleteZoneSpecificObjects();
 				SpawnHiddenObject();
 			}
 		}
 		else if (!nowInZone && zone.entered)
 		{
 			zone.entered = false;
-			if (zone.onExit) zone.onExit();
-			DeleteInteractables();
-			DeleteEnemy();
+			if (zone.onExit)
+			{
+				zone.onExit();
+				// Zone을 벗어날 때 Zone별 오브젝트만 정리
+				DeleteZoneSpecificObjects();
+			}
 		}
 	}
 }
@@ -120,36 +112,42 @@ void SceneHidden::UpdateBehaviorZone()
 {
 	if (!player || zoneID < 1 || zoneID > 4) return;
 
+	auto size = FRAMEWORK.GetWindowSizeF();
+	float halfWidth = size.x * 0.25f;   // worldView의 절반 너비
+	float halfHeight = size.y * 0.25f;  // worldView의 절반 높이
+
+	sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
+
 	switch (zoneID)
-	{//player 기준
-	case 1:
 	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, -96, 96);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 128, 384);
-		worldView.setCenter({ x, y });
-	}
-	break;
-	case 2:
+	case 1: // 왼쪽 아래
 	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, -96, 96);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -128, 128);
+		float x = Utils::Clamp(playerPos.x, -halfWidth, halfWidth);
+		float y = Utils::Clamp(playerPos.y, 0, halfHeight * 2);
 		worldView.setCenter({ x, y });
+		break;
 	}
-	break;
-	case 3:
+	case 2: // 왼쪽 위
 	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 96, 384);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, 128, 384);
+		float x = Utils::Clamp(playerPos.x, -halfWidth, halfWidth);
+		float y = Utils::Clamp(playerPos.y, -halfHeight * 2, 0);
 		worldView.setCenter({ x, y });
+		break;
 	}
-	break;
-	case 4:
+	case 3: // 오른쪽 아래
 	{
-		float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, 128, 384);
-		float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, -128, 128);
+		float x = Utils::Clamp(playerPos.x, 0, halfWidth * 2);
+		float y = Utils::Clamp(playerPos.y, 0, halfHeight * 2);
 		worldView.setCenter({ x, y });
+		break;
 	}
-	break;
+	case 4: // 오른쪽 위
+	{
+		float x = Utils::Clamp(playerPos.x, 0, halfWidth * 2);
+		float y = Utils::Clamp(playerPos.y, -halfHeight * 2, 0);
+		worldView.setCenter({ x, y });
+		break;
+	}
 	}
 }
 
@@ -179,6 +177,10 @@ void SceneHidden::CheckCollison()
 			case Interactable::Type::JumpWall:
 				player->SetPosition(player->GetPos());
 				obj->OnInteract();
+				break;
+
+			case Interactable::Type::Npc:
+				// NPC 상호작용은 OnInteract에서 자동 처리
 				break;
 			}
 		}
@@ -250,32 +252,59 @@ void SceneHidden::SpawnHiddenObject()
 		dadInteractable = pool.front();
 		pool.pop_front();
 	}
-	else dadInteractable = (Interactable*)AddGameObject(new Npc());
+	else
+	{
+		dadInteractable = (Interactable*)AddGameObject(new Npc());
+		dadInteractable->Init();
+	}
 
 	if (auto npc = dynamic_cast<Npc*>(dadInteractable))
 	{
 		npc->SetNpcType(Npc::Type::Dad);
 		npc->SetPlayer(player);
+		npc->Reset();
+		npc->SetActive(true);
+		npc->SetPosition({ dadPos.x + 20.f, dadPos.y + 20.f });
+		npc->sortingLayer = SortingLayers::Background;
 
-		dadInteractable->Init();
-		dadInteractable->sortingLayer = SortingLayers::Background;
-		dadInteractable->Reset();
-
-		dadInteractable->SetActive(true);
-		dadInteractable->SetPosition({ dadPos.x + 20.f, dadPos.y + 20.f });
 		interactList.push_back(dadInteractable);
 	}
 }
 
+void SceneHidden::DeleteHitboxes()
+{
+	collisions.clear();
+}
+
 void SceneHidden::DeleteInteractables()
 {
-	auto it = interactables.begin();
-	while (it != interactables.end())
+	// Scene 종료 시에만 모든 인터랙터블 삭제
+	for (Interactable* inter : interactList)
 	{
-		RemoveGameObject(*it);
-		it = interactables.erase(it);
+		inter->SetActive(false);
+		interactPool[inter->GetType()].push_back(inter);
 	}
-	interactables.clear();
+	interactList.clear();
+}
+
+void SceneHidden::DeleteZoneSpecificObjects()
+{
+	// NPC와 특별한 Zone 오브젝트만 삭제 (JumpWall은 유지)
+	auto it = interactList.begin();
+	while (it != interactList.end())
+	{
+		if ((*it)->GetType() == Interactable::Type::Npc)
+		{
+			(*it)->SetActive(false);
+			auto& pool = interactPool[(*it)->GetType()];
+			pool.push_back(*it);
+			it = interactList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }
 
 void SceneHidden::RecycleEnemy(Enemy* enemy)
@@ -393,10 +422,11 @@ void SceneHidden::Enter()
 	uiView.setSize(size);
 	uiView.setCenter(center);
 	worldView.setSize({ size.x * .5f, size.y * .5f });
+
 	if (inventoryUI)
 	{
-		inventoryUI->SetActive(false); // 처음 진입 시 숨김 처리
-		inventoryUI->Reset();          // 필요 시 초기화 상태도 같이
+		inventoryUI->SetActive(false);
+		inventoryUI->Reset();
 	}
 
 	Scene::Enter();
@@ -410,7 +440,18 @@ void SceneHidden::Enter()
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 
+	// Scene 진입 시 한 번만 히트박스 생성 (전체 맵에 대해)
+	SpawnSquareHitBox();
+
+	// 적 스폰
 	SpawnEnemyAtTile(1, 6149, Enemy::Types::Basic);
+
+	// 초기 Zone ID 설정 및 모든 Zone을 비활성화 상태로 초기화
+	zoneID = 0;
+	for (auto& zone : hiddenZones)
+	{
+		zone.entered = false;
+	}
 }
 
 void SceneHidden::Update(float dt)
@@ -467,16 +508,28 @@ void SceneHidden::Update(float dt)
 		}
 	}
 }
+
+void SceneHidden::Exit()
+{
+	// Scene 종료 시에만 모든 히트박스, 인터랙터블, 적 정리
+	DeleteInteractables();
+	DeleteHitboxes();
+
+	// Zone 상태 초기화
+	for (auto& zone : hiddenZones)
+	{
+		zone.entered = false;
+	}
+	zoneID = 0;
+
+	Scene::Exit();
+}
+
 void SceneHidden::Draw(sf::RenderWindow& window)
 {
 	window.setView(worldView);
-
 	Scene::Draw(window);
-	for (auto& col : collisions)
-	{
-		col.Draw(window);
-	}
-	window.setView(uiView);
+
 	if (hud) hud->Draw(window);
 	if (inventoryUI && inventoryUI->GetActive()) 
 	{

@@ -15,7 +15,7 @@ void BasicEnemy::Init()
 void BasicEnemy::Reset()
 {
 
-	// ¿©±â¼­ sprite texture º¯°æÇÏ±â
+	// ï¿½ï¿½ï¿½â¼­ sprite texture ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
 	direction = (Direction)Utils::RandomRange(0, 4);
@@ -42,27 +42,33 @@ void BasicEnemy::Update(float dt)
 		state = EnemyState::Patrol;
 	}
 
-	switch (state)
+	if (state == EnemyState::Patrol)
 	{
-	case EnemyState::Patrol:
-		if (moveTimer > 3.f)
+		moveTimer += dt;
+
+		if (moveTimer > 3)
 		{
 			direction = (Direction)Utils::RandomRange(0, 4);
 			ChangeSprite();
 			moveTimer = 0.f;
 			body.setColor(sf::Color (0xffffffff));
 		}
-		break;
-
-	case EnemyState::Chase:
-		dir = player->GetPosition() - GetPosition();
-		Utils::Normalize(dir);
-		body.setColor(sf::Color::Green);
-		
-		break;
+	}
+	else if (state == EnemyState::Chase)
+	{
+		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+		moveTimer = 0;
 	}
 
-	position += dir * speed * dt;
+	velocity = dir * speed;
+
+	// Enemy::Update()ï¿½ï¿½ï¿½ï¿½ canMoveï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+	// Enemy::Update() È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ velocityï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½
+	Enemy::Update(dt);
+
+	// Enemy::Update()ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ Ã¼Å©ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½, 
+	// ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ velocityï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+	position += velocity * dt;
 	SetPosition(position);
 
 	hitBox.UpdateTransform(body, GetLocalBounds());
