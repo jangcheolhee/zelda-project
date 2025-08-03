@@ -449,5 +449,4 @@ void Npc::Draw(sf::RenderWindow& window)
         window.setView(originalView);
         return;
     }
-
 }

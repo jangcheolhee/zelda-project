@@ -499,6 +499,7 @@ void SceneHidden::Init()
 	fontIds.push_back("fonts/DungGeunMo.ttf");
 
 	soundIds.push_back("bgm/Cave.flac");
+	TEXTURE_MGR.Load("graphics/sword_get.png");
 	soundIds.push_back("effects/key.wav");
 	soundIds.push_back("effects/message.wav");
 	soundIds.push_back("effects/item get 1.wav");
