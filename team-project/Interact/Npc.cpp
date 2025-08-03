@@ -183,10 +183,11 @@ void Npc::HandleDadInteraction()
     sf::Vector2f dadPos = GetPosition();
 
     float distance = sqrt(pow(playerPos.x - dadPos.x, 2) + pow(playerPos.y - dadPos.y, 2));
-
-    if (distance < 30.0f)
+    // 1. 가까이 있고, 대화중이 아니고, N을 눌렀을 때만 대화 시작!
+    if (distance < 30.0f && !player->isNpcTalk && InputMgr::GetKeyDown(sf::Keyboard::N))
     {
         player->isNpcTalk = 1;
+        sayCount = 0;
 
         if (conversation == nullptr)
         {
@@ -211,39 +212,44 @@ void Npc::HandleDadInteraction()
             dialogText->SetOutlineColor(sf::Color(0, 0, 150));
         }
 
-        if (sayCount == 0)
+        if (dialogText != nullptr)
         {
-            sayCount++;
-            if (dialogText != nullptr)
-            {
-                dialogText->SetString(L"Hi, 검을 내게 맡기마...링크");
-            }
+            dialogText->SetString(L"Hi, 검을 내게 맡기마...링크");
         }
+        sayCount = 1;
+        return;
+    }
 
-        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
+    // 2. 대화 진행 중에만 N키로 다음 대사 넘김
+    if (player->isNpcTalk)
+    {
+        if (InputMgr::GetKeyDown(sf::Keyboard::N))
         {
-            sayCount++;
-            if (dialogText != nullptr)
+            if (sayCount == 1)
             {
-                dialogText->SetString(L"링크...젤다공주를 부탁한다");
+                sayCount++;
+                if (dialogText != nullptr)
+                {
+                    dialogText->SetString(L"링크...젤다공주를 부탁한다");
+                }
             }
-        }
 
-        if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 2)
-        {
-            sayCount = 0;
-            player->isNpcTalk = 0;
+            else if (sayCount == 2)
+            {
+                sayCount = 0;
+                player->isNpcTalk = 0;
 
-            // UI 정리
-            if (conversation != nullptr)
-            {
-                delete conversation;
-                conversation = nullptr;
-            }
-            if (dialogText != nullptr)
-            {
-                delete dialogText;
-                dialogText = nullptr;
+                // UI 정리
+                if (conversation != nullptr)
+                {
+                    delete conversation;
+                    conversation = nullptr;
+                }
+                if (dialogText != nullptr)
+                {
+                    delete dialogText;
+                    dialogText = nullptr;
+                }
             }
         }
     }

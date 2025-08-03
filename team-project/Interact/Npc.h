@@ -29,6 +29,9 @@ protected:
 	int npcId = 0;  
 	static int nextNpcId;  
 	static std::unordered_map<int, int> npcDialogueIndices;
+	//대화 쿨타임 추가
+	bool recentlyTalked = false;
+	float talkCooldown = 0.f;
 
 public:
 
