@@ -116,10 +116,12 @@ void Npc::HandleBasicNpcInteraction()
 
     if (rect.intersects(npcRect) && npcSay == 0 && sayCount < 2)
     {
+       
         player->isNpcTalk = 1;
 
         if (player->isNpcTalk == 1 && conversation == nullptr)
         {
+            SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/message.wav"));
             conversation = new SpriteGo("graphics/conversation.png", "Conversation");
             conversation->Init();
             conversation->Reset();
@@ -152,6 +154,7 @@ void Npc::HandleBasicNpcInteraction()
         }
         if (InputMgr::GetKeyDown(sf::Keyboard::N) && sayCount == 1)
         {
+            SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/message.wav"));
             sayCount++;
             if (dialogText != nullptr)
             {
@@ -203,6 +206,7 @@ void Npc::HandleDadInteraction()
             // 대화창, 텍스트 생성
             if (conversation == nullptr)
             {
+                SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/message.wav"));
                 conversation = new SpriteGo("graphics/conversation.png", "Conversation");
                 conversation->Init();
                 conversation->Reset();
@@ -230,6 +234,7 @@ void Npc::HandleDadInteraction()
         // 2. "젤다공주를 부탁한다"
         else if (sayCount == 1 && InputMgr::GetKeyDown(sf::Keyboard::N))
         {
+            SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/message.wav"));
             sayCount = 2;
             if (dialogText)
                 dialogText->SetString(L"링크...젤다공주를 부탁한다");
@@ -237,6 +242,8 @@ void Npc::HandleDadInteraction()
         // 3. N키 한번 더 누르면 → 검 애니메이션 시작
         else if (sayCount == 2 && InputMgr::GetKeyDown(sf::Keyboard::N))
         {
+            SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/item get 1.wav"));
+
             // 검 PNG 준비
             if (swordGetImg == nullptr)
             {
@@ -264,6 +271,7 @@ void Npc::HandleDadInteraction()
         // 4. 검 연출 후 → "잘 가"
         else if (sayCount == 3 && InputMgr::GetKeyDown(sf::Keyboard::N))
         {
+            SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/message.wav"));
             sayCount = 0;
             npcSay = !npcSay;
             player->isNpcTalk = 0;

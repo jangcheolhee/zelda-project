@@ -13,8 +13,8 @@ void SceneGameOver::Init()
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	
-
-	
+	soundIds.push_back("bgm/ending.flac");
+	soundIds.push_back("effects/cursor.wav");
 	AddGameObject(new GameOverUI("GameOverUI"));
 
 	Scene::Init();
@@ -28,6 +28,7 @@ void SceneGameOver::Enter()
 	uiView.setCenter(center);
 
 	Scene::Enter();
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/ending.flac"));
 }
 
 void SceneGameOver::Update(float dt)

@@ -108,12 +108,13 @@ void Enemy::Reset()
 
 	SetActive(true);
 	SetPosition(initPosition);
+	isDie = false;
 	
 }
 
 void Enemy::Update(float dt)
 {
-	
+	animator.Update(dt);
 	timer += dt;
 
 	switch (SCENE_MGR.GetCurrentSceneId())

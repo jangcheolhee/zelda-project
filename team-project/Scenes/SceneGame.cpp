@@ -354,7 +354,7 @@ void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 		switch (type)
 		{
 		case Enemy::Types::Basic:
-			enemy = (Enemy*)AddGameObject(new BasicEnemy());
+			enemy = (Enemy*)AddGameObject(new BasicEnemy("Enemy"));
 			break;
 		case Enemy::Types::Count:
 			break;
@@ -383,7 +383,7 @@ void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types typ
 		std::vector<sf::Vector2f> positions = tileMapGame->getPositions(layerIndex, targetGid);
 		for (auto pos : positions)
 		{
-			pos.y += 70.f; 
+			pos.y += 50.f; 
 			SpawnEnemy(pos, type);
 		}
 	}
@@ -522,7 +522,8 @@ void SceneGame::Init()
 	soundIds.push_back("effects/enemy hit.wav");
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
-
+	soundIds.push_back("effects/grass destroyed.wav");
+	soundIds.push_back("effects/message.wav");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	FONT_MGR.Load("fonts/Neo.ttf");

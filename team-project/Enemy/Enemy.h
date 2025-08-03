@@ -32,7 +32,7 @@ protected:
 	HitBox hitBox;
 	HitBox boundBox;
 
-	int maxHp = 10;
+	int maxHp = 3;
 	int hp = 3;
 	float speed = 0.f;
 	bool isHitThisFrame = false;
@@ -46,6 +46,7 @@ protected:
 	Direction direction = Direction::Down;
 	sf::Vector2f previousPosition;
 	float timer = 0.f;
+	
 public:
 	Enemy(const std::string& name = "");
 	~Enemy() = default;

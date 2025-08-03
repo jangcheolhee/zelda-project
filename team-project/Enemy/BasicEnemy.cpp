@@ -2,6 +2,11 @@
 #include "BasicEnemy.h""
 #include "Player.h"
 
+BasicEnemy::BasicEnemy(const std::string& name)
+	:Enemy(name)
+{
+}
+
 void BasicEnemy::Init()
 {
 	Enemy::Init();
@@ -22,44 +27,52 @@ void BasicEnemy::Reset()
 	maxHp = 5;
 	hp = maxHp;
 	moveTimer = 0;
+	isDie = false;
 }
 
 void BasicEnemy::Update(float dt)
 {
 	previousPosition = GetPosition();
-	moveTimer += dt;
+	
+	if (!isDie)
+	{
+		moveTimer += dt;
 
-	if (Utils::Distance(player->GetPosition(), GetPosition()) < 80)
-	{
-		state = EnemyState::Chase;
-	}
-	else
-	{
-		state = EnemyState::Patrol;
-	}
-
-	if (state == EnemyState::Patrol)
-	{
-		if (moveTimer > 3)
+		if (Utils::Distance(player->GetPosition(), GetPosition()) < 80)
 		{
-			direction = (Direction)Utils::RandomRange(0, 4);
-			ChangeSprite();
-			moveTimer = 0.f;
-			body.setColor(sf::Color(0xffffffff));
+			state = EnemyState::Chase;
 		}
-	}
-	else if (state == EnemyState::Chase)
-	{
-		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
-		moveTimer = 0;
-	}
+		else
+		{
+			state = EnemyState::Patrol;
+		}
 
-	velocity = dir * speed;
+		if (state == EnemyState::Patrol)
+		{
+			if (moveTimer > 3)
+			{
+				direction = (Direction)Utils::RandomRange(0, 4);
+				ChangeSprite();
+				moveTimer = 0.f;
+				body.setColor(sf::Color(0xffffffff));
+			}
+		}
+		else if (state == EnemyState::Chase)
+		{
+			dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+			body.setColor(sf::Color(0x00ff00ff));
+			moveTimer = 0;
+		}
+
+		velocity = dir * speed;
+		
+	}
 	Enemy::Update(dt);
 
 	position += velocity * dt;
 	SetPosition(position);
 	boundBox.rect.setPosition(GetPosition());
+	
 }
 
 void BasicEnemy::ChangeSprite()

@@ -2,6 +2,7 @@
 #include "Bush.h"
 #include "Player.h"
 #include "SceneGame.h"
+#include "BasicEnemy.h"
 
 void Bush::ChangeAnimation()
 {
@@ -89,13 +90,13 @@ void Bush::Update(float dt)
 		position += velocity * dt;
 		SetPosition(position);
 
-		for (auto& enemy : enemyList)
+		for (auto& enemy : SCENE_MGR.GetCurrentScene()->FindGameObjects("Enemy"))
 		{
-
+			
 			if (Utils::CheckCollision(enemy->GetHitBox().rect, boundBox.rect))
 			{
 				isHit = true;
-				enemy->OnDamage(1);
+				dynamic_cast<BasicEnemy*>(enemy)->OnDamage(1);
 				break;
 			}
 		}
@@ -104,6 +105,7 @@ void Bush::Update(float dt)
 			hitBox.rect.setSize({ 0,0 });
 			player->SetIsInteract(false);
 			state = BushState::Crush;
+			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/grass destroyed.wav"));
 			ChangeAnimation();
 		}
 		break;

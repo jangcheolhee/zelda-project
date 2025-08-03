@@ -94,10 +94,12 @@ void GameOverUI::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Up))
 	{
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/cursor.wav"));
 		selectedIndex = 0;
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Down))
 	{
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/cursor.wav"));
 		selectedIndex =  1;
 	}
 	cursor.setPosition(center.x - 150.f, center.y - 40.f + (selectedIndex + 3)  * 60);
