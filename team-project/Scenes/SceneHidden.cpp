@@ -21,10 +21,13 @@ SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 	tileMapHidden = nullptr;
 	hud = nullptr;
 	inventoryUI = nullptr;
+	key = nullptr;  
+	hasKey = false;
 
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/inventory.png");
+	texIds.push_back("graphics/Items.png");
 	fontIds.push_back("fonts/Neo.ttf");
 }
 
@@ -213,6 +216,21 @@ void SceneHidden::CheckCollison()
 {
 	if (!player) return;
 
+	if (key && key->GetActive() && !hasKey)
+	{
+		sf::Vector2f playerPos = player->GetPosition();
+		sf::Vector2f keyPosition = key->GetPosition();
+		float distance = sqrt(pow(playerPos.x - keyPosition.x, 2) + pow(playerPos.y - keyPosition.y, 2));
+		if (distance < 25.0f)
+		{
+			hasKey = true;
+			key->SetActive(false);
+			key->GetSprite().setColor(sf::Color::Transparent);
+			key->SetPosition({ -1000, -1000 });
+			endPosActive = true;
+		}
+	}
+
 	for (auto& obj : interactList)
 	{
 		if (Utils::CheckCollision(player->GetHitBox().rect, obj->GetHitBox().rect))
@@ -301,6 +319,25 @@ void SceneHidden::SpawnHiddenObject()
 	hiddenPathCover->SetOrigin(Origins::TL);
 	hiddenPathCover->SetPosition(hiddenPathPos);
 	AddGameObject(hiddenPathCover);
+
+	// Key 
+	if (!hasKey && key == nullptr)
+	{
+		keyPos = tileMapHidden->getPosition(1, 6200);
+
+		key = new SpriteGo();
+		key->SetName("Key");
+		key->Init();
+
+		key->GetSprite().setTexture(TEXTURE_MGR.Get("graphics/Items.png"));
+		key->GetSprite().setTextureRect({ 228, 190, 15, 17 });
+
+		key->SetActive(true);
+		key->SetOrigin(Origins::MC);
+		key->SetPosition(keyPos);
+		key->sortingLayer = SortingLayers::Foreground;
+		AddGameObject(key);
+	}
 
 	//Dad NPC
 	sf::Vector2f dadPos = tileMapHidden->getPosition(1, 1174);
@@ -455,6 +492,7 @@ void SceneHidden::Init()
 	texIds.push_back("graphics/Enemy_sheet.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/conversation.png");
+	texIds.push_back("graphics/Items.png"); 
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
@@ -507,6 +545,10 @@ void SceneHidden::Init()
 		endPos = tileMapHidden->getPosition(1, 5680);
 		endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 	}
+
+	key = nullptr;
+	hasKey = false;
+	endPosActive = false;
 }
 
 void SceneHidden::Enter()
@@ -550,13 +592,16 @@ void SceneHidden::Enter()
 	SpawnSquareHitBox();
 	SpawnEnemyAtTile(1, 6149, Enemy::Types::Basic);
 
+	// Key
+	hasKey = false;
+	endPosActive = false;
+
 	zoneID = 0;
 	for (auto& zone : hiddenZones)
 	{
 		zone.entered = false;
 	}
 }
-
 void SceneHidden::Update(float dt)
 {
 	Scene::Update(dt);
@@ -579,7 +624,7 @@ void SceneHidden::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone();
 
-	if (player && endHole.contains(player->GetGlobalBounds().getPosition()))
+	if (player && hasKey && endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Castle);
 	}
@@ -632,6 +677,12 @@ void SceneHidden::Exit()
 	}
 	zoneObjects.clear();
 
+	if (key)
+	{
+		RemoveGameObject(key);
+		key = nullptr;
+	}
+
 	for (auto& zone : hiddenZones)
 	{
 		zone.entered = false;
@@ -646,7 +697,6 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	window.setView(worldView);
 	Scene::Draw(window);
 
-	// UI는 uiView로 그리기
 	window.setView(uiView);
 	if (hud)
 	{

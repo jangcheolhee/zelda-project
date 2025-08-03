@@ -33,6 +33,11 @@ protected:
 	TileMap* tileMapHidden;
 	SpriteGo* hiddenPathCover;
 
+	//key
+	SpriteGo* key;
+	bool hasKey = false;
+	sf::Vector2f keyPos;
+
 	//enemy
 	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
 	std::list<Enemy*> enemyList;
