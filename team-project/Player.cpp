@@ -560,25 +560,16 @@ void Player::CheckInteractions()
 		}
 	}
 
-	// 상호작용 가능한 오브젝트 갱신
 	if (nearestObj != currentInteractable)
 	{
 		currentInteractable = nearestObj;
 		showInteractionUI = (currentInteractable != nullptr);
-
-		if (showInteractionUI)
-		{
-			std::cout << "interact ok! distance: " << nearestDistance << std::endl;
-		}
 	}
 }
 
 void Player::TriggerInteraction(GameObject* obj)
 {
 	if (obj == nullptr) return;
-
-	std::cout << ">>> interact ok! <<<" << std::endl;
-
 }
 
 void Player::CollideMoving(HitBox box)
