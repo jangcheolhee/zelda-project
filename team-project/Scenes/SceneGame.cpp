@@ -8,6 +8,8 @@
 #include "Rupee.h"
 #include "JumpWall.h"
 #include "Heart.h"
+#include "Enemy.h"
+#include "BasicEnemy.h"
 #include "HUD.h"
 #include "HitboxGenerator.h"
 #include <istream>
@@ -337,6 +339,79 @@ void SceneGame::SpawnSquareHitBox()
 	}
 }
 
+void SceneGame::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
+{
+	Enemy* enemy = nullptr;
+
+	auto& pool = enemyPools[type];
+	if (!pool.empty())
+	{
+		enemy = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		switch (type)
+		{
+		case Enemy::Types::Basic:
+			enemy = (Enemy*)AddGameObject(new BasicEnemy());
+			break;
+		case Enemy::Types::Count:
+			break;
+		default:
+			break;
+		}
+		if (enemy)
+		{
+			enemy->Init();
+		}
+	}
+
+	if (enemy)
+	{
+		enemy->Reset();
+		enemy->SetPosition(pos);
+		enemy->SetActive(true);
+		enemyList.push_back(enemy);
+	}
+}
+
+void SceneGame::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
+{
+	if (tileMapGame)
+	{
+		std::vector<sf::Vector2f> positions = tileMapGame->getPositions(layerIndex, targetGid);
+		for (auto pos : positions)
+		{
+			pos.y += 70.f; 
+			SpawnEnemy(pos, type);
+		}
+	}
+}
+
+void SceneGame::RecycleEnemy(Enemy* enemy)
+{
+	if (enemy)
+	{
+		enemy->SetActive(false);
+		enemyPools[enemy->GetType()].push_back(enemy);
+	}
+}
+
+void SceneGame::DeleteEnemies()
+{
+	for (Enemy* enemy : enemyList)
+	{
+		if (enemy)
+		{
+			enemy->SetActive(false);
+			enemyPools[enemy->GetType()].push_back(enemy);
+		}
+	}
+	enemyList.clear();
+}
+
+
 void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 {
 	//layer 1 : bush
@@ -502,7 +577,7 @@ void SceneGame::Exit()
 		}
 	}
 	DeleteInteractables();
-
+	DeleteEnemies();
 
 	Scene::Exit();
 }
@@ -516,6 +591,7 @@ void SceneGame::Enter()
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
+	startPos.y += 50.f;
 	Scene::Enter();
 
 	SOUND_MGR.SetSfxVolume(100);
@@ -536,11 +612,26 @@ void SceneGame::Enter()
 		}
 	}
 
+	SpawnEnemyAtTile(5, 24737, Enemy::Types::Basic);
 }
 
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
+
+	auto it = enemyList.begin();
+	while (it != enemyList.end())
+	{
+		if (!(*it)->GetActive())
+		{
+			RecycleEnemy(*it);
+			it = enemyList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 
 	auto it1 = interactList.begin();
 	while (it1 != interactList.end())

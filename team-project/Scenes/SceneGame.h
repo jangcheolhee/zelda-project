@@ -41,6 +41,9 @@ protected:
 	std::list<Interactable*>interactList;
 	std::vector<Interactable*> interactables;
 
+	std::unordered_map<Enemy::Types, std::list<Enemy*>> enemyPools;
+	std::list<Enemy*> enemyList;
+
 	std::vector<MapZone> mapZones;
 	int zoneID = 1;
 	bool showInventory=false;
@@ -91,6 +94,11 @@ public:
 	void SpawnInteractable(sf::Vector2f pos, Interactable::Type type);
 	void CheckCollison();
 	void SpawnSquareHitBox();
+
+	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
+	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
+	void RecycleEnemy(Enemy* enemy);
+	void DeleteEnemies();
 
 	void Init() override;
 	void Exit() override;
