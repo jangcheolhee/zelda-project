@@ -28,8 +28,8 @@ void BasicEnemy::Reset()
 
 void BasicEnemy::Update(float dt)
 {
-	Enemy::Update(dt);
 	pastPosition = GetPosition();
+
 	if (Utils::Distance(GetPosition(), player->GetPosition()) < 50)
 	{
 		state = EnemyState::Chase;
@@ -38,25 +38,33 @@ void BasicEnemy::Update(float dt)
 	{
 		state = EnemyState::Patrol;
 	}
+
 	if (state == EnemyState::Patrol)
 	{
 		moveTimer += dt;
-	
+
 		if (moveTimer > 3)
 		{
 			direction = (Direction)Utils::RandomRange(0, 4);
 			moveTimer = 0;
 			ChangeSprite();
 		}
-	
 	}
 	else if (state == EnemyState::Chase)
 	{
 		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
 		moveTimer = 0;
 	}
+
 	velocity = dir * speed;
-	position += velocity *dt;
+
+	// Enemy::Update()에서 canMove를 확인한 후에만 위치 업데이트
+	// Enemy::Update() 호출 전에 velocity를 설정해야 함
+	Enemy::Update(dt);
+
+	// Enemy::Update()에서 벽 충돌을 체크했으므로, 
+	// 여기서는 velocity가 수정되었을 수 있음을 고려
+	position += velocity * dt;
 	SetPosition(position);
 	boundBox.rect.setPosition(GetPosition());
 }

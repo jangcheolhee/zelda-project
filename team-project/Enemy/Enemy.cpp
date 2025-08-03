@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Enemy.h"
+#include "BasicEnemy.h"
 #include "SceneGame.h"
 #include "SceneHidden.h"
 #include "SceneBoss.h"
@@ -43,8 +44,6 @@ void Enemy::SetOrigin(Origins preset)
 	}
 }
 
-
-
 void Enemy::OnCollide(Direction direction)
 {
 	switch (direction)
@@ -64,10 +63,6 @@ void Enemy::OnCollide(Direction direction)
 	}
 }
 
-
-
-
-
 void Enemy::OnDamage(int damage)
 {
 
@@ -86,9 +81,6 @@ void Enemy::Init()
 	sf::FloatRect bodyBounds = body.getLocalBounds();
 	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
-
-
-
 
 	sortingLayer = SortingLayers::Enemy;
 	sortingOrder = 3;
@@ -146,14 +138,53 @@ void Enemy::Update(float dt)
 		interList = dynamic_cast<SceneBoss*>(SCENE_MGR.GetCurrentScene())->GetInteract();
 		break;
 	}
-	
+
+	// JumpWall과의 충돌 체크 (움직이기 전에)
+	bool canMove = true;
 	for (auto& obj : interList)
 	{
-
-		if (Utils::CheckCollision(obj->GetHitBox().rect, GetBoundBox().rect))
+		if (obj->GetType() == Interactable::Type::JumpWall)
 		{
-			//enemy->SetPosition(enemy->GetPos());
+			// 다음 위치에서 충돌하는지 미리 체크
+			sf::Vector2f nextPosition = GetPosition() + velocity * dt;
+			sf::RectangleShape nextBounds = GetBoundBox().rect;
+			nextBounds.setPosition(nextPosition);
 
+			if (Utils::CheckCollision(obj->GetHitBox().rect, nextBounds))
+			{
+				canMove = false;
+				// BasicEnemy의 경우 방향 바꾸기
+				if (auto basicEnemy = dynamic_cast<BasicEnemy*>(this))
+				{
+					// 현재 방향의 반대 방향으로 설정
+					switch (direction)
+					{
+					case Direction::Up:
+						direction = Direction::Down;
+						break;
+					case Direction::Down:
+						direction = Direction::Up;
+						break;
+					case Direction::Left:
+						direction = Direction::Right;
+						break;
+					case Direction::Right:
+						direction = Direction::Left;
+						break;
+					}
+					basicEnemy->ChangeSprite();
+				}
+				break;
+			}
+		}
+	}
+
+	// 다른 오브젝트들과의 기존 충돌 처리
+	for (auto& obj : interList)
+	{
+		if (obj->GetType() != Interactable::Type::JumpWall &&
+			Utils::CheckCollision(obj->GetHitBox().rect, GetBoundBox().rect))
+		{
 			sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
 			sf::FloatRect enemyRect = GetBoundBox().rect.getGlobalBounds();
 
@@ -174,34 +205,26 @@ void Enemy::Update(float dt)
 
 			if (overlapX < overlapY)
 			{
-
 				if (dx < 0)
 				{
-					//왼쪽
 					OnCollide(Direction::Left);
 				}
-
 				else
 				{
 					OnCollide(Direction::Right);
-					//오른쪽
 				}
 				if (dy < 0)
 				{
-					//왼쪽
 					OnCollide(Direction::Up);
 				}
-
 				else
 				{
 					OnCollide(Direction::Down);
-					//오른쪽
 				}
-
-
 			}
 		}
 	}
+
 	animator.Update(dt);
 	LastHit += dt;
 	// 매 프레임마다 피격 가능 상태로 초기화
@@ -211,7 +234,6 @@ void Enemy::Update(float dt)
 	{
 		player->TakeDamageIfPossible(1);
 	}
-
 
 	hitBox.rect.setScale(GetScale());
 	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{ 4 * GetScale().x,6 * GetScale().y });
@@ -236,8 +258,6 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 	LastHit = 0.f;
 
 }
-
-
 
 void Enemy::DeathAnimation()
 {

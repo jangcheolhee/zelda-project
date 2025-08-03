@@ -73,6 +73,7 @@ public:
 	std::list<Enemy*> GetEnemy() { return enemyList; }
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy();
+	void DeleteEnemies();
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
 
@@ -84,13 +85,16 @@ public:
 	//hitbox_collision
 	std::list<Interactable*> GetInteract() { return interactList; }
 	void DeleteInteractables();
+	void DeleteZoneSpecificObjects();
 	void CheckCollison();
 	void SpawnSquareHitBox();
 	void SpawnHiddenObject();
+	void DeleteHitboxes();
 
 	//Scene
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
+	void Exit() override;
 	void Draw(sf::RenderWindow& window) override;
 };
