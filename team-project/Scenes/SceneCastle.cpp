@@ -448,6 +448,7 @@ void SceneCastle::Init()
 	soundIds.push_back("effects/link hurt.wav");
 	soundIds.push_back("effects/throw.wav");
 	soundIds.push_back("effects/rupee.wav");
+	texIds.push_back("graphics/inventory.png");
 	soundIds.push_back("effects/heart.wav");
 	soundIds.push_back("effects/enemy hit.wav");
 	soundIds.push_back("effects/link dies.wav");
@@ -533,11 +534,12 @@ void SceneCastle::Enter()
 	player->Heal(0);   // 내부적으로 HUD와 sync
 	hud->SetRupee(GAME_MGR.playerRupee);
 	hud->SetHeartCount(GAME_MGR.playerHp);
-	//minju
-	player->SetPosition({ startPos.x, startPos.y - 30.f });
-	GAME_MGR.playerHp = player->GetMaxHp();
-	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = startPos;
+
+	////minju
+	//player->SetPosition({ startPos.x, startPos.y - 30.f });
+	//GAME_MGR.playerHp = player->GetMaxHp();
+	//GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
+	//GAME_MGR.playerSpawnPosition = startPos;
 
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());

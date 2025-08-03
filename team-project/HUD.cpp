@@ -172,6 +172,7 @@ void HUD::UpdateHeartSprites()
 		}
 	}
 }
+
 void HUD::SetSize(const sf::Vector2f& size)
 {
 	if (!hudSprite.getTexture()) return;

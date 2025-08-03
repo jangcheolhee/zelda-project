@@ -492,6 +492,7 @@ void SceneHidden::Init()
 	texIds.push_back("graphics/Enemy_sheet.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/conversation.png");
+	texIds.push_back("graphics/inventory.png");
 	texIds.push_back("graphics/Items.png"); 
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
@@ -740,19 +741,13 @@ void SceneHidden::Exit()
 
 void SceneHidden::Draw(sf::RenderWindow& window)
 {
-	window.setView(worldView);
-	Scene::Draw(window);
+	window.setView(worldView); 
+	Scene::Draw(window);       
 
-	window.setView(uiView);
-	if (hud)
-	{
-		hud->Draw(window);
-	}
+	window.setView(uiView);   
+	if (hud) hud->Draw(window);
 	if (inventoryUI && inventoryUI->GetActive())
-	{
-		inventoryUI->Draw(window);
-	}
-
+		inventoryUI->Draw(window); 
 }
 
 void SceneHidden::SetPlayer(Player* p) { player = p; }
