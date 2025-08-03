@@ -7,10 +7,11 @@
 #include "HUD.h"
 class Player;
 class TileMap;
-
+class TextGo;
 class SceneBoss : public Scene
 {
 protected:
+	TextGo* endingText;
 	Player* player;
 	TileMap* tileMapBoss;
 	HUD* hud;
@@ -38,6 +39,8 @@ std::list<Enemy*> bosses;
 	float wallWithdh = 0;
 	float wallHeight = 0;
 	bool squareToggle = false;
+	bool ending = false;
+	float endingTimer = 0;
 
 public:
 	SceneBoss();

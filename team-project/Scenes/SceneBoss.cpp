@@ -12,6 +12,7 @@
 #include "SceneCastle.h"
 #include "HitboxGenerator.h"
 #include "BossEnemy.h"
+#include "TextGo.h"
 
 SceneBoss::SceneBoss() :Scene(SceneIds::Boss)
 {
@@ -88,9 +89,12 @@ void SceneBoss::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 	soundIds.push_back("bgm/boss.flac");
+	soundIds.push_back("bgm/Ending.flac");
 	soundIds.push_back("effects/boss hit.wav");
 	soundIds.push_back("effects/boss dies.wav");
 	texIds.push_back("graphics/Boss.png");
+
+	fontIds.push_back("fonts/DungGeunMo.ttf");
 
 	ANI_CLIP_MGR.Load("animations/bossDie.csv");
 	player = new Player("Player");
@@ -102,7 +106,18 @@ void SceneBoss::Init()
 
 	//endPos = tileMapBoss->getPosition(1, 5680);
 	//endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
-
+	
+	endingTimer = 0;
+	endingText = new TextGo("fonts/DungGeunMo.ttf");
+	endingText->SetString(L"THANK YOU");
+	endingText->SetActive(false);
+	endingText->SetCharacterSize(30);
+	endingText->SetFillColor(sf::Color::White);
+	endingText->SetPosition({ 0.f, 0.f });
+	endingText->SetOrigin(Origins::MC);
+	endingText->SetOutlineThickness(1.5f);
+	endingText->SetOutlineColor(sf::Color(0, 0, 150));
+	AddGameObject(endingText);
 	Scene::Init();
 }
 
@@ -148,6 +163,7 @@ void SceneBoss::Enter()
 	GAME_MGR.Save();
 	player->SetPosition({ -12, 85 });
 	worldView.setCenter({ 0, 0 });
+	
 	Scene::Enter();
 	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/boss.flac"));
 	player->SetHp(10);
@@ -156,38 +172,57 @@ void SceneBoss::Enter()
 
 void SceneBoss::Update(float dt)
 {
-	Scene::Update(dt);
+	if (!ending)
+	{
 
-	auto it = enemyList.begin();
-	while (it != enemyList.end())
-	{
-		if (!(*it)->GetActive())
+		Scene::Update(dt);
+		auto it = enemyList.begin();
+		while (it != enemyList.end())
 		{
-			RecycleEnemy(*it);
-			it = enemyList.erase(it);
-		}
-		else ++it;
-	}
-	if (enemyList.size() == 3)
-	{
-		for (auto enemy : enemyList)
-		{
-			if (dynamic_cast<BossEnemy*>(enemy)->GetState() != BossState::Skill1)
+			if (!(*it)->GetActive())
 			{
-				dynamic_cast<BossEnemy*>(enemy)->SetPage1(true);
+				RecycleEnemy(*it);
+				it = enemyList.erase(it);
+			}
+			else ++it;
+		}
+		if (enemyList.size() == 3)
+		{
+			for (auto enemy : enemyList)
+			{
+				if (dynamic_cast<BossEnemy*>(enemy)->GetState() != BossState::Skill1)
+				{
+					dynamic_cast<BossEnemy*>(enemy)->SetPage1(true);
+				}
 			}
 		}
-	}
-	else if (enemyList.size() == 1)
-		for (auto enemy : enemyList)
-		{
-			if (dynamic_cast<BossEnemy*>(enemy)->GetState() != BossState::Berserk)
+		else if (enemyList.size() == 1)
+			for (auto enemy : enemyList)
 			{
-				dynamic_cast<BossEnemy*>(enemy)->SetPage2(true);
+				if (dynamic_cast<BossEnemy*>(enemy)->GetState() != BossState::Berserk)
+				{
+					dynamic_cast<BossEnemy*>(enemy)->SetPage2(true);
+				}
 			}
+		else if (enemyList.size() == 0)
+		{
+			ending = true;
+			SOUND_MGR.StopBgm();
+			SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Ending.flac"));
+			endingText->SetActive(true);
 		}
 
-	CheckCollison();
+		CheckCollison();
+	}
+	if (ending)
+	{
+		endingTimer += dt;
+
+		if (endingTimer > 7)
+		{
+			FRAMEWORK.GetWindow().close();
+		}
+	}
 	//if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	//{
 	//	std::cout << "Castle" << std::endl;
@@ -241,7 +276,14 @@ void SceneBoss::DeleteEnemy()
 	{
 		RecycleEnemy(e);
 	}
+
 	enemyList.clear();
+	for (auto& [type, pool] : enemyPools) {
+		for (auto* enemy : pool) {
+			RemoveGameObject(enemy);
+		}
+		pool.clear();
+	}
 }
 
 void SceneBoss::SpawnEnemy(sf::Vector2f pos1, sf::Vector2f pos2, sf::Vector2f pos3, Enemy::Types type)

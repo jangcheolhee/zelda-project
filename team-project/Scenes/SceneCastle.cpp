@@ -543,6 +543,12 @@ void SceneCastle::Exit()
 		enemyPools[enemy->GetType()].push_back(enemy);
 	}
 	enemyList.clear();
+	for (auto& [type, pool] : enemyPools) {
+		for (auto* enemy : pool) {
+			RemoveGameObject(enemy);
+		}
+		pool.clear();
+	}
 
 	for (auto& zone : castleZones)
 	{
