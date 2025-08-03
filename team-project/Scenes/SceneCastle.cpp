@@ -544,6 +544,7 @@ void SceneCastle::Enter()
 	{
 		zone.entered = false;
 	}
+	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Castle.flac"));
 }
 
 void SceneCastle::Update(float dt)

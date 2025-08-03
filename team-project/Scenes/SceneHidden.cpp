@@ -501,7 +501,9 @@ void SceneHidden::Init()
 
 	soundIds.push_back("bgm/Cave.flac");
 	soundIds.push_back("effects/key.wav");
-
+	soundIds.push_back("effects/message.wav");
+	soundIds.push_back("effects/item get 1.wav");
+	soundIds.push_back("effects/enemy hit.wav");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 

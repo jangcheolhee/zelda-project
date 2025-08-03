@@ -32,7 +32,7 @@ protected:
 	HitBox hitBox;
 	HitBox boundBox;
 
-	int maxHp = 10;
+	int maxHp = 3;
 	int hp = 3;
 	float speed = 0.f;
 	bool isHitThisFrame = false;

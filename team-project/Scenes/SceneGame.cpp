@@ -523,6 +523,7 @@ void SceneGame::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 	soundIds.push_back("effects/grass destroyed.wav");
+	soundIds.push_back("effects/message.wav");
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	FONT_MGR.Load("fonts/Neo.ttf");
