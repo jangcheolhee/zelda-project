@@ -753,7 +753,7 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	}
 
 }
-// 각 Scene에서는 생성하지 않고 세터만!
+
 void SceneHidden::SetPlayer(Player* p) { player = p; }
 void SceneHidden::SetHUD(HUD* h) { hud = h; }
 void SceneHidden::SetInventoryUI(InventoryUI* inv) { inventoryUI = inv; }

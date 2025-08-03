@@ -27,23 +27,23 @@ void SceneGame::InitZones()
 
 	mapZones.push_back({
 		//zone1 origin
-		sf::FloatRect(0, 260, 511, 499), //zone 1_confirm
+		sf::FloatRect(0, 260, 511, 499), 
 		1,
 		[this]()
-		  {
-			  std::cout << "Zone 1 Enter" << std::endl;
-
-		  },
+		{
+			std::cout << "Zone 1 Enter" << std::endl;
+		},
 		[this]()
-		  {
-			  std::cout << "Zone 1 Exit" << std::endl;
-			  DeleteInteractables();
-		  },
+		{
+			std::cout << "Zone 1 Exit" << std::endl;
+			DeleteInteractables(); 
+		},
 		false
 		});
+
 	// Zone 2 origin_left1
 	mapZones.push_back({
-		sf::FloatRect(-512, 260, 511,499),
+		sf::FloatRect(-512, 260, 511, 499),
 		2,
 		[this]()
 		{
@@ -55,6 +55,7 @@ void SceneGame::InitZones()
 		},
 		false
 		});
+
 	// Zone 3 origin_up1
 	mapZones.push_back({
 		sf::FloatRect(0, -240, 511, 499),
@@ -87,50 +88,41 @@ void SceneGame::InitZones()
 
 void SceneGame::UpdateZones()
 {
-	sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
-	for (auto& zone : mapZones)
-	{
-		bool nowInZone = zone.bounds.contains(playerPos);
-		if (nowInZone && !zone.entered)
-		{
-			zone.entered = true;
-			zoneID = zone.zoneId;
+    sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
+    for (auto& zone : mapZones)
+    {
+        bool nowInZone = zone.bounds.contains(playerPos);
+        if (nowInZone && !zone.entered)
+        {
+            zone.entered = true;
+            zoneID = zone.zoneId;
 
-			if (zone.onEnter)
-			{
-				zone.entered = true;
-				zoneID = zone.zoneId;
-				changeZone = true;
-				zone.onEnter();
-				DeleteInteractables();
-				SpawnInteractableObject(zone.bounds);
-				if (flowers.empty())
-				{
-					SpawnFlowers(zone.bounds);
-				}
-				SpawnSquareHitBox();
-			}
-		}
-		else if (!nowInZone && zone.entered)
-		{
-			zone.entered = false;
-			if (zone.onExit)
-			{
-				zone.onExit();
-				DeleteInteractables();
-			
-			}
-
-			for (auto flower : flowers)
-			{
-				if (flower != nullptr)
-				{
-					flower->SetActive(false);
-				}
-			}
-		}
-	}
+            if (zone.onEnter)
+            {
+                zone.entered = true;
+                zoneID = zone.zoneId;
+                changeZone = true;
+                zone.onEnter();
+                DeleteInteractables();
+                SpawnInteractableObject(zone.bounds);
+                if (flowers.empty())
+                {
+                    SpawnFlowers(zone.bounds);
+                }
+                SpawnSquareHitBox();
+            }
+        }
+        else if (!nowInZone && zone.entered)
+        {
+            zone.entered = false;
+            if (zone.onExit)
+            {
+                zone.onExit();
+            }
+        }
+    }
 }
+
 void SceneGame::UpdateBehaviorZone(float dt)
 {
 	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, mapZones[zoneID - 1].bounds.left + worldView.getSize().x / 2, mapZones[zoneID - 1].bounds.left + mapZones[0].bounds.width - worldView.getSize().x / 2);

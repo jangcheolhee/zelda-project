@@ -84,8 +84,10 @@ public:
 	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();
+	void ResetZones();
 	void UpdateBehaviorZone(float dt);
 	void DeleteInteractables();
+	void ForceUpdateZones();
 	
 	void SpawnFlowers(sf::FloatRect zone);
 	void FlowerBreath(float dt);
