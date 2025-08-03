@@ -20,52 +20,44 @@ SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 void SceneCastle::InitZones()
 {
 	castleZones.clear();
-
 	castleZones.push_back({
-		sf::FloatRect(-400, -230, 515, 464),
+		sf::FloatRect(-400, -230, 615, 464),
 		1,
 		[this]()
 		  {
 			  std::cout << "Zone 1 Enter" << std::endl;
-			  DeleteZoneSpecificObjects();
-			  SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		  },
 		[this]()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
-			  DeleteZoneSpecificObjects();
 		  },
 		false
 		});
+
 	castleZones.push_back({
-		sf::FloatRect(188, -230, 242, 464),
+		sf::FloatRect(188, -230, 442, 464),
 		2,
 		[this]()
 		{
 			std::cout << "Zone 2 Enter" << std::endl;
-			DeleteZoneSpecificObjects();
-			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		},
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
-			DeleteZoneSpecificObjects();
 		},
 		false
 		});
+
 	castleZones.push_back({
 		sf::FloatRect(-584, -230, 363, 464),
 		3,
 		[this]()
 		{
 			std::cout << "Zone 3 Enter" << std::endl;
-			DeleteZoneSpecificObjects();
-			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		},
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
-			DeleteZoneSpecificObjects();
 		},
 		false
 		});
@@ -76,17 +68,27 @@ void SceneCastle::UpdateZones()
 	if (!player || castleZones.empty()) return;
 
 	sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
+
 	for (auto& zone : castleZones)
 	{
 		bool nowInZone = zone.bounds.contains(playerPos);
+
 		if (nowInZone && !zone.entered)
 		{
 			zone.entered = true;
+			int oldZoneID = zoneID;
 			zoneID = zone.zoneId;
+
+			if (oldZoneID != zoneID)
+			{
+				changeZone = true;
+			}
 
 			if (zone.onEnter)
 			{
-				changeZone = true;
+				DeleteHitboxes();
+				DeleteInteractables();
+
 				zone.onEnter();
 				SpawnSquareHitBox();
 				SpawnFloorCovers();
@@ -98,8 +100,6 @@ void SceneCastle::UpdateZones()
 			if (zone.onExit)
 			{
 				zone.onExit();
-				DeleteHitboxes();
-				DeleteInteractables();
 			}
 		}
 	}
@@ -115,10 +115,12 @@ void SceneCastle::UpdateBehaviorZone(float dt)
 
 	if (changeZone)
 	{
-		worldView.setCenter(Utils::Lerp(worldView.getCenter(), { x,y }, dt * 2));
-		if (Utils::Distance(worldView.getCenter(), { x,y }) > 1 && Utils::Distance(worldView.getCenter(), { x,y }) < 5)
+		worldView.setCenter(Utils::Lerp(worldView.getCenter(), { x, y }, dt * 2));
+		float distance = Utils::Distance(worldView.getCenter(), { x, y });
+		if (distance < 10.0f) 
 		{
 			changeZone = false;
+			worldView.setCenter({ x, y }); 
 		}
 	}
 	else
@@ -162,6 +164,12 @@ void SceneCastle::CheckCollison()
 
 void SceneCastle::SpawnSquareHitBox()
 {
+	if (!collisions.empty())
+	{
+		DeleteHitboxes();
+		DeleteInteractables();
+	}
+
 	HitboxGenerator::SpawnSquareHitBox(
 		tileMapCastle,
 		collisions,
@@ -184,16 +192,23 @@ void SceneCastle::SpawnSquareHitBox()
 			inter = pool.front();
 			pool.pop_front();
 		}
-		else inter = (Interactable*)AddGameObject(new JumpWall());
-		inter->Init();
-		if (dynamic_cast<JumpWall*>(inter))
+		else
 		{
-			dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+			inter = (Interactable*)AddGameObject(new JumpWall());
 		}
-		inter->Reset();
-		inter->SetActive(true);
-		inter->SetPosition({ wallX,wallY });
-		interactList.push_back(inter);
+
+		if (inter)
+		{
+			inter->Init();
+			if (dynamic_cast<JumpWall*>(inter))
+			{
+				dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+			}
+			inter->Reset();
+			inter->SetActive(true);
+			inter->SetPosition({ wallX, wallY });
+			interactList.push_back(inter);
+		}
 	}
 }
 
@@ -244,7 +259,6 @@ void SceneCastle::SpawnFloorCovers()
 
 		LeftBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
 		LeftBridge->GetSprite().setTextureRect({ 88, 88, 49, 64 });
-
 		LeftBridge->SetActive(!isSecondFloor);
 		LeftBridge->SetOrigin(Origins::TL);
 		LeftBridge->SetPosition(LeftBridgePos);
@@ -261,7 +275,6 @@ void SceneCastle::SpawnFloorCovers()
 
 		RightBridge->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
 		RightBridge->GetSprite().setTextureRect({ 928, 120, 64, 152 });
-
 		RightBridge->SetActive(!isSecondFloor);
 		RightBridge->SetOrigin(Origins::TL);
 		RightBridge->SetPosition(RightBridgePos);
@@ -274,21 +287,87 @@ void SceneCastle::DeleteHitboxes()
 	collisions.clear();
 }
 
+void SceneCastle::AddBridgeCollisions()
+{
+	if (!LeftBridge || !RightBridge) return;
+	sf::Vector2f leftBridgePos = LeftBridge->GetPosition();
+	sf::FloatRect leftBridgeBounds = LeftBridge->GetSprite().getGlobalBounds();
+	CreateBridgeHitbox(leftBridgePos.x, leftBridgePos.y - 2, leftBridgeBounds.width, 4, "LeftBridge_Top");
+	CreateBridgeHitbox(leftBridgePos.x, leftBridgePos.y + leftBridgeBounds.height - 2, leftBridgeBounds.width, 4, "LeftBridge_Bottom");
+
+	sf::Vector2f rightBridgePos = RightBridge->GetPosition();
+	sf::FloatRect rightBridgeBounds = RightBridge->GetSprite().getGlobalBounds();
+
+	CreateBridgeHitbox(rightBridgePos.x - 2, rightBridgePos.y, 4, rightBridgeBounds.height, "RightBridge_Left");
+	CreateBridgeHitbox(rightBridgePos.x + rightBridgeBounds.width - 2, rightBridgePos.y, 4, rightBridgeBounds.height, "RightBridge_Right");
+}
+
+void SceneCastle::RemoveBridgeCollisions()
+{
+	auto it = interactList.begin();
+	while (it != interactList.end())
+	{
+		std::string name = (*it)->GetName();
+		if (name.find("Bridge") != std::string::npos)
+		{
+			(*it)->SetActive(false);
+			interactPool[(*it)->GetType()].push_back(*it);
+			it = interactList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void SceneCastle::CreateBridgeHitbox(float x, float y, float width, float height, const std::string& name)
+{
+	Interactable* inter = nullptr;
+	auto& pool = interactPool[Interactable::Type::JumpWall];
+	if (!pool.empty())
+	{
+		inter = pool.front();
+		pool.pop_front();
+	}
+	else
+	{
+		inter = (Interactable*)AddGameObject(new JumpWall());
+	}
+
+	if (inter)
+	{
+		inter->Init();
+		inter->SetName(name); 
+		if (dynamic_cast<JumpWall*>(inter))
+		{
+			dynamic_cast<JumpWall*>(inter)->SetBounds(x, y, width, height);
+		}
+		inter->Reset();
+		inter->SetActive(true);
+		inter->SetPosition({ x, y });
+		interactList.push_back(inter);
+	}
+}
+
 void SceneCastle::DeleteInteractables()
 {
-	// interactList 정리 (JumpWall 포함)
 	for (Interactable* inter : interactList)
 	{
-		inter->SetActive(false);
-		interactPool[inter->GetType()].push_back(inter);
+		if (inter)
+		{
+			inter->SetActive(false);
+			interactPool[inter->GetType()].push_back(inter);
+		}
 	}
 	interactList.clear();
-
-	// interactables 정리 (기존 코드 유지)
 	auto it = interactables.begin();
 	while (it != interactables.end())
 	{
-		RemoveGameObject(*it);
+		if (*it)
+		{
+			RemoveGameObject(*it);
+		}
 		it = interactables.erase(it);
 	}
 	interactables.clear();
@@ -428,12 +507,17 @@ void SceneCastle::Init()
 
 void SceneCastle::Enter()
 {
+	DeleteInteractables();
+	DeleteHitboxes();
+	DeleteZoneSpecificObjects();
+
 	player->Reset();
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
 	uiView.setCenter(center);
 	worldView.setSize({ size.x * .5f, size.y * .5f });
+
 	if (inventoryUI)
 	{
 		inventoryUI->SetActive(false);
@@ -443,7 +527,7 @@ void SceneCastle::Enter()
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
-	player->SetPosition({ startPos.x,startPos.y - 30.f });
+	player->SetPosition({ startPos.x, startPos.y - 30.f });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
@@ -452,6 +536,8 @@ void SceneCastle::Enter()
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 
 	SpawnSquareHitBox();
+
+	SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 
 	zoneID = 0;
 	for (auto& zone : castleZones)
@@ -479,6 +565,8 @@ void SceneCastle::Update(float dt)
 	UpdateZones();
 	UpdateBehaviorZone(dt);
 
+	bool wasSecondFloor = isSecondFloor;
+
 	for (const auto& fB : firstBounds)
 	{
 		if (fB.contains(player->GetGlobalBounds().getPosition()))
@@ -495,6 +583,14 @@ void SceneCastle::Update(float dt)
 			isSecondFloor = 1;
 			if (LeftBridge) LeftBridge->SetActive(0);
 			if (RightBridge) RightBridge->SetActive(0);
+		}
+	}
+	if (wasSecondFloor != isSecondFloor)
+	{
+		RemoveBridgeCollisions();
+		if (isSecondFloor && LeftBridge && RightBridge)
+		{
+			AddBridgeCollisions();
 		}
 	}
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))

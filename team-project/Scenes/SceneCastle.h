@@ -93,6 +93,10 @@ public:
 	void CheckCollison();
 	void SpawnSquareHitBox();
 	void DeleteHitboxes();
+
+	void CreateBridgeHitbox(float x, float y, float width, float height, const std::string& name = "");
+	void AddBridgeCollisions();
+	void RemoveBridgeCollisions();
 	//Scene
 	void Exit() override;
 	void Init() override;
