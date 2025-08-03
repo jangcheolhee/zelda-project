@@ -15,7 +15,7 @@ Npc::Npc(const std::string& name)
     conversation = nullptr;
     dialogText = nullptr;
     npcId = nextNpcId++;
-    dialogueIndex = 0; 
+    dialogueIndex = 0;
     InitDialogues();
 }
 
@@ -99,8 +99,8 @@ Direction Npc::GetDirectionToPlayer()
 void Npc::DaddySprite()
 {
     body.setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
-    body.setTextureRect({ 218, 102, 28, 29 }); 
-    SetOrigin(Origins::MC); 
+    body.setTextureRect({ 218, 102, 28, 29 });
+    SetOrigin(Origins::MC);
     SetScale({ 1, 1 });
 }
 
@@ -177,8 +177,8 @@ void Npc::HandleBasicNpcInteraction()
 void Npc::HandleDadInteraction()
 {
     if (!player) return;
-   
-  
+
+
     sf::FloatRect rect = player->GetGlobalBounds();
     rect.left -= 2.f;
     rect.top -= 2.f;
@@ -225,7 +225,7 @@ void Npc::HandleDadInteraction()
             }
             if (dialogText)
                 dialogText->SetString(L"검을 네게 맡기마...링크");
-                sayCount = 1;
+            sayCount = 1;
         }
         // 2. "젤다공주를 부탁한다"
         else if (sayCount == 1 && InputMgr::GetKeyDown(sf::Keyboard::N))
@@ -251,16 +251,15 @@ void Npc::HandleDadInteraction()
                 {
                     std::cout << "sword_get.png 로드 실패!" << std::endl;
                 }
+                swordGetImg->Init();
+                swordGetImg->SetOrigin(Origins::MC);
 
-                player->SetActive(false);
-                
                 sf::Vector2f playerPos = player->GetPosition();
-                float offsetY = -18.f; // 위로 32픽셀 (음수면 위, 양수면 아래)
-                swordGetImg->SetPosition(sf::Vector2f(playerPos.x, playerPos.y + offsetY));
+                swordGetImg->SetPosition(playerPos);
             }
             swordGetAfterPrincess = true;
-            swordAfterTimer = 2.0f;
-            sayCount = 99; // 특별한 값으로 잠시 동결!
+            swordAfterTimer = 5.0f;
+            sayCount = 99; 
         }
         // 4. 검 연출 후 → "잘 가"
         else if (sayCount == 3 && InputMgr::GetKeyDown(sf::Keyboard::N))
@@ -358,7 +357,7 @@ void Npc::Update(float dt)
         if (swordAfterTimer <= 0.f)
         {
             swordGetAfterPrincess = false;
-            //showSwordGet = false;
+            showSwordGet = false;
 
             if (swordGetImg)
             {
@@ -370,7 +369,6 @@ void Npc::Update(float dt)
             if (dialogText)
             {
                 dialogText->SetString(L"잘 가");
-                player->SetActive(true);
             }
         }
         // 애니메이션 중에는 다른 업데이트 스킵
@@ -384,7 +382,6 @@ void Npc::Update(float dt)
         }
         return;
     }
-
     if (player != nullptr && npcType != Type::Dad)
     {
         Direction newDirection = GetDirectionToPlayer();
@@ -393,9 +390,9 @@ void Npc::Update(float dt)
             currentDirection = newDirection;
             DirectionSprite(currentDirection);
         }
-       
+
     }
-    
+
 
     OnInteract();
 
@@ -410,13 +407,6 @@ void Npc::Draw(sf::RenderWindow& window)
     Interactable::Draw(window);
     sf::View originalView = window.getView();
     window.setView(talkUi);
-    if (player->isNpcTalk == 1 && conversation != nullptr)
-    {
-        // window.setView(talkUi);
-        conversation->Draw(window);
-        if (dialogText != nullptr) dialogText->Draw(window);
-    }
-    window.setView(originalView);
 
     if (showSwordGet && swordGetImg != nullptr)
     {
@@ -441,5 +431,11 @@ void Npc::Draw(sf::RenderWindow& window)
         window.setView(originalView);
         return;
     }
-    
+    if (player->isNpcTalk == 1 && conversation != nullptr)
+    {
+        // window.setView(talkUi);
+        conversation->Draw(window);
+        if (dialogText != nullptr) dialogText->Draw(window);
+    }
+    window.setView(originalView);
 }

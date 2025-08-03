@@ -11,7 +11,6 @@ struct CastleZone
 {
 	sf::FloatRect bounds;
 	int zoneId;
-	// 占쌩곤옙 占쏙옙占쏙옙
 	std::function<void()> onEnter;
 	std::function<void()> onExit;
 	bool entered = false;
@@ -77,8 +76,11 @@ public:
 	std::list<Enemy*> GetEnemy() { return enemyList; }
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy();
+	void DeleteEnemies();
+	void DeleteZoneEnemies();
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
+
 	//zone
 	void InitZones();
 	void UpdateZones();

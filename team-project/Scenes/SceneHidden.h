@@ -41,14 +41,17 @@ protected:
 	std::unordered_map<Interactable::Type, std::list<Interactable*>> interactPool;
 	std::list<Interactable*>interactList;
 	std::vector<Interactable*> interactables;
+	std::vector<GameObject*> zoneObjects;
 
 	//zone
+	sf::FloatRect mapBounds;
 	std::vector<HiddenZone> hiddenZones;
 	int zoneID = 1;
 
 	//pos
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
+	bool endPosActive;
 
 	//hitbox_collision
 	std::vector<HitBox> collisions;
@@ -58,10 +61,6 @@ protected:
 	float wallWithdh = 0;
 	float wallHeight = 0;
 	bool squareToggle = false;
-
-	//SpriteGo* dad;
-	//bool dadSay = 0;
-	//int sayCount = 0;
 
 	HUD* hud = nullptr;
 	InventoryUI* inventoryUI = nullptr;
@@ -74,6 +73,7 @@ public:
 	void RecycleEnemy(Enemy* enemy);
 	void DeleteEnemy();
 	void DeleteEnemies();
+	void DeleteZoneEnemies();
 	void SpawnEnemy(sf::Vector2f pos, Enemy::Types type);
 	void SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type);
 
