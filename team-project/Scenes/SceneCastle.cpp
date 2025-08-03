@@ -7,6 +7,7 @@
 #include "BasicEnemy.h"
 #include "Enemy.h"
 #include "HUD.h"
+
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 {
 	texIds.push_back("graphics/HUD.png");
@@ -26,12 +27,13 @@ void SceneCastle::InitZones()
 		[this]()
 		  {
 			  std::cout << "Zone 1 Enter" << std::endl;
+			  DeleteZoneSpecificObjects();
 			  SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		  },
 		[this]()
 		  {
 			  std::cout << "Zone 1 Exit" << std::endl;
-			  DeleteEnemy();
+			  DeleteZoneSpecificObjects();
 		  },
 		false
 		});
@@ -41,12 +43,13 @@ void SceneCastle::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 2 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
 			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		},
 		[this]()
 		{
 			std::cout << "Zone 2 Exit" << std::endl;
-			DeleteEnemy();
+			DeleteZoneSpecificObjects();
 		},
 		false
 		});
@@ -56,12 +59,13 @@ void SceneCastle::InitZones()
 		[this]()
 		{
 			std::cout << "Zone 3 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
 			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
 		},
 		[this]()
 		{
 			std::cout << "Zone 3 Exit" << std::endl;
-			DeleteEnemy();
+			DeleteZoneSpecificObjects();
 		},
 		false
 		});
@@ -82,9 +86,6 @@ void SceneCastle::UpdateZones()
 
 			if (zone.onEnter)
 			{
-				zone.entered = true;
-				zoneID = zone.zoneId;
-
 				changeZone = true;
 				zone.onEnter();
 				SpawnSquareHitBox();
@@ -94,22 +95,29 @@ void SceneCastle::UpdateZones()
 		else if (!nowInZone && zone.entered)
 		{
 			zone.entered = false;
-			if (zone.onExit) zone.onExit();
-			DeleteInteractables();
+			if (zone.onExit)
+			{
+				zone.onExit();
+				DeleteHitboxes();
+				DeleteInteractables();
+			}
 		}
 	}
 }
 
+
 void SceneCastle::UpdateBehaviorZone(float dt)
 {
-	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, castleZones[zoneID - 1].bounds.left + worldView.getSize().x / 2, castleZones[zoneID - 1].bounds.left + castleZones[0].bounds.width - worldView.getSize().x / 2);
-	float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, castleZones[zoneID - 1].bounds.top + worldView.getSize().y / 2, castleZones[zoneID - 1].bounds.top + castleZones[0].bounds.height - worldView.getSize().y / 2);
+	if (zoneID < 1 || zoneID > castleZones.size()) return;
+
+	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, castleZones[zoneID - 1].bounds.left + worldView.getSize().x / 2, castleZones[zoneID - 1].bounds.left + castleZones[zoneID - 1].bounds.width - worldView.getSize().x / 2);
+	float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, castleZones[zoneID - 1].bounds.top + worldView.getSize().y / 2, castleZones[zoneID - 1].bounds.top + castleZones[zoneID - 1].bounds.height - worldView.getSize().y / 2);
+
 	if (changeZone)
 	{
 		worldView.setCenter(Utils::Lerp(worldView.getCenter(), { x,y }, dt * 2));
 		if (Utils::Distance(worldView.getCenter(), { x,y }) > 1 && Utils::Distance(worldView.getCenter(), { x,y }) < 5)
 		{
-			//std::cout << Utils::Distance(worldView.getCenter(), { x,y }) << std::endl;
 			changeZone = false;
 		}
 	}
@@ -131,6 +139,7 @@ void SceneCastle::CheckCollison()
 			{
 			case Interactable::Type::Throw:
 			case Interactable::Type::Chest:
+				player->CollideMoving(obj->GetHitBox());
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
 					obj->OnInteract();
@@ -143,7 +152,7 @@ void SceneCastle::CheckCollison()
 				break;
 
 			case Interactable::Type::JumpWall:
-				player->SetPosition(player->GetPos());
+				player->CollideMoving(obj->GetHitBox());
 				obj->OnInteract();
 				break;
 			}
@@ -191,7 +200,7 @@ void SceneCastle::SpawnSquareHitBox()
 void SceneCastle::SpawnFloorCovers()
 {
 	//floor 1 Door Path
-	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(2,8125);
+	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(2, 8125);
 	for (const auto& pos : positions)
 	{
 		auto floor1DoorPathCover = new SpriteGo();
@@ -260,8 +269,22 @@ void SceneCastle::SpawnFloorCovers()
 	}
 }
 
+void SceneCastle::DeleteHitboxes()
+{
+	collisions.clear();
+}
+
 void SceneCastle::DeleteInteractables()
 {
+	// interactList 정리 (JumpWall 포함)
+	for (Interactable* inter : interactList)
+	{
+		inter->SetActive(false);
+		interactPool[inter->GetType()].push_back(inter);
+	}
+	interactList.clear();
+
+	// interactables 정리 (기존 코드 유지)
 	auto it = interactables.begin();
 	while (it != interactables.end())
 	{
@@ -271,6 +294,14 @@ void SceneCastle::DeleteInteractables()
 	interactables.clear();
 }
 
+void SceneCastle::DeleteZoneSpecificObjects()
+{
+	for (Enemy* e : enemyList)
+	{
+		RecycleEnemy(e);
+	}
+	enemyList.clear();
+}
 void SceneCastle::RecycleEnemy(Enemy* enemy)
 {
 	if (enemy)
@@ -307,7 +338,7 @@ void SceneCastle::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 	enemy->Reset();
 	enemy->SetPosition(pos);
 	enemy->SetActive(true);
-
+	enemy->SetInitPosition(pos);
 	enemyList.push_back(enemy);
 }
 
@@ -329,10 +360,12 @@ void SceneCastle::DeleteEnemy()
 	enemyList.clear();
 }
 
+
+
 void SceneCastle::Init()
 {
 	texIds.push_back("graphics/Enemy_sheet.png");
-
+	texIds.push_back("graphics/Death.png");
 	soundIds.push_back("effects/link hurt.wav");
 	soundIds.push_back("effects/throw.wav");
 	soundIds.push_back("effects/rupee.wav");
@@ -340,7 +373,15 @@ void SceneCastle::Init()
 	soundIds.push_back("effects/enemy hit.wav");
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
+	soundIds.push_back("bgm/Castle.flac");
 	texIds.push_back("data/59984.png");
+
+
+	texIds.push_back("graphics/Items.png");
+
+	fontIds.push_back("fonts/DS-DIGIT.ttf");
+	soundIds.push_back("bgm/Select.flac");
+
 
 	player = new Player("Player");
 	tileMapCastle = new TileMap("TileMapCastle", "data/castleInner.tmj");
@@ -349,6 +390,7 @@ void SceneCastle::Init()
 	hud = new HUD("HUD");
 	hud->Init();
 	AddGameObject(hud);
+
 
 	if (FindGameObject("InventoryUI") == nullptr)
 	{
@@ -376,10 +418,10 @@ void SceneCastle::Init()
 	}
 	isSecondFloor = 1;
 
-	endPos = tileMapCastle->getPosition(2, 8313);
+	endPos = sf::Vector2f(-70.7919f, -232.579f);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
-	
+
 
 	Scene::Init();
 }
@@ -394,25 +436,44 @@ void SceneCastle::Enter()
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	if (inventoryUI)
 	{
-		inventoryUI->SetActive(false); // 처음 진입 시 숨김 처리
-		inventoryUI->Reset();          // 필요 시 초기화 상태도 같이
+		inventoryUI->SetActive(false);
+		inventoryUI->Reset();
 	}
 
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
-	player->SetPosition({ startPos.x,startPos.y-30.f });
+	player->SetPosition({ startPos.x,startPos.y - 30.f });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	GAME_MGR.playerSpawnPosition = startPos;
 
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
+
+	SpawnSquareHitBox();
+
+	zoneID = 0;
+	for (auto& zone : castleZones)
+	{
+		zone.entered = false;
+	}
 }
 
 void SceneCastle::Update(float dt)
 {
 	Scene::Update(dt);
+
+	auto it = enemyList.begin();
+	while (it != enemyList.end())
+	{
+		if (!(*it)->GetActive())
+		{
+			RecycleEnemy(*it);
+			it = enemyList.erase(it);
+		}
+		else ++it;
+	}
 
 	CheckCollison();
 	UpdateZones();
@@ -471,14 +532,30 @@ void SceneCastle::Update(float dt)
 	}
 }
 
+void SceneCastle::Exit()
+{
+	DeleteInteractables();
+	DeleteHitboxes();
+
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->SetActive(false);
+		enemyPools[enemy->GetType()].push_back(enemy);
+	}
+	enemyList.clear();
+
+	for (auto& zone : castleZones)
+	{
+		zone.entered = false;
+	}
+	zoneID = 0;
+
+	Scene::Exit();
+}
+
 void SceneCastle::Draw(sf::RenderWindow& window)
 {
 	window.setView(worldView);
 	Scene::Draw(window);
 
-	for (auto& col : collisions)
-	{
-		col.Draw(window);
-	}
-	
 }

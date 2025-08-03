@@ -117,8 +117,9 @@ void SceneGame::UpdateZones()
 			if (zone.onExit)
 			{
 				zone.onExit();
+				DeleteInteractables();
+			
 			}
-			DeleteInteractables();
 
 			for (auto flower : flowers)
 			{
@@ -307,7 +308,7 @@ void SceneGame::CheckCollison()
 				obj->OnInteract(); // 아이템 제거
 				continue;
 			}
-			player->SetPosition(player->GetPos());
+			player->CollideMoving(obj->GetHitBox());
 			if (obj->GetType() == Interactable::Type::Chest || obj->GetType() == Interactable::Type::JumpWall)
 			{
 				obj->OnInteract();
@@ -449,12 +450,12 @@ void SceneGame::Init()
 	soundIds.push_back("effects/sword.wav");
 
 	//text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
-
-
+	
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	FONT_MGR.Load("fonts/Neo.ttf");
 	TEXTURE_MGR.Load("graphics/HUD.png");
+	
 	TEXTURE_MGR.Load("data/HiddenPathToGarden.png");
 	
 	hud = new HUD("HUD");
@@ -500,6 +501,8 @@ void SceneGame::Exit()
 			flower->SetActive(false);
 		}
 	}
+	DeleteInteractables();
+
 
 	Scene::Exit();
 }
@@ -549,10 +552,11 @@ void SceneGame::Update(float dt)
 		}
 		else ++it1;
 	}
-	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone(dt);
 	FlowerBreath(dt);
+
+	CheckCollison();
 
 	if (endHole.contains(player->GetGlobalBounds().getPosition()))
 	{

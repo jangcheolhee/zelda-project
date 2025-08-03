@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Enemy.h"
+#include "BasicEnemy.h"
 #include "SceneGame.h"
 #include "SceneHidden.h"
 #include "SceneBoss.h"
@@ -43,8 +44,6 @@ void Enemy::SetOrigin(Origins preset)
 	}
 }
 
-
-
 void Enemy::OnCollide(Direction direction)
 {
 	switch (direction)
@@ -66,20 +65,6 @@ void Enemy::OnCollide(Direction direction)
 
 
 
-
-
-void Enemy::OnDamage(int damage)
-{
-
-	hp = Utils::Clamp(hp - damage, 0, maxHp);
-
-	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/ennemy hit.wav"));
-	if (hp == 0)
-	{
-		DeathAnimation();
-	}
-}
-
 void Enemy::Init()
 {
 	// 히트박스를 작게 설정
@@ -87,17 +72,9 @@ void Enemy::Init()
 	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
 
-
-
-
 	sortingLayer = SortingLayers::Enemy;
 	sortingOrder = 3;
 	animator.SetTarget(&body);
-	SetOrigin(Origins::TL);
-	boundBox.rect.setSize({ 16,24 });
-	boundBox.SetOrigin(Origins::TL);
-	hitBox.rect.setSize({ 8,12 });
-	hitBox.SetOrigin(Origins::TL);
 
 	animator.AddEvent("Death", 6,
 		[this]()
@@ -127,10 +104,14 @@ void Enemy::Reset()
 
 	SetActive(true);
 	SetPosition(initPosition);
+	
 }
 
 void Enemy::Update(float dt)
 {
+	
+	timer += dt;
+
 	switch (SCENE_MGR.GetCurrentSceneId())
 	{
 	case SceneIds::Game:
@@ -146,14 +127,53 @@ void Enemy::Update(float dt)
 		interList = dynamic_cast<SceneBoss*>(SCENE_MGR.GetCurrentScene())->GetInteract();
 		break;
 	}
-	
+
+	// JumpWall과의 충돌 체크 (움직이기 전에)
+	bool canMove = true;
 	for (auto& obj : interList)
 	{
-
-		if (Utils::CheckCollision(obj->GetHitBox().rect, GetBoundBox().rect))
+		if (obj->GetType() == Interactable::Type::JumpWall)
 		{
-			//enemy->SetPosition(enemy->GetPos());
+			// 다음 위치에서 충돌하는지 미리 체크
+			sf::Vector2f nextPosition = GetPosition() + velocity * dt;
+			sf::RectangleShape nextBounds = GetBoundBox().rect;
+			nextBounds.setPosition(nextPosition);
 
+			if (Utils::CheckCollision(obj->GetHitBox().rect, nextBounds))
+			{
+				canMove = false;
+				// BasicEnemy의 경우 방향 바꾸기
+				if (auto basicEnemy = dynamic_cast<BasicEnemy*>(this))
+				{
+					// 현재 방향의 반대 방향으로 설정
+					switch (direction)
+					{
+					case Direction::Up:
+						direction = Direction::Down;
+						break;
+					case Direction::Down:
+						direction = Direction::Up;
+						break;
+					case Direction::Left:
+						direction = Direction::Right;
+						break;
+					case Direction::Right:
+						direction = Direction::Left;
+						break;
+					}
+					basicEnemy->ChangeSprite();
+				}
+				break;
+			}
+		}
+	}
+
+	// 다른 오브젝트들과의 기존 충돌 처리
+	for (auto& obj : interList)
+	{
+		if (obj->GetType() != Interactable::Type::JumpWall &&
+			Utils::CheckCollision(obj->GetHitBox().rect, GetBoundBox().rect))
+		{
 			sf::FloatRect objRect = obj->GetHitBox().rect.getGlobalBounds();
 			sf::FloatRect enemyRect = GetBoundBox().rect.getGlobalBounds();
 
@@ -174,44 +194,35 @@ void Enemy::Update(float dt)
 
 			if (overlapX < overlapY)
 			{
-
 				if (dx < 0)
 				{
-					//왼쪽
 					OnCollide(Direction::Left);
 				}
-
 				else
 				{
 					OnCollide(Direction::Right);
-					//오른쪽
 				}
 				if (dy < 0)
 				{
-					//왼쪽
 					OnCollide(Direction::Up);
 				}
-
 				else
 				{
 					OnCollide(Direction::Down);
-					//오른쪽
 				}
-
-
 			}
 		}
 	}
+
 	animator.Update(dt);
 	LastHit += dt;
 	// 매 프레임마다 피격 가능 상태로 초기화
 	isHitThisFrame = false;
 
-	if (!player->IsAttacking() && player->checkCollision(hitBox))
+	if (!player->IsAttacking() && player->checkCollision(hitBox) && !isDie)
 	{
 		player->TakeDamageIfPossible(1);
 	}
-
 
 	hitBox.rect.setScale(GetScale());
 	hitBox.rect.setPosition(GetPosition() + sf::Vector2f{ 4 * GetScale().x,6 * GetScale().y });
@@ -237,11 +248,27 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 
 }
 
-
-
 void Enemy::DeathAnimation()
 {
-	SetPosition(pastPosition);
+	hitBox.rect.setSize({ 0,0 });
+	SetPosition(previousPosition);
 	animator.Play("animations/EnemyDeath.csv");
 }
 
+void Enemy::OnDamage(int damage)
+{
+	
+	if (timer > 1)
+	{
+		hp = Utils::Clamp(hp - damage, 0, maxHp);
+
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/enemy hit.wav"));
+		if (hp == 0)
+		{
+			isDie = true;
+			DeathAnimation();
+		}
+		timer = 0;
+	}
+	
+}

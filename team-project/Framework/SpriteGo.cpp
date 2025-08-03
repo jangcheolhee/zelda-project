@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SpriteGo.h"
 
 SpriteGo::SpriteGo(const std::string& texPlayerId, const std::string& name)
@@ -39,6 +39,11 @@ void SpriteGo::SetOrigin(Origins preset)
 		origin = Utils::SetOrigin(sprite, originPreset);
 	}
 
+}
+
+const sf::Texture* SpriteGo::GetTexture() const
+{
+	return sprite.getTexture();
 }
 
 void SpriteGo::Init()

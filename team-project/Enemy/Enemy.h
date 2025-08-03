@@ -12,9 +12,11 @@ public:
 	enum class Types
 	{
 		Basic,
+		Boss,
 		Count,
 	};
 protected:
+	bool isDie = false;
 	float hitCooldown = 0.5f;     // 피격 간 최소 시간 (초)
 	float LastHit = 0.f; // 마지막 피격 이후 시간
 
@@ -42,13 +44,13 @@ protected:
 	int attackInterval = 0.f;
 	sf::Vector2f dir = { 0.f, 0.f };
 	Direction direction = Direction::Down;
-	sf::Vector2f pastPosition;
-
+	sf::Vector2f previousPosition;
+	float timer = 0.f;
 public:
 	Enemy(const std::string& name = "");
 	~Enemy() = default;
 
-	sf::Vector2f GetPos() { return pastPosition; }
+	sf::Vector2f GetPos() { return previousPosition; }
 	Types GetType() { return type; }
 	void SetInitPosition(sf::Vector2f pos) { initPosition = pos; }
 	void SetPosition(const sf::Vector2f& pos) override;
@@ -68,7 +70,6 @@ public:
 		return body.getGlobalBounds();
 	}
 	
-	virtual void OnCollide(Direction direction);
 
 	int GetDamage() { return damage; }
 
@@ -80,8 +81,9 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
-	
+	void OnCollide(Direction direction);
 	virtual void OnCollideBySword();
+
 
 	void DeathAnimation();
 	virtual HitBox GetHitBox() { return hitBox; };

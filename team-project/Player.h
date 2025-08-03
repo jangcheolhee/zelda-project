@@ -32,7 +32,7 @@ protected:
 	float frameTime = 0.2f;   
 	size_t currentFrame = 0;
 	float elapsedTime = 0.f;
-	float speed = 50.f;        
+	float speed = 100.f;        
 	float attackFrameTime = 1.f / 20.f;
 
 
@@ -140,4 +140,5 @@ public:
 	GameObject* GetNearestInteractable() const { return currentInteractable; }
 	bool CanInteract() const { return currentInteractable != nullptr; }
 	bool isNpcTalk = 0;
+	void CollideMoving(HitBox hitBox);
 };

@@ -1,5 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
+#include "SpriteGo.h"
 
 class SpriteGo : public GameObject
 {
@@ -22,6 +23,7 @@ public:
 	void SetScale(const sf::Vector2f& s) override;
 	void SetOrigin(const sf::Vector2f& o) override;
 	void SetOrigin(Origins preset) override;
+	const sf::Texture* GetTexture()const;
 
 	void Init() override;
 	void Release() override;

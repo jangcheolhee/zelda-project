@@ -1,10 +1,6 @@
 #pragma once
 #include "Enemy.h"
-enum class moveType
-{
-	Random,
-	Patrol,
-};
+
 enum class EnemyState
 {
 	None = -1,

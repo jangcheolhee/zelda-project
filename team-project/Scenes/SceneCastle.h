@@ -83,16 +83,19 @@ public:
 	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);
+	void DeleteZoneSpecificObjects();
 	//interact
 	std::list<Interactable*> GetInteract() { return interactList; }
 	void DeleteInteractables();
 	//hitbox
 	void CheckCollison();
 	void SpawnSquareHitBox();
+	void DeleteHitboxes();
 	//Scene
+	void Exit() override;
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
+	
 	void Draw(sf::RenderWindow& window) override;
-
 };

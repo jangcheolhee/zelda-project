@@ -39,8 +39,7 @@ void Bush::Init()
 
 		}
 	);
-	hitBox.rect.setSize({ 10,10 });
-	hitBox.SetOrigin(Origins::MR);
+	
 
 }
 
@@ -56,7 +55,8 @@ void Bush::Reset()
 	lifeTime = 0.f;
 	state = BushState::OnGround;
 	isHit = false;
-
+	hitBox.rect.setSize({ 10,10 });
+	hitBox.SetOrigin(Origins::MR);
 }
 
 void Bush::Update(float dt)
@@ -92,7 +92,7 @@ void Bush::Update(float dt)
 		for (auto& enemy : enemyList)
 		{
 
-			if (Utils::CheckCollision(enemy->GetBoundBox().rect, boundBox.rect))
+			if (Utils::CheckCollision(enemy->GetHitBox().rect, boundBox.rect))
 			{
 				isHit = true;
 				enemy->OnDamage(1);
@@ -101,6 +101,7 @@ void Bush::Update(float dt)
 		}
 		if (lifeTime > 0.5 || isHit)
 		{
+			hitBox.rect.setSize({ 0,0 });
 			player->SetIsInteract(false);
 			state = BushState::Crush;
 			ChangeAnimation();

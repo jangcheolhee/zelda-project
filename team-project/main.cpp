@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include <filesystem>
 #include <iostream>
 #include <windows.h>

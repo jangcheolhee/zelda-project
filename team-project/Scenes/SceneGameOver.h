@@ -1,17 +1,17 @@
 #pragma once
 #include "Scene.h"
-class SaveSlotUI;
-
-class SceneSelect : public Scene
+#include "GameOverUI.h"
+class SceneGameOver :
+    public Scene
 {
 protected:
-	SaveSlotUI* saveSloatUI;
 
 public:
 
-	SceneSelect();
+	SceneGameOver();
 
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
 };
+

@@ -10,7 +10,7 @@ void BossEnemy::SetPosition(const sf::Vector2f& pos)
 {
 	GameObject::SetPosition(pos);
 	body.setPosition(pos);
-	shadow.setPosition(pos + sf::Vector2f{0,24});
+	shadow.setPosition(pos + sf::Vector2f{ 0,24 });
 }
 
 void BossEnemy::SetRotation(float rot)
@@ -57,6 +57,7 @@ void BossEnemy::Init()
 	sortingLayer = SortingLayers::Enemy;
 	sortingOrder = 3;
 
+
 	Utils::SetOrigin(body, Origins::MC);
 	Utils::SetOrigin(shadow, Origins::MC);
 }
@@ -69,7 +70,7 @@ void BossEnemy::Release()
 
 void BossEnemy::Reset()
 {
-	
+
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Boss.png"));
 	shadow.setTexture(TEXTURE_MGR.Get("graphics/Boss.png"));
@@ -81,6 +82,7 @@ void BossEnemy::Reset()
 
 void BossEnemy::Update(float dt)
 {
+	previousPosition = GetPosition();
 	animator.Update(dt);
 	hitTimer += dt;
 	switch (state)
@@ -91,8 +93,8 @@ void BossEnemy::Update(float dt)
 		timer += dt;
 		if (Utils::RandomRange(0, 2) == 0)
 		{
-			SetPosition({ GetPosition().x - 0.05f ,GetPosition().y});
-			
+			SetPosition({ GetPosition().x - 0.05f ,GetPosition().y });
+
 		}
 		else
 		{
@@ -102,7 +104,7 @@ void BossEnemy::Update(float dt)
 		{
 			state = BossState::Idle;
 			SetScale({ 1,1 });
-			
+
 			timer = 0;
 		}
 		break;
@@ -122,20 +124,31 @@ void BossEnemy::Update(float dt)
 		position += velocity * dt;
 		SetPosition(position);
 		SetPosition(GetPosition() + direction * dt * 50.f);
-		
-		if (velocity.y >150)
+
+		if (velocity.y > 150)
 		{
 			timer = 0;
 		}
-		
+
 		break;
 	case BossState::Jump:
+		if (onHit)
+		{
+			body.setColor(Utils::RandomColor());
+			if (hitTimer > 1)
+			{
+				onHit = false;
+
+				body.setColor(sf::Color(0xffffffff));
+
+			}
+		}
 		if (timer == 0)
 		{
 			velocity.y = -151;
-			
 		}
 		timer += dt;
+		hitTimer += dt;
 		direction = Utils::GetNormal(player->GetPosition() - GetPosition());
 		velocity += gravity * dt;
 		position += velocity * dt;
@@ -144,13 +157,83 @@ void BossEnemy::Update(float dt)
 
 		if (velocity.y > 150) timer = 0;
 		break;
+	case BossState::Skill1:
+
+		if (onHit)
+		{
+			body.setColor(Utils::RandomColor());
+			if (hitTimer > 1)
+			{
+				onHit = false;
+
+				body.setColor(sf::Color(0xffffffff));
+			}
+		}
+		if (timer == 0)
+		{
+			velocity.y = -151;
+		}
+		timer += dt;
+		hitTimer += dt;
+
+		if (page1)
+		{
+			direction = Utils::GetNormal(point1 - GetPosition());
+
+			if (Utils::Distance(point1, position) < 5)
+			{
+				page1 = false;
+			}
+		}
+		else
+		{
+			direction = sf::Vector2f(0, 1);
+		}
+
+		SetPosition(GetPosition() + direction * dt * 80.f);
+		if (Utils::Distance({ point1.x, -point1.y }, position) < 20)
+		{
+			page1 = true;
+		}
+		if (velocity.y > 150) timer = 0;
+		break;
+	case BossState::Berserk:
+		body.setColor(sf::Color::Red);
+
+		if (timer == 0)
+		{
+			velocity.y = -151;
+		}
+		timer += dt;
+		hitTimer += dt;
+
+		SetPosition(GetPosition() + direction * dt * 150.f);
+
+		if (velocity.y > 150) timer = 0;
+
 	}
 	hitBox.UpdateTransform(body, GetLocalBounds());
+	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
+
+
+
+	Enemy::Update(dt);
+
+	for (auto& obj : interList)
+	{
+		if (Utils::CheckCollision(shadowBox.rect, obj->GetHitBox().rect))
+		{
+			CheckCollide(obj->GetHitBox());
+
+		}
+	}
+
+
 }
 
 void BossEnemy::Draw(sf::RenderWindow& window)
 {
-	
+
 	window.draw(shadow);
 	window.draw(body);
 	hitBox.Draw(window);
@@ -160,20 +243,64 @@ void BossEnemy::OnDamage(int damage)
 {
 	if (hitTimer > 1)
 	{
+
 		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss hit.wav"));
 		hp -= damage;
-		OnHit = true;
+		onHit = true;
 		if (hp <= 0)
 		{
+
+			isDie = true;
+			hitBox.rect.setSize({ 0,0 });
+
+			body.setColor(sf::Color(0xffffffff));
+			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/boss dies.wav"));
 			Change();
 		}
 		hitTimer = 0;
 	}
-	
+
 }
 
 void BossEnemy::Change()
 {
+
 	animator.Play("animations/bossDie.csv");
+}
+
+void BossEnemy::CheckCollide(HitBox box)
+{
+	sf::Vector2f newPosition = GetPosition();
+
+
+	newPosition.x = previousPosition.x;
+	SetPosition({ newPosition.x, newPosition.y });
+	shadowBox.SetPosition(GetPosition());
+
+	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
+		newPosition.x = previousPosition.x;
+	}
+
+
+	newPosition.y = previousPosition.y;
+	SetPosition({ newPosition.x, newPosition.y });
+	shadowBox.SetPosition(GetPosition());
+
+	if (Utils::CheckCollision(shadowBox.rect, box.rect)) {
+		newPosition.y = previousPosition.y;
+	}
+
+
+	SetPosition(newPosition);
+	shadowBox.SetPosition(newPosition);
+	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
+
+	if (state == BossState::Berserk)
+	{
+		direction = sf::Vector2f(
+			Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1.f : 1.f),
+			Utils::RandomValue() * (Utils::RandomRange(0, 2) % 2 == 0 ? -1.f : 1.f)
+		);
+	}
 }
 
