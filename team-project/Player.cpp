@@ -17,7 +17,7 @@ Player::Player(const std::string& name)
 
 void Player::OnCollide(Enemy* enemy)
 {
-	if (!isInvincible)
+	/*if (!isInvincible)
 	{
 		hp = std::max(hp - 1, 0);
 
@@ -25,7 +25,7 @@ void Player::OnCollide(Enemy* enemy)
 
 		isInvincible = true;
 		invincibleTime = 1.f;
-	}
+	}*/
 	// 칼 히트박스가 활성화되어 있고,
 		// 현재 적의 바운딩박스와 충돌한다면
 	

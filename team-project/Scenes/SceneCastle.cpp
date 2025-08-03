@@ -534,10 +534,10 @@ void SceneCastle::Enter()
 	hud->SetRupee(GAME_MGR.playerRupee);
 	hud->SetHeartCount(GAME_MGR.playerHp);
 	//minju
-	player->SetPosition({ startPos.x, startPos.y - 30.f });
+	/*player->SetPosition({ startPos.x, startPos.y - 30.f });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = startPos;
+	GAME_MGR.playerSpawnPosition = startPos;*/
 
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
