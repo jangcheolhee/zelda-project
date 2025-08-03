@@ -14,6 +14,7 @@
 #include "HitboxGenerator.h"
 #include "HUD.h"
 #include "InventoryUI.h"
+#include "SceneBoss.h"
 
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
@@ -24,6 +25,7 @@ SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 	key = nullptr;  
 	hasKey = false;
 
+	
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/inventory.png");
@@ -31,9 +33,6 @@ SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 	fontIds.push_back("fonts/Neo.ttf");
 }
 
-void SceneHidden::SetPlayer(Player* p) {
-	player = p;
-}
 
 void SceneHidden::InitZones()
 {
@@ -509,13 +508,7 @@ void SceneHidden::Init()
 
 	Scene::Init();
 
-	player = new Player("Player");
-	if (player)
-	{
-		player->Init();
-		TEXTURE_MGR.Load("graphics/Link.png");
-		AddGameObject(player);
-	}
+	
 
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	if (tileMapHidden)
@@ -525,14 +518,25 @@ void SceneHidden::Init()
 		mapBounds = tileMapHidden->GetGlobalBounds();
 	}
 
-	hud = new HUD("HUD");
+	//hud = new HUD("HUD");
 	if (hud)
 	{
 		hud->Init();
-		AddGameObject(hud);
+		//AddGameObject(hud);
+		hud->SetRupee(GAME_MGR.playerRupee);
+		hud->SetHeartCount(player->GetHp());
 	}
 
-	if (FindGameObject("InventoryUI") == nullptr)
+	//player = new Player("Player");
+	//if (player)
+	//{
+	//	/*player->Init();
+	//	TEXTURE_MGR.Load("graphics/Link.png");
+	//	AddGameObject(player);
+	//	player->SetHUD(hud);*/
+	//	player->SetRupee(GAME_MGR.playerRupee);
+	//}
+	/*if (FindGameObject("InventoryUI") == nullptr)
 	{
 		inventoryUI = new InventoryUI("InventoryUI");
 		if (inventoryUI)
@@ -540,8 +544,29 @@ void SceneHidden::Init()
 			inventoryUI->Init();
 			AddGameObject(inventoryUI);
 		}
-	}
+	}*/
 
+	player = GAME_MGR.player;
+	hud = GAME_MGR.hud;
+	inventoryUI = GAME_MGR.inventoryUI;
+
+	// 무조건 Init()!
+	if (player) {
+		player->Init();
+		player->SetRupee(GAME_MGR.playerRupee);
+	}
+	if (hud) hud->SetRupee(GAME_MGR.playerRupee);
+
+
+	// 이 객체들을 Scene에 등록 (중복 Add 막기!)
+	if (player && !FindGameObject("Player"))
+		AddGameObject(player);
+	if (hud && !FindGameObject("HUD"))
+		AddGameObject(hud);
+	if (inventoryUI && !FindGameObject("InventoryUI"))
+		AddGameObject(inventoryUI);
+	player->SetRupee(GAME_MGR.playerRupee);
+	hud->SetRupee(GAME_MGR.playerRupee);
 	InitZones();
 
 	if (tileMapHidden)
@@ -560,9 +585,16 @@ void SceneHidden::Enter()
 	DeleteEnemies();
 	DeleteZoneSpecificObjects();
 	DeleteHitboxes();
-
+	player = GAME_MGR.player;
+	hud = GAME_MGR.hud;
+	if (player && hud) {
+		player->SetHUD(hud);
+	}
+	hud->SetHeartCount(player->GetHp());
 	if (player)
 	{
+		player->Init(); 
+		player->SetRupee(GAME_MGR.playerRupee);
 		player->Reset();
 	}
 
@@ -572,12 +604,20 @@ void SceneHidden::Enter()
 	uiView.setCenter(center);
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 
+	if (player) player->SetRupee(GAME_MGR.playerRupee);
+	if (hud) hud->SetRupee(GAME_MGR.playerRupee);
+
 	if (inventoryUI)
 	{
 		inventoryUI->SetActive(false);
 		inventoryUI->Reset();
 	}
-
+	if(hud) 
+	{
+		hud->Init(); 
+		hud->SetRupee(GAME_MGR.playerRupee);
+		hud->SetHeartCount(player ? player->GetHp() : GAME_MGR.playerHp);
+	}
 	Scene::Enter();
 	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Cave.flac"));
 
@@ -605,6 +645,7 @@ void SceneHidden::Enter()
 	{
 		zone.entered = false;
 	}
+	
 }
 void SceneHidden::Update(float dt)
 {
@@ -692,8 +733,8 @@ void SceneHidden::Exit()
 		zone.entered = false;
 	}
 	zoneID = 0;
-
 	Scene::Exit();
+	GAME_MGR.playerRupee = player->GetRupee();//루피 기록
 }
 
 void SceneHidden::Draw(sf::RenderWindow& window)
@@ -710,4 +751,9 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	{
 		inventoryUI->Draw(window);
 	}
+
 }
+// 각 Scene에서는 생성하지 않고 세터만!
+void SceneHidden::SetPlayer(Player* p) { player = p; }
+void SceneHidden::SetHUD(HUD* h) { hud = h; }
+void SceneHidden::SetInventoryUI(InventoryUI* inv) { inventoryUI = inv; }

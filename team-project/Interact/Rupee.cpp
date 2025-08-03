@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Rupee.h"
 #include "Player.h"
 void Rupee::Init()
@@ -21,6 +21,7 @@ void Rupee::OnInteract()
 	if (GetActive())
 	{
 		player->AddRupee(value);
+		GAME_MGR.playerRupee = player->GetRupee();
 		SetActive(false);
 	}
 }

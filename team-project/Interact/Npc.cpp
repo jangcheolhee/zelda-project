@@ -258,15 +258,16 @@ void Npc::HandleDadInteraction()
                 {
                     std::cout << "sword_get.png 로드 실패!" << std::endl;
                 }
-                swordGetImg->Init();
-                swordGetImg->SetOrigin(Origins::MC);
+
+                player->SetActive(false);
 
                 sf::Vector2f playerPos = player->GetPosition();
-                swordGetImg->SetPosition(playerPos);
+                float offsetY = -18.f; // 위로 32픽셀 (음수면 위, 양수면 아래)
+                swordGetImg->SetPosition(sf::Vector2f(playerPos.x, playerPos.y + offsetY));
             }
             swordGetAfterPrincess = true;
-            swordAfterTimer = 5.0f;
-            sayCount = 99; 
+            swordAfterTimer = 2.0f;
+            sayCount = 99; // 특별한 값으로 잠시 동결!
         }
         // 4. 검 연출 후 → "잘 가"
         else if (sayCount == 3 && InputMgr::GetKeyDown(sf::Keyboard::N))
@@ -365,7 +366,7 @@ void Npc::Update(float dt)
         if (swordAfterTimer <= 0.f)
         {
             swordGetAfterPrincess = false;
-            showSwordGet = false;
+            //showSwordGet = false;
 
             if (swordGetImg)
             {
@@ -377,6 +378,7 @@ void Npc::Update(float dt)
             if (dialogText)
             {
                 dialogText->SetString(L"잘 가");
+                player->SetActive(true);
             }
         }
         // 애니메이션 중에는 다른 업데이트 스킵
@@ -390,6 +392,7 @@ void Npc::Update(float dt)
         }
         return;
     }
+
     if (player != nullptr && npcType != Type::Dad)
     {
         Direction newDirection = GetDirectionToPlayer();
@@ -415,6 +418,13 @@ void Npc::Draw(sf::RenderWindow& window)
     Interactable::Draw(window);
     sf::View originalView = window.getView();
     window.setView(talkUi);
+    if (player->isNpcTalk == 1 && conversation != nullptr)
+    {
+        // window.setView(talkUi);
+        conversation->Draw(window);
+        if (dialogText != nullptr) dialogText->Draw(window);
+    }
+    window.setView(originalView);
 
     if (showSwordGet && swordGetImg != nullptr)
     {
@@ -439,11 +449,5 @@ void Npc::Draw(sf::RenderWindow& window)
         window.setView(originalView);
         return;
     }
-    if (player->isNpcTalk == 1 && conversation != nullptr)
-    {
-        // window.setView(talkUi);
-        conversation->Draw(window);
-        if (dialogText != nullptr) dialogText->Draw(window);
-    }
-    window.setView(originalView);
+
 }

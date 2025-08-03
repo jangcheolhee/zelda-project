@@ -462,12 +462,12 @@ void SceneCastle::Init()
 	soundIds.push_back("bgm/Select.flac");
 
 
-	player = new Player("Player");
+	player = GAME_MGR.player;
 	tileMapCastle = new TileMap("TileMapCastle", "data/castleInner.tmj");
 	tileMapCastle->Init();
 
-	hud = new HUD("HUD");
-	hud->Init();
+	hud = GAME_MGR.hud;
+	
 	AddGameObject(hud);
 
 
@@ -527,6 +527,13 @@ void SceneCastle::Enter()
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
+	//chaebin
+	player->SetPosition({ startPos.x,startPos.y - 30.f });
+	player->SetRupee(GAME_MGR.playerRupee);
+	player->Heal(0);   // 내부적으로 HUD와 sync
+	hud->SetRupee(GAME_MGR.playerRupee);
+	hud->SetHeartCount(GAME_MGR.playerHp);
+	//minju
 	player->SetPosition({ startPos.x, startPos.y - 30.f });
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();

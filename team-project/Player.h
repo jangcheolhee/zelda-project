@@ -4,6 +4,8 @@
 #include "Defines.h"
 #include "Enemy.h"
 #include "SceneGame.h"
+#include "GameMgr.h"
+#include "HUD.h"
 class SceneGame;
 
 enum class PlayerState
@@ -21,8 +23,10 @@ protected:
 	std::list<GameObject*> gameObjects;
 	SceneGame* sceneGame = nullptr;
 	PlayerState playerState = PlayerState::Idle;
-	
+
+	bool godMode = false;
 	int rupee = 0;
+	int rupeeCount = 0;
 	sf::Texture* swordTexture = nullptr;
 	std::vector<sf::IntRect> attackFrames;
 	float attackElapsed = 0.f;
@@ -99,7 +103,9 @@ public:
 	// 충돌 체크 함수-----------
 	void OnCollide(Enemy* enemy);
 	bool WantsToInteract(){ return wantsToInteract; }
-	void AddRupee(int i) { rupee += i; }
+	void AddRupee(int amount);
+    void SetRupee(int value) { rupeeCount = value; }
+	int GetRupee() const { return rupeeCount; }
 	//--------------
 
 	void SetPosition(const sf::Vector2f& pos) override;

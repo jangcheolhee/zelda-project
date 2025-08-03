@@ -1,11 +1,16 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "GameMgr.h"
 
 void GameMgr::Release()
 {
 
 }
-
+void GameMgr::InitializeGameObjects() 
+{
+	if (!player) player = new Player("Player");
+	if (!hud) hud = new HUD("HUD");
+	if (!inventoryUI) inventoryUI = new InventoryUI("InventoryUI");
+}
 bool GameMgr::CheckSlot(int index)
 {
 	
@@ -88,6 +93,7 @@ std::string GameMgr::GetSlotFileName(int index) const
 
 void GameMgr::Init()
 {
+	GAME_MGR.InitializeGameObjects();
 }
 void GameMgr::Update(float dt)
 {

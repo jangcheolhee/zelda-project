@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 #include "HUD.h"
+#include "GameObject.h"
+
 HUD::HUD(const std::string& name)
 	: GameObject(name)
 {
@@ -40,7 +42,12 @@ void HUD::SetOrigin(Origins preset)
 
 void HUD::Init()
 {
-	
+	GameObject::Init();
+	hp = 6;                 // 기본 하트 3개
+	maxHp = hp;
+	heartCount = hp;
+	rupeeCount = 0;
+
 	sortingLayer = SortingLayers::UI;
 	sortingOrder = 5;
 	body.setTexture(TEXTURE_MGR.Get("graphics/HUD.png"));
@@ -54,7 +61,7 @@ void HUD::Init()
 	heartSprites.clear();
 
 
-	for (int i = 0; i < maxHp / 2; ++i)
+	for (int i = 0; i < hp / 2; ++i)
 	{
 		sf::Sprite sprite;
 		sprite.setScale(0.9f, 0.9f);
@@ -87,6 +94,9 @@ void HUD::Update(float dt)
 
 void HUD::Draw(sf::RenderWindow& window)
 {
+	GameObject::Draw(window);
+	
+	
 	window.draw(hudSprite);
 	window.draw(body);
 	window.draw(rupeeText);  // 루피 텍스트 같이 그리기
@@ -104,6 +114,12 @@ void HUD::Draw(sf::RenderWindow& window)
 	}
 }
 
+void HUD::SetRupee(int count)
+{
+	rupeeCount = count;
+	rupeeText.setString("0 0 " + std::to_string(rupeeCount));
+}
+
 void HUD::AddRupee(int amount)
 {
 	rupeeCount += amount;
@@ -115,6 +131,29 @@ void HUD::AddRupee(int amount)
 void HUD::AddHeart(int amount)
 {
 	SetHeartCount(hp + amount);
+}
+
+void HUD::SetHeartCount(int currentHp)
+{
+	hp = currentHp;
+	int fullHearts = currentHp / 2;
+	bool hasHalfHeart = currentHp % 2 == 1;
+
+	for (int i = 0; i < heartSprites.size(); ++i)
+	{
+		if (i < fullHearts)
+		{
+			heartSprites[i].setTexture(TEXTURE_MGR.Get("graphics/Heart.png"));
+		}
+		else if (i == fullHearts && hasHalfHeart)
+		{
+			//heartSprites[i].setTexture(TEXTURE_MGR.Get("graphics/Heart_half.png")); // 반 하트 이미지가 있다면
+		}
+		else
+		{
+			heartSprites[i].setTexture(TEXTURE_MGR.Get("graphics/Heart_empty.png"));
+		}
+	}
 }
 
 void HUD::UpdateHeartSprites()

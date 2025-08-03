@@ -25,7 +25,12 @@ void Scene::Release()
 	ApplyPendingChanges();
 	
 	for (auto obj : gameObjects)
-	{
+	{ // 전역 매니저가 소유하는 객체는 delete 하지 않음
+		if (obj == GAME_MGR.player ||
+			obj == GAME_MGR.hud ||
+			obj == GAME_MGR.inventoryUI)
+			continue;
+
 		obj->Release();
 		delete obj;
 	}

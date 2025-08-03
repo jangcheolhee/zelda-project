@@ -9,15 +9,22 @@ protected:
 	sf::Sprite hudSprite;
 	sf::Sprite body;
 	int rupeeCount = 0;
+	int heartCount = 0;
 	sf::Text rupeeText;
 	sf::Sprite statusUI;
 	InventoryUI inventoryUI;
 	bool showStatus = true;
 	int hp = 6;
 	int maxHp = 6;
-	
+	int rupee = 0;
+
+
+	sf::Vector2f heartStartPos = { 10.f, 10.f }; // 하트 그리기 시작 위치
+	float heartSpacing = 20.f; // 하트 간 간격
+
 	sf::Text heartText;
 	sf::Texture fullHeartTex;
+	
 	std::vector<sf::Sprite> heartSprites;
 	sf::RectangleShape background;
 	
@@ -32,6 +39,7 @@ public:
 	void SetOrigin(const sf::Vector2f& o) override;
 	void SetOrigin(Origins preset) override;
 
+	void SetHeartCount(int currentHp);
 	void Init() override;
 	void Release() override;
 	void Reset() override;
@@ -39,12 +47,9 @@ public:
 	void Draw(sf::RenderWindow& window) override;
 
 	void AddRupee(int amount);
+	void SetRupee(int value);
 	void AddHeart(int amount);
-	void SetHeartCount(int newHp)
-	{
-		hp = std::clamp(newHp, 0, maxHp);
-		UpdateHeartSprites();
-	}
+	
 	void UpdateHeartSprites();
 	void SetSize(const sf::Vector2f& size);
 	void ApplyBossStyle();
