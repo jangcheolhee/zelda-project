@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "GameObject.h"
 
 
@@ -8,5 +8,11 @@ GameObject::GameObject(const std::string& name)
 }
 
 GameObject::~GameObject()
+{
+}
+void GameObject::Init()
+{
+}
+void GameObject::Draw(sf::RenderWindow& window)
 {
 }

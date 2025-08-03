@@ -289,11 +289,8 @@ void SceneGame::CheckCollison()
 			if (rupee != nullptr)
 			{
 				obj->OnInteract();
-				HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD"));
-				if (hud != nullptr)
-				{
-					hud->AddRupee(1);
-				}
+				player->AddRupee(1);
+				GAME_MGR.playerRupee = player->GetRupee();
 				continue;
 			}
 			Heart* heart = dynamic_cast<Heart*>(obj);
@@ -459,8 +456,10 @@ void SceneGame::Init()
 	AddGameObject(hud);
 	player = new Player("Player");
 	player->SetSceneGame(this);
-	
 	player->SetHUD(hud);
+	player->SetRupee(GAME_MGR.playerRupee);
+	hud->SetRupee(GAME_MGR.playerRupee);
+
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
 	TEXTURE_MGR.Load("graphics/Heart.png");
@@ -493,7 +492,8 @@ void SceneGame::Exit()
 {
 	GAME_MGR.playerHp = player->GetHp();
 	GAME_MGR.playerSpawnPosition = sf::Vector2f{ 0,0 };
-
+	GAME_MGR.playerRupee = player->GetRupee(); // 현재 루피 저장
+	
 	for (auto flower : flowers)
 	{
 		if (flower != nullptr)
@@ -516,6 +516,7 @@ void SceneGame::Enter()
 	worldView.setSize({ size.x * .5f, size.y * .5f });
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
 	sf::Vector2f startPos = tileMapGame->getPosition(2, 18585);
+	
 	Scene::Enter();
 
 	SOUND_MGR.SetSfxVolume(100);
@@ -525,7 +526,8 @@ void SceneGame::Enter()
 	GAME_MGR.playerSpawnPosition = startPos;
 
 	player->SetPosition(startPos);
-
+	player->SetRupee(GAME_MGR.playerRupee);
+	hud->SetRupee(GAME_MGR.playerRupee);
 	for (auto flower : flowers)
 	{
 		if (flower != nullptr)

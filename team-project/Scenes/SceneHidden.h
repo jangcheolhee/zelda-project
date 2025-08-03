@@ -66,7 +66,7 @@ protected:
 	InventoryUI* inventoryUI = nullptr;
 public:
 	SceneHidden();
-	void SetPlayer(Player* p);
+	
 
 	//Enemy
 	std::list<Enemy*> GetEnemy() { return enemyList; }
@@ -97,4 +97,8 @@ public:
 	void Update(float dt) override;
 	void Exit() override;
 	void Draw(sf::RenderWindow& window) override;
+
+	void SetPlayer(Player* p);
+	void SetHUD(HUD* h);
+	void SetInventoryUI(InventoryUI* inv);
 };

@@ -6,6 +6,7 @@
 #include "SceneCastle.h"
 #include "SceneHidden.h"
 #include "SceneBoss.h"
+#include "GameMgr.h"
 
 
 Player::Player(const std::string& name)
@@ -16,6 +17,15 @@ Player::Player(const std::string& name)
 
 void Player::OnCollide(Enemy* enemy)
 {
+	if (!isInvincible)
+	{
+		hp = std::max(hp - 1, 0);
+
+		if (hud) hud->SetHeartCount(hp);
+
+		isInvincible = true;
+		invincibleTime = 1.f;
+	}
 	// 칼 히트박스가 활성화되어 있고,
 		// 현재 적의 바운딩박스와 충돌한다면
 	
@@ -27,6 +37,12 @@ void Player::OnCollide(Enemy* enemy)
 	}
 }
 
+void Player::AddRupee(int amount)
+{
+	rupeeCount += amount;
+	GAME_MGR.playerRupee = rupeeCount;   // 전역에도 저장
+	if (hud) hud->SetRupee(rupeeCount);
+}
 void Player::SetPosition(const sf::Vector2f& pos)
 {
 	GameObject::SetPosition(pos);
@@ -170,6 +186,7 @@ void Player::Release()
 void Player::Reset()
 {
 	hp = GAME_MGR.playerHp;
+	if (hud) hud->SetHeartCount(hp);
 	SetPosition(GAME_MGR.playerSpawnPosition);
 	wantsToInteract = false;
 	isInteract = false;
@@ -628,11 +645,15 @@ void Player::TakeDamageIfPossible(int damage)
 }
 void Player::OnDamage(int damage)
 {
-	//if (isInvincible) return;
+	// 보스 전용 씬이면 데미지 무시
+	if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Boss)
+		return;
 
 	hp = Utils::Clamp(hp - damage, 0, maxHp);
 	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/link hurt.wav"));
 	std::cout << "[Player] damage! " << damage << " ▶ HP: " << hp << "\n";
+	hp -= damage;
+	if (hp < 0) hp = 0;
 	if (hud != nullptr)
 	{
 		// 💡 하트 개수 = hp / 2 (2 체력 = 1 하트)

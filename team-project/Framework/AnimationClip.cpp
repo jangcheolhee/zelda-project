@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "AnimationClip.h"
 #include "rapidcsv.h"
 
@@ -34,34 +34,34 @@ std::vector<sf::IntRect> AnimationIO::loadFromCSV(const std::string& csvPath)
 
     std::string line;
     bool isFirstLine = true;
-    //std::getline(file, line); // Çì´õ ½ºÅµ
+    //std::getline(file, line); // í—¤ë” ìŠ¤í‚µ
 
     while (std::getline(file, line))
     {
         if (isFirstLine)
         {
-            // Ã¹ ÁÙÀº Çì´õÀÌ¹Ç·Î °Ç³Ê¶Ú´Ù
+            // ì²« ì¤„ì€ í—¤ë”ì´ë¯€ë¡œ ê±´ë„ˆë›´ë‹¤
             isFirstLine = false;
             continue;
         }
 
         std::stringstream ss(line);
-        std::string dir, frameStr;
-        int x, y, w, h;
-
-        // 6¿­ Áß ³× ¹øÂ°ºÎÅÍ ÀÐ¾î¿Â´Ù°í °¡Á¤
-        std::getline(ss, dir, ',');       // Direction
-        std::getline(ss, frameStr, ',');  // Frame
-        ss >> x; ss.ignore();             // X
-        ss >> y; ss.ignore();             // Y
-        ss >> w; ss.ignore();             // Width
-        ss >> h;                          // Height
-
+        std::string token;
+        std::vector<std::string> tokens;
+        while (std::getline(ss, token, ',')) {
+            tokens.push_back(token);
+        }
+        if (tokens.size() < 6) continue;
+        // X, Y, Width, Height = 3, 4, 5, 6ë²ˆì§¸
+        int x = std::stoi(tokens[2]);
+        int y = std::stoi(tokens[3]);
+        int w = std::stoi(tokens[4]);
+        int h = std::stoi(tokens[5]);
         frames.emplace_back(x, y, w, h);
     }
     
-    return frames;
     std::cerr
         << "[AnimationIO] Loaded " << frames.size()
         << " frames from " << csvPath << "\n";
+    return frames;
 }
