@@ -67,6 +67,6 @@ public:
 	void OnDamage(int damage) override;
 
 	void Change();
-	void CheckCollide(HitBox box) override;
+	void CheckCollide(HitBox box) ;
 
 };

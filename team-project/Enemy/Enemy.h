@@ -81,9 +81,9 @@ public:
 	void Reset() override;
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
-	
+	void OnCollide(Direction direction);
 	virtual void OnCollideBySword();
-	virtual void CheckCollide(HitBox box);
+
 
 	void DeathAnimation();
 	virtual HitBox GetHitBox() { return hitBox; };

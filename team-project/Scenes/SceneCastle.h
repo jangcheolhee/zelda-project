@@ -96,6 +96,6 @@ public:
 	void Init() override;
 	void Enter() override;
 	void Update(float dt) override;
-	void Exit() override;
+	
 	void Draw(sf::RenderWindow& window) override;
 };

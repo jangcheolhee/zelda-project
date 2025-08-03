@@ -63,17 +63,7 @@ void Enemy::OnCollide(Direction direction)
 	}
 }
 
-void Enemy::OnDamage(int damage)
-{
 
-	hp = Utils::Clamp(hp - damage, 0, maxHp);
-
-	SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/ennemy hit.wav"));
-	if (hp == 0)
-	{
-		DeathAnimation();
-	}
-}
 
 void Enemy::Init()
 {

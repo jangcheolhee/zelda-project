@@ -216,8 +216,8 @@ void BossEnemy::Update(float dt)
 	shadowBox.UpdateTransform(shadow, shadow.getLocalBounds());
 
 
-	
-		Enemy::Update(dt);	
+
+	Enemy::Update(dt);
 
 	for (auto& obj : interList)
 	{
@@ -272,7 +272,7 @@ void BossEnemy::CheckCollide(HitBox box)
 {
 	sf::Vector2f newPosition = GetPosition();
 
-	
+
 	newPosition.x = previousPosition.x;
 	SetPosition({ newPosition.x, newPosition.y });
 	shadowBox.SetPosition(GetPosition());

@@ -73,15 +73,7 @@ void BasicEnemy::Update(float dt)
 
 	hitBox.UpdateTransform(body, GetLocalBounds());
 	hitBox.rect.setSize({ 20,26 });
-	Enemy::Update(dt);
-	for (auto& obj : interList)
-	{
-		if (Utils::CheckCollision(hitBox.rect, obj->GetHitBox().rect))
-		{
-			CheckCollide(obj->GetHitBox());
-
-		}
-	}
+	
 
 }
 

@@ -200,7 +200,7 @@ void SceneCastle::SpawnSquareHitBox()
 void SceneCastle::SpawnFloorCovers()
 {
 	//floor 1 Door Path
-	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(2,8125);
+	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(2, 8125);
 	for (const auto& pos : positions)
 	{
 		auto floor1DoorPathCover = new SpriteGo();
@@ -360,12 +360,7 @@ void SceneCastle::DeleteEnemy()
 	enemyList.clear();
 }
 
-void SceneCastle::Exit()
-{
-	DeleteEnemy();
-	DeleteInteractables();
-	Scene::Exit();
-}
+
 
 void SceneCastle::Init()
 {
@@ -387,7 +382,7 @@ void SceneCastle::Init()
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	soundIds.push_back("bgm/Select.flac");
 
-	
+
 	player = new Player("Player");
 	tileMapCastle = new TileMap("TileMapCastle", "data/castleInner.tmj");
 	tileMapCastle->Init();
@@ -395,7 +390,7 @@ void SceneCastle::Init()
 	hud = new HUD("HUD");
 	hud->Init();
 	AddGameObject(hud);
-	
+
 
 	if (FindGameObject("InventoryUI") == nullptr)
 	{
@@ -426,7 +421,7 @@ void SceneCastle::Init()
 	endPos = sf::Vector2f(-70.7919f, -232.579f);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 
-	
+
 
 	Scene::Init();
 }
@@ -444,7 +439,7 @@ void SceneCastle::Enter()
 		inventoryUI->SetActive(false);
 		inventoryUI->Reset();
 	}
-	
+
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
@@ -562,5 +557,5 @@ void SceneCastle::Draw(sf::RenderWindow& window)
 {
 	window.setView(worldView);
 	Scene::Draw(window);
-	
+
 }
