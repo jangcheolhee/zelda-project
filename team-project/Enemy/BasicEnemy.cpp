@@ -27,52 +27,51 @@ void BasicEnemy::Reset()
 	maxHp = 5;
 	hp = maxHp;
 	moveTimer = 0;
-	isDie = false;
 }
 
 void BasicEnemy::Update(float dt)
 {
 	previousPosition = GetPosition();
-	
-	if (!isDie)
+	moveTimer += dt;
+
+	if (Utils::Distance(player->GetPosition() ,GetPosition()) < 80)
+	{
+		state = EnemyState::Chase;
+	}
+	else
+	{
+		state = EnemyState::Patrol;
+	}
+
+	if (state == EnemyState::Patrol)
 	{
 		moveTimer += dt;
 
-		if (Utils::Distance(player->GetPosition(), GetPosition()) < 80)
+		if (moveTimer > 3)
 		{
-			state = EnemyState::Chase;
+			direction = (Direction)Utils::RandomRange(0, 4);
+			ChangeSprite();
+			moveTimer = 0.f;
+			body.setColor(sf::Color (0xffffffff));
 		}
-		else
-		{
-			state = EnemyState::Patrol;
-		}
-
-		if (state == EnemyState::Patrol)
-		{
-			if (moveTimer > 3)
-			{
-				direction = (Direction)Utils::RandomRange(0, 4);
-				ChangeSprite();
-				moveTimer = 0.f;
-				body.setColor(sf::Color(0xffffffff));
-			}
-		}
-		else if (state == EnemyState::Chase)
-		{
-			dir = Utils::GetNormal(player->GetPosition() - GetPosition());
-			body.setColor(sf::Color(0x00ff00ff));
-			moveTimer = 0;
-		}
-
-		velocity = dir * speed;
-		
 	}
+	else if (state == EnemyState::Chase)
+	{
+		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+		moveTimer = 0;
+	}
+
+	velocity = dir * speed;
+
 	Enemy::Update(dt);
 
 	position += velocity * dt;
 	SetPosition(position);
-	boundBox.rect.setPosition(GetPosition());
+
+	hitBox.UpdateTransform(body, GetLocalBounds());
+	hitBox.rect.setSize({ 20,26 });
 	
+
 }
 
 void BasicEnemy::ChangeSprite()

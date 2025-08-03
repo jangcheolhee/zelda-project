@@ -493,7 +493,8 @@ void SceneHidden::Init()
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/conversation.png");
 	texIds.push_back("graphics/inventory.png");
-	texIds.push_back("graphics/Items.png"); 
+	texIds.push_back("graphics/Items.png");
+	texIds.push_back("graphics/Death.png");
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	fontIds.push_back("fonts/Neo.ttf");
@@ -505,12 +506,11 @@ void SceneHidden::Init()
 	soundIds.push_back("effects/message.wav");
 	soundIds.push_back("effects/item get 1.wav");
 	soundIds.push_back("effects/enemy hit.wav");
+
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 
 	Scene::Init();
-
-	
 
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
 	if (tileMapHidden)
@@ -520,55 +520,38 @@ void SceneHidden::Init()
 		mapBounds = tileMapHidden->GetGlobalBounds();
 	}
 
-	//hud = new HUD("HUD");
-	if (hud)
-	{
-		hud->Init();
-		//AddGameObject(hud);
-		hud->SetRupee(GAME_MGR.playerRupee);
-		hud->SetHeartCount(player->GetHp());
-	}
-
-	//player = new Player("Player");
-	//if (player)
-	//{
-	//	/*player->Init();
-	//	TEXTURE_MGR.Load("graphics/Link.png");
-	//	AddGameObject(player);
-	//	player->SetHUD(hud);*/
-	//	player->SetRupee(GAME_MGR.playerRupee);
-	//}
-	/*if (FindGameObject("InventoryUI") == nullptr)
-	{
-		inventoryUI = new InventoryUI("InventoryUI");
-		if (inventoryUI)
-		{
-			inventoryUI->Init();
-			AddGameObject(inventoryUI);
-		}
-	}*/
-
 	player = GAME_MGR.player;
 	hud = GAME_MGR.hud;
-	inventoryUI = GAME_MGR.inventoryUI;
 
-	// 무조건 Init()!
+	if (GAME_MGR.inventoryUI == nullptr)
+	{
+		inventoryUI = new InventoryUI("InventoryUI");
+		inventoryUI->Init();
+		GAME_MGR.inventoryUI = inventoryUI;
+	}
+	else
+	{
+		inventoryUI = GAME_MGR.inventoryUI;
+	}
+
 	if (player) {
 		player->Init();
 		player->SetRupee(GAME_MGR.playerRupee);
 	}
-	if (hud) hud->SetRupee(GAME_MGR.playerRupee);
+	if (hud) {
+		hud->SetRupee(GAME_MGR.playerRupee);
+	}
+	if (inventoryUI) {
+		inventoryUI->SetActive(false); 
+	}
 
-
-	// 이 객체들을 Scene에 등록 (중복 Add 막기!)
 	if (player && !FindGameObject("Player"))
 		AddGameObject(player);
 	if (hud && !FindGameObject("HUD"))
 		AddGameObject(hud);
 	if (inventoryUI && !FindGameObject("InventoryUI"))
 		AddGameObject(inventoryUI);
-	player->SetRupee(GAME_MGR.playerRupee);
-	hud->SetRupee(GAME_MGR.playerRupee);
+
 	InitZones();
 
 	if (tileMapHidden)
@@ -581,6 +564,7 @@ void SceneHidden::Init()
 	hasKey = false;
 	endPosActive = false;
 }
+
 
 void SceneHidden::Enter()
 {
@@ -741,15 +725,28 @@ void SceneHidden::Exit()
 
 void SceneHidden::Draw(sf::RenderWindow& window)
 {
-	window.setView(worldView); 
-	Scene::Draw(window);       
+	window.setView(worldView);
+	Scene::Draw(window);
 
-	window.setView(uiView);   
-	if (hud) hud->Draw(window);
-	if (inventoryUI && inventoryUI->GetActive())
-		inventoryUI->Draw(window); 
+	window.setView(window.getDefaultView());
+
+	sf::Vector2f winSize(window.getSize().x, window.getSize().y);
+	if (hud)
+	{
+		hud->SetSize(winSize);
+		hud->Draw(window);
+	}
+
+	if (inventoryUI)
+	{
+		if (inventoryUI->GetActive())
+		{
+			inventoryUI->Draw(window);
+		}
+	}
+
+	sf::View currentView = window.getView();
 }
-
 void SceneHidden::SetPlayer(Player* p) { player = p; }
 void SceneHidden::SetHUD(HUD* h) { hud = h; }
 void SceneHidden::SetInventoryUI(InventoryUI* inv) { inventoryUI = inv; }

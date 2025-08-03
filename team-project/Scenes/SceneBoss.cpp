@@ -28,16 +28,12 @@ void SceneBoss::SetPlayer(Player* p) {
 
 void SceneBoss::SpawnSquareHitBox()
 {
-	std::cout << "SpawnSquareHitBox() called" << std::endl;
-
 	HitboxGenerator::SpawnSquareHitBox(
 		tileMapBoss,
 		collisions,
 		collisionBox,
 		"Boss"
 	);
-
-	std::cout << "After SpawnSquareHitBox, collisions size: " << collisions.size() << std::endl;
 
 	for (const auto& hitbox : collisions)
 	{
@@ -159,9 +155,9 @@ void SceneBoss::Enter()
 	sf::Vector2f startPos = tileMapBoss->getPosition(1, 1086);
 	GAME_MGR.playerHp = player->GetMaxHp();
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = { -12, 85 };
+	//GAME_MGR.playerSpawnPosition = { -12, 100 };
 	GAME_MGR.Save();
-	player->SetPosition({ -12, 85 });
+	//player->SetPosition({ -12, 100 });
 	worldView.setCenter({ 0, 0 });
 	
 	Scene::Enter();

@@ -512,6 +512,7 @@ void SceneCastle::Enter()
 	DeleteZoneSpecificObjects();
 
 	player->Reset();
+	player->SetActive(true);
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
@@ -527,17 +528,11 @@ void SceneCastle::Enter()
 	Scene::Enter();
 
 	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
-	//chaebin
-	player->SetPosition({ startPos.x,startPos.y - 30.f });
+	player->SetPosition({ startPos.x,startPos.y-150.f });
 	player->SetRupee(GAME_MGR.playerRupee);
-	player->Heal(0);   // 내부적으로 HUD와 sync
+	player->Heal(0);   
 	hud->SetRupee(GAME_MGR.playerRupee);
 	hud->SetHeartCount(GAME_MGR.playerHp);
-	//minju
-	/*player->SetPosition({ startPos.x, startPos.y - 30.f });
-	GAME_MGR.playerHp = player->GetMaxHp();
-	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = startPos;*/
 
 	GAME_MGR.Save();
 	worldView.setCenter(player->GetGlobalBounds().getPosition());
