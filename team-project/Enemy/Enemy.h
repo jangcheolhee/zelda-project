@@ -46,6 +46,7 @@ protected:
 	Direction direction = Direction::Down;
 	sf::Vector2f previousPosition;
 	float timer = 0.f;
+	
 public:
 	Enemy(const std::string& name = "");
 	~Enemy() = default;

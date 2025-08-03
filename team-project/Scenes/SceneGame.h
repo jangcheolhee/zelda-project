@@ -81,7 +81,7 @@ public:
 	}
 
 	std::list<Interactable*> GetInteract(){return interactList;}
-
+	std::list<Enemy*> GetEnemy() { return enemyList; }
  	void InitZones();
 	void UpdateZones();
 	void UpdateBehaviorZone(float dt);

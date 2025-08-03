@@ -89,7 +89,7 @@ void SceneBoss::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 	soundIds.push_back("bgm/boss.flac");
-	soundIds.push_back("bgm/Ending.flac");
+	soundIds.push_back("bgm/Boss Clear.flac");
 	soundIds.push_back("effects/boss hit.wav");
 	soundIds.push_back("effects/boss dies.wav");
 	texIds.push_back("graphics/Boss.png");
@@ -208,7 +208,7 @@ void SceneBoss::Update(float dt)
 		{
 			ending = true;
 			SOUND_MGR.StopBgm();
-			SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Ending.flac"));
+			SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Boss Clear.flac"));
 			endingText->SetActive(true);
 		}
 

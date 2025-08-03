@@ -161,10 +161,12 @@ void SaveSlotUI::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Up))
 	{
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/cursor.wav"));
 		selectedIndex = selectedIndex - 1 < 0 ? 0 : selectedIndex - 1;
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Down))
 	{
+		SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/cursor.wav"));
 		selectedIndex = selectedIndex + 1 > 4 ? 4 : selectedIndex + 1;
 	}
 	body.setPosition(center.x - 150.f, center.y - 40.f + selectedIndex * slotSpacing);

@@ -11,10 +11,12 @@ enum class EnemyState
 class BasicEnemy :  public Enemy
 {
 protected:
+	
 	float moveTimer = 0.f;
 	EnemyState state = EnemyState::Patrol;
 
 public:
+	BasicEnemy(const std::string& name = "");
 	// Enemy을(를) 통해 상속됨
 	void Init() override;
 	void Reset() override;

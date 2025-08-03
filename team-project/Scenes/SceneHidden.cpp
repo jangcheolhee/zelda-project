@@ -223,6 +223,7 @@ void SceneHidden::CheckCollison()
 		float distance = sqrt(pow(playerPos.x - keyPosition.x, 2) + pow(playerPos.y - keyPosition.y, 2));
 		if (distance < 25.0f)
 		{
+			SOUND_MGR.PlaySfx(SOUNDBUFFER_MGR.Get("effects/key.wav"));
 			hasKey = true;
 			key->SetActive(false);
 			key->GetSprite().setColor(sf::Color::Transparent);
@@ -499,6 +500,7 @@ void SceneHidden::Init()
 	fontIds.push_back("fonts/DungGeunMo.ttf");
 
 	soundIds.push_back("bgm/Cave.flac");
+	soundIds.push_back("effects/key.wav");
 
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");

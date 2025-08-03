@@ -397,7 +397,7 @@ void Player::Update(float dt)
 		//------------------------------
 		if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Game)
 		{
-			
+			enemyList = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene())->GetEnemy();
 
 		}
 		else if (SCENE_MGR.GetCurrentSceneId() == SceneIds::Castle)

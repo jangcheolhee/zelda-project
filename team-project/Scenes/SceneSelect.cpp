@@ -14,7 +14,7 @@ void SceneSelect::Init()
 
 	fontIds.push_back("fonts/DS-DIGIT.ttf");
 	soundIds.push_back("bgm/Select.flac");
-	
+	soundIds.push_back("effects/cursor.wav");
 	saveSloatUI = (SaveSlotUI*)AddGameObject(new SaveSlotUI());
 
 	saveSloatUI->onSlotSelected = [](int slotIndex)
