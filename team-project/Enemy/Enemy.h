@@ -84,7 +84,6 @@ public:
 	void OnCollide(Direction direction);
 	virtual void OnCollideBySword();
 
-
 	void DeathAnimation();
 	virtual HitBox GetHitBox() { return hitBox; };
 	virtual HitBox GetBoundBox() { return boundBox; };

@@ -67,14 +67,18 @@ void Enemy::OnCollide(Direction direction)
 
 void Enemy::Init()
 {
-	// 히트박스를 작게 설정
 	sf::FloatRect bodyBounds = body.getLocalBounds();
-	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f); // 60% 크기
+	sf::Vector2f hitBoxSize(bodyBounds.width * 0.6f, bodyBounds.height * 0.6f);
 	sf::Vector2f hitBoxOffset((bodyBounds.width - hitBoxSize.x) / 2.f, (bodyBounds.height - hitBoxSize.y) / 2.f);
 
 	sortingLayer = SortingLayers::Enemy;
 	sortingOrder = 3;
 	animator.SetTarget(&body);
+	SetOrigin(Origins::TL);
+	boundBox.rect.setSize({ 16, 24 });
+	boundBox.SetOrigin(Origins::TL);
+	hitBox.rect.setSize({ 8, 12 }); 
+	hitBox.SetOrigin(Origins::TL);
 
 	animator.AddEvent("Death", 6,
 		[this]()

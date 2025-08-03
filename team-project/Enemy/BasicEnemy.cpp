@@ -12,8 +12,6 @@ void BasicEnemy::Init()
 
 void BasicEnemy::Reset()
 {
-
-	// 占쏙옙占썩서 sprite texture 占쏙옙占쏙옙占싹깍옙
 	Enemy::Reset();
 	body.setTexture(TEXTURE_MGR.Get("graphics/Enemy_sheet.png"));
 	direction = (Direction)Utils::RandomRange(0, 4);
@@ -31,7 +29,7 @@ void BasicEnemy::Update(float dt)
 	previousPosition = GetPosition();
 	moveTimer += dt;
 
-	if (Utils::Distance(player->GetPosition() ,GetPosition()) < 80)
+	if (Utils::Distance(player->GetPosition(), GetPosition()) < 80)
 	{
 		state = EnemyState::Chase;
 	}
@@ -42,14 +40,12 @@ void BasicEnemy::Update(float dt)
 
 	if (state == EnemyState::Patrol)
 	{
-		moveTimer += dt;
-
 		if (moveTimer > 3)
 		{
 			direction = (Direction)Utils::RandomRange(0, 4);
 			ChangeSprite();
 			moveTimer = 0.f;
-			body.setColor(sf::Color (0xffffffff));
+			body.setColor(sf::Color(0xffffffff));
 		}
 	}
 	else if (state == EnemyState::Chase)
@@ -59,20 +55,11 @@ void BasicEnemy::Update(float dt)
 	}
 
 	velocity = dir * speed;
-
-	// Enemy::Update()占쏙옙占쏙옙 canMove占쏙옙 확占쏙옙占쏙옙 占식울옙占쏙옙 占쏙옙치 占쏙옙占쏙옙占쏙옙트
-	// Enemy::Update() 호占쏙옙 占쏙옙占쏙옙 velocity占쏙옙 占쏙옙占쏙옙占쌔억옙 占쏙옙
 	Enemy::Update(dt);
 
-	// Enemy::Update()占쏙옙占쏙옙 占쏙옙 占썸돌占쏙옙 체크占쏙옙占쏙옙占실뤄옙, 
-	// 占쏙옙占썩서占쏙옙 velocity占쏙옙 占쏙옙占쏙옙占실억옙占쏙옙 占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占?
 	position += velocity * dt;
 	SetPosition(position);
-
-	hitBox.UpdateTransform(body, GetLocalBounds());
-	hitBox.rect.setSize({ 20,26 });
-	
-
+	boundBox.rect.setPosition(GetPosition());
 }
 
 void BasicEnemy::ChangeSprite()
