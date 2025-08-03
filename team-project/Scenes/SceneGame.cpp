@@ -12,8 +12,6 @@
 #include "HitboxGenerator.h"
 #include <istream>
 #include "InventoryUI.h"
-
-
 #include "TextGo.h"
 
 SceneGame::SceneGame()
@@ -139,7 +137,6 @@ void SceneGame::UpdateBehaviorZone(float dt)
 		worldView.setCenter(Utils::Lerp(worldView.getCenter(), { x,y }, dt * 2));
 		if (Utils::Distance(worldView.getCenter(), { x,y }) > 1 && Utils::Distance(worldView.getCenter(), { x,y }) < 5)
 		{
-			//std::cout << Utils::Distance(worldView.getCenter(), { x,y }) << std::endl;
 			changeZone = false;
 		}
 	}
@@ -147,11 +144,6 @@ void SceneGame::UpdateBehaviorZone(float dt)
 	{
 		worldView.setCenter({ x, y });
 	}
-	//switch (zoneID)
-	//{//player 기준
-	//case 1:
-	//break;
-	//}
 }
 
 void SceneGame::DeleteInteractables()
@@ -263,6 +255,13 @@ void SceneGame::CheckCollison()
 			{
 				if (player->WantsToInteract() && !player->IsInteract())
 				{
+					if (obj == holeBush)
+					{
+						holeBushInteracted = true;  
+						holeBushTimer = 0.0f;      
+						holeBush = nullptr;
+					}
+
 					int r = Utils::RandomRange(0, 4);
 					switch (r)
 					{
@@ -289,10 +288,10 @@ void SceneGame::CheckCollison()
 			if (rupee != nullptr)
 			{
 				obj->OnInteract();
-				HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD")); // 또는 멤버 변수로 접근 가능
+				HUD* hud = dynamic_cast<HUD*>(FindGameObject("HUD"));
 				if (hud != nullptr)
 				{
-					hud->AddRupee(1);  // 루피 1 증가
+					hud->AddRupee(1);
 				}
 				continue;
 			}
@@ -302,9 +301,9 @@ void SceneGame::CheckCollison()
 				obj->OnInteract();
 				if (player != nullptr)
 				{
-					player->Heal(1); // ❤️ Player가 체력 회복
+					player->Heal(1);
 				}
-				obj->OnInteract(); // 아이템 제거
+				obj->OnInteract();
 				continue;
 			}
 			player->SetPosition(player->GetPos());
@@ -313,7 +312,6 @@ void SceneGame::CheckCollison()
 				obj->OnInteract();
 			}
 		}
-
 	}
 }
 
@@ -353,14 +351,15 @@ void SceneGame::SpawnInteractableObject(sf::FloatRect zone)
 	sf::Vector2f holePops = tileMapGame->getPosition(1, 24590);
 	if ((holePops.x >= zone.left && holePops.x <= (zone.left + zone.width)) && (holePops.y >= zone.top && holePops.y <= zone.top + zone.height))
 	{
-		Interactable* bush = new Bush();       
+		Interactable* bush = new Bush();
 		bush->Init();
 		bush->Reset();
 		bush->SetActive(true);
 		bush->SetPosition(holePops);
-		bush->SetOrigin(Origins::TL);   
+		bush->SetOrigin(Origins::TL);
 		AddGameObject(bush);
 		interactList.push_back(bush);
+		holeBush = bush; 
 	}
 
 	//layer 2 : npc
@@ -448,9 +447,6 @@ void SceneGame::Init()
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
 
-	//text = (TextGo*)AddGameObject(new TextGo("fonts/Neo.ttf"));
-
-
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 	FONT_MGR.Load("fonts/Neo.ttf");
@@ -463,7 +459,6 @@ void SceneGame::Init()
 	player->SetSceneGame(this);
 	
 	player->SetHUD(hud);
-	// 3) 타일맵도 만들고 Init()
 	tileMapGame = new TileMap("TileMap", "data/originalMap.tmj");
 	tileMapGame->Init();
 	TEXTURE_MGR.Load("graphics/Heart.png");
@@ -480,6 +475,10 @@ void SceneGame::Init()
 
 	endPos = tileMapGame->getPosition(4, 24590);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
+	endPosActivated = false;  
+	holeBush = nullptr;
+	holeBushInteracted = false;
+	holeBushTimer = 0.0f;
 
 	flowerTimer = 0.f;
 	flowerBool = true;
@@ -500,7 +499,6 @@ void SceneGame::Exit()
 			flower->SetActive(false);
 		}
 	}
-
 	Scene::Exit();
 }
 
@@ -538,6 +536,7 @@ void SceneGame::Enter()
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
+
 	auto it1 = interactList.begin();
 	while (it1 != interactList.end())
 	{
@@ -549,12 +548,21 @@ void SceneGame::Update(float dt)
 		}
 		else ++it1;
 	}
+
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone(dt);
 	FlowerBreath(dt);
 
-	if (endHole.contains(player->GetGlobalBounds().getPosition()))
+	if (holeBushInteracted && !endPosActivated)
+	{
+		holeBushTimer += dt;
+		if (holeBushTimer >= holeBushDelay)
+		{
+			endPosActivated = true; 
+		}
+	}
+	if (endPosActivated && endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
 		std::cout << "Hidden" << std::endl;
 		SCENE_MGR.ChangeScene(SceneIds::Hidden);
@@ -592,13 +600,12 @@ void SceneGame::Draw(sf::RenderWindow& window)
 	sf::Vector2f winSize(window.getSize().x, window.getSize().y);
 	hud->SetSize(winSize);
 	hud->Draw(window);
-	// 💡 UI는 기본 뷰로 바꿔서 그리기
 	if (inventoryUI->IsActive())
 	{
 		inventoryUI->Draw(window);
 	}
 	sf::View prev = window.getView();
-	window.setView(prev); // 원래 뷰로 복구
+	window.setView(prev); 
 	Scene::Draw(window);
 }
 

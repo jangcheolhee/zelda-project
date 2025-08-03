@@ -12,12 +12,16 @@
 #include <istream>
 #include "SceneCastle.h"
 #include "HitboxGenerator.h"
+#include "HUD.h"
+#include "InventoryUI.h"
 
 SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 {
 	player = nullptr;
-	//dad = nullptr;
 	tileMapHidden = nullptr;
+	hud = nullptr;
+	inventoryUI = nullptr;
+
 	texIds.push_back("graphics/HUD.png");
 	texIds.push_back("data/HiddenPathToGarden.png");
 	texIds.push_back("graphics/inventory.png");
@@ -25,7 +29,6 @@ SceneHidden::SceneHidden() :Scene(SceneIds::Hidden)
 }
 
 void SceneHidden::SetPlayer(Player* p) {
-
 	player = p;
 }
 
@@ -33,44 +36,71 @@ void SceneHidden::InitZones()
 {
 	hiddenZones.clear();
 
-	// 화면 크기 기반으로 Zone 계산 (worldView가 50% 크기이므로) - 원래 설정 복원
 	auto size = FRAMEWORK.GetWindowSizeF();
-	float halfWidth = size.x * 0.25f;   // worldView 절반 너비
-	float halfHeight = size.y * 0.25f;  // worldView 절반 높이
+	float halfWidth = size.x * 0.25f;
+	float halfHeight = size.y * 0.25f;
 
-	// Zone 1: 왼쪽 아래 (y 좌표 수정)
+	// Zone 1: 왼쪽 아래
 	hiddenZones.push_back({
 		sf::FloatRect(-halfWidth, 0, halfWidth * 2, halfHeight * 2),
 		1,
-		[this]() { std::cout << "Zone 1 Enter (Left Bottom)" << std::endl; },
-		[this]() { std::cout << "Zone 1 Exit" << std::endl; },
+		[this]() {
+			std::cout << "Zone 1 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
+			SpawnHiddenObject();
+		},
+		[this]() {
+			std::cout << "Zone 1 Exit" << std::endl;
+			DeleteZoneSpecificObjects();
+		},
 		false
 		});
 
-	// Zone 2: 왼쪽 위 (y 좌표 수정)
+	// Zone 2: 왼쪽 위
 	hiddenZones.push_back({
-		sf::FloatRect(-halfWidth, -halfHeight * 2, halfWidth * 2, halfHeight * 2),
+		sf::FloatRect(-halfWidth, -halfHeight * 2, halfWidth * 2, halfHeight * 1.8f), 
 		2,
-		[this]() { std::cout << "Zone 2 Enter (Left Top)" << std::endl; },
-		[this]() { std::cout << "Zone 2 Exit" << std::endl; },
+		[this]() {
+			std::cout << "Zone 2 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
+			SpawnHiddenObject();
+		},
+		[this]() {
+			std::cout << "Zone 2 Exit" << std::endl;
+			DeleteZoneSpecificObjects();
+		},
 		false
 		});
 
-	// Zone 3: 오른쪽 아래 (y 좌표 수정)
+	// Zone 3: 오른쪽 아래
 	hiddenZones.push_back({
 		sf::FloatRect(0, 0, halfWidth * 2, halfHeight * 2),
 		3,
-		[this]() { std::cout << "Zone 3 Enter (Right Bottom)" << std::endl; },
-		[this]() { std::cout << "Zone 3 Exit" << std::endl; },
+		[this]() {
+			std::cout << "Zone 3 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
+			SpawnHiddenObject();
+		},
+		[this]() {
+			std::cout << "Zone 3 Exit" << std::endl;
+			DeleteZoneSpecificObjects();
+		},
 		false
 		});
 
-	// Zone 4: 오른쪽 위 (y 좌표 수정)
+	// Zone 4: 오른쪽 위
 	hiddenZones.push_back({
 		sf::FloatRect(0, -halfHeight * 2, halfWidth * 2, halfHeight * 2),
 		4,
-		[this]() { std::cout << "Zone 4 Enter (Right Top)" << std::endl; },
-		[this]() { std::cout << "Zone 4 Exit" << std::endl; },
+		[this]() {
+			std::cout << "Zone 4 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
+			SpawnHiddenObject();
+		},
+		[this]() {
+			std::cout << "Zone 4 Exit" << std::endl;
+			DeleteZoneSpecificObjects();
+		},
 		false
 		});
 }
@@ -90,10 +120,8 @@ void SceneHidden::UpdateZones()
 			if (zone.onEnter)
 			{
 				zone.onEnter();
-				// Zone 변경 시에는 NPC와 특별한 오브젝트만 재생성
-				DeleteZoneSpecificObjects();
-				SpawnHiddenObject();
 			}
+			std::cout << "Entered Zone " << zone.zoneId << std::endl;
 		}
 		else if (!nowInZone && zone.entered)
 		{
@@ -101,9 +129,8 @@ void SceneHidden::UpdateZones()
 			if (zone.onExit)
 			{
 				zone.onExit();
-				// Zone을 벗어날 때 Zone별 오브젝트만 정리
-				DeleteZoneSpecificObjects();
 			}
+			std::cout << "Exited Zone " << zone.zoneId << std::endl;
 		}
 	}
 }
@@ -113,35 +140,66 @@ void SceneHidden::UpdateBehaviorZone()
 	if (!player || zoneID < 1 || zoneID > 4) return;
 
 	auto size = FRAMEWORK.GetWindowSizeF();
-	float halfWidth = size.x * 0.25f;   // worldView의 절반 너비
-	float halfHeight = size.y * 0.25f;  // worldView의 절반 높이
+	float halfWidth = size.x * 0.25f;
+	float halfHeight = size.y * 0.25f;
 
 	sf::Vector2f playerPos = player->GetGlobalBounds().getPosition();
 
+	sf::Vector2f viewSize = worldView.getSize();
+    float viewHalfWidth = viewSize.x * 0.5f;
+    float viewHalfHeight = viewSize.y * 0.5f;
+
 	switch (zoneID)
 	{
-	case 1: // 왼쪽 아래
+	case 1:
 	{
 		float x = Utils::Clamp(playerPos.x, -halfWidth, halfWidth);
 		float y = Utils::Clamp(playerPos.y, 0, halfHeight * 2);
 		worldView.setCenter({ x, y });
 		break;
 	}
-	case 2: // 왼쪽 위
+	case 2:
 	{
 		float x = Utils::Clamp(playerPos.x, -halfWidth, halfWidth);
 		float y = Utils::Clamp(playerPos.y, -halfHeight * 2, 0);
 		worldView.setCenter({ x, y });
+
+		if (playerPos.y >= 0)
+		{
+			zoneID = 1; 
+			for (auto& zone : hiddenZones)
+			{
+				if (zone.zoneId == 1 && !zone.entered)
+				{
+					zone.entered = true;
+					if (zone.onEnter)
+					{
+						zone.onEnter();
+					}
+				}
+				else if (zone.zoneId == 2 && zone.entered)
+				{
+					zone.entered = false;
+					if (zone.onExit)
+					{
+						zone.onExit();
+					}
+				}
+			}
+			float x1 = Utils::Clamp(playerPos.x, -halfWidth, halfWidth);
+			float y1 = Utils::Clamp(playerPos.y, 0, halfHeight * 2);
+			worldView.setCenter({ x1, y1 });
+		}
 		break;
 	}
-	case 3: // 오른쪽 아래
+	case 3:
 	{
 		float x = Utils::Clamp(playerPos.x, 0, halfWidth * 2);
 		float y = Utils::Clamp(playerPos.y, 0, halfHeight * 2);
 		worldView.setCenter({ x, y });
 		break;
 	}
-	case 4: // 오른쪽 위
+	case 4:
 	{
 		float x = Utils::Clamp(playerPos.x, 0, halfWidth * 2);
 		float y = Utils::Clamp(playerPos.y, -halfHeight * 2, 0);
@@ -180,7 +238,6 @@ void SceneHidden::CheckCollison()
 				break;
 
 			case Interactable::Type::Npc:
-				// NPC 상호작용은 OnInteract에서 자동 처리
 				break;
 			}
 		}
@@ -212,16 +269,19 @@ void SceneHidden::SpawnSquareHitBox()
 			pool.pop_front();
 		}
 		else inter = (Interactable*)AddGameObject(new JumpWall());
-		inter->Init();
 
-		if (dynamic_cast<JumpWall*>(inter))
+		if (inter)
 		{
-			dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+			inter->Init();
+			if (dynamic_cast<JumpWall*>(inter))
+			{
+				dynamic_cast<JumpWall*>(inter)->SetBounds(wallX, wallY, wallWithdh, wallHeight);
+			}
+			inter->Reset();
+			inter->SetActive(true);
+			inter->SetPosition({ wallX,wallY });
+			interactList.push_back(inter);
 		}
-		inter->Reset();
-		inter->SetActive(true);
-		inter->SetPosition({ wallX,wallY });
-		interactList.push_back(inter);
 	}
 }
 
@@ -231,18 +291,18 @@ void SceneHidden::SpawnHiddenObject()
 	sf::Vector2f hiddenPathPos = tileMapHidden->getPosition(1, 6168);
 
 	auto hiddenPathCover = new SpriteGo();
-	hiddenPathCover->SetName("floor1DoorPathCovers");
+	hiddenPathCover->SetName("hiddenPathCover");
 	hiddenPathCover->Init();
 
 	hiddenPathCover->GetSprite().setTexture(TEXTURE_MGR.Get("data/HiddenPathToGarden.png"));
 	hiddenPathCover->GetSprite().setTextureRect({ 112, 208, 32, 112 });
 
-	hiddenPathCover->SetActive(1);
+	hiddenPathCover->SetActive(true);
 	hiddenPathCover->SetOrigin(Origins::TL);
 	hiddenPathCover->SetPosition(hiddenPathPos);
 	AddGameObject(hiddenPathCover);
 
-	//Dad
+	//Dad NPC
 	sf::Vector2f dadPos = tileMapHidden->getPosition(1, 1174);
 
 	Interactable* dadInteractable = nullptr;
@@ -255,18 +315,23 @@ void SceneHidden::SpawnHiddenObject()
 	else
 	{
 		dadInteractable = (Interactable*)AddGameObject(new Npc());
-		dadInteractable->Init();
+		if (dadInteractable)
+		{
+			dadInteractable->Init();
+		}
 	}
 
-	if (auto npc = dynamic_cast<Npc*>(dadInteractable))
+	if (dadInteractable)
 	{
-		npc->SetNpcType(Npc::Type::Dad);
-		npc->SetPlayer(player);
-		npc->Reset();
-		npc->SetActive(true);
-		npc->SetPosition({ dadPos.x + 20.f, dadPos.y + 20.f });
-		npc->sortingLayer = SortingLayers::Background;
-
+		if (auto npc = dynamic_cast<Npc*>(dadInteractable))
+		{
+			npc->SetNpcType(Npc::Type::Dad);
+			npc->SetPlayer(player);
+		}
+		dadInteractable->Reset();
+		dadInteractable->SetActive(true);
+		dadInteractable->SetPosition({ dadPos.x + 20.f, dadPos.y + 20.f });
+		dadInteractable->sortingLayer = SortingLayers::Background;
 		interactList.push_back(dadInteractable);
 	}
 }
@@ -278,7 +343,6 @@ void SceneHidden::DeleteHitboxes()
 
 void SceneHidden::DeleteInteractables()
 {
-	// Scene 종료 시에만 모든 인터랙터블 삭제
 	for (Interactable* inter : interactList)
 	{
 		inter->SetActive(false);
@@ -289,7 +353,6 @@ void SceneHidden::DeleteInteractables()
 
 void SceneHidden::DeleteZoneSpecificObjects()
 {
-	// NPC와 특별한 Zone 오브젝트만 삭제 (JumpWall은 유지)
 	auto it = interactList.begin();
 	while (it != interactList.end())
 	{
@@ -305,6 +368,28 @@ void SceneHidden::DeleteZoneSpecificObjects()
 			++it;
 		}
 	}
+
+	for (auto& obj : zoneObjects)
+	{
+		if (obj)
+		{
+			RemoveGameObject(obj);
+		}
+	}
+	zoneObjects.clear();
+}
+
+void SceneHidden::DeleteEnemies()
+{
+	for (Enemy* enemy : enemyList)
+	{
+		if (enemy)
+		{
+			enemy->SetActive(false);
+			enemyPools[enemy->GetType()].push_back(enemy);
+		}
+	}
+	enemyList.clear();
 }
 
 void SceneHidden::RecycleEnemy(Enemy* enemy)
@@ -338,21 +423,30 @@ void SceneHidden::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 		default:
 			break;
 		}
-		enemy->Init();
+		if (enemy)
+		{
+			enemy->Init();
+		}
 	}
-	enemy->Reset();
-	enemy->SetPosition(pos);
-	enemy->SetActive(true);
 
-	enemyList.push_back(enemy);
+	if (enemy)
+	{
+		enemy->Reset();
+		enemy->SetPosition(pos);
+		enemy->SetActive(true);
+		enemyList.push_back(enemy);
+	}
 }
 
 void SceneHidden::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
 {
-	std::vector<sf::Vector2f> positions = tileMapHidden->getPositions(layerIndex, targetGid);
-	for (const auto& pos : positions)
+	if (tileMapHidden)
 	{
-		SpawnEnemy(pos, type);
+		std::vector<sf::Vector2f> positions = tileMapHidden->getPositions(layerIndex, targetGid);
+		for (const auto& pos : positions)
+		{
+			SpawnEnemy(pos, type);
+		}
 	}
 }
 
@@ -371,44 +465,61 @@ void SceneHidden::Init()
 	ANI_CLIP_MGR.Load("animations/bush2.csv");
 	ANI_CLIP_MGR.Load("animations/EnemyDeath.csv");
 
+	Scene::Init();
+
 	player = new Player("Player");
+	if (player)
+	{
+		player->Init();
+		TEXTURE_MGR.Load("graphics/Link.png");
+		AddGameObject(player);
+	}
+
 	tileMapHidden = new TileMap("TileMapHidden", "data/hiddenPath.tmj");
-	tileMapHidden->Init();
-	player = new Player("Player");
-	player->Init();
-	TEXTURE_MGR.Load("graphics/Link.png");
+	if (tileMapHidden)
+	{
+		tileMapHidden->Init();
+		AddGameObject(tileMapHidden);
+		mapBounds = tileMapHidden->GetGlobalBounds();
+	}
 
 	hud = new HUD("HUD");
-	hud->Init();
-	AddGameObject(hud);
+	if (hud)
+	{
+		hud->Init();
+		AddGameObject(hud);
+	}
 
 	if (FindGameObject("InventoryUI") == nullptr)
 	{
 		inventoryUI = new InventoryUI("InventoryUI");
-		inventoryUI->Init();
-		AddGameObject(inventoryUI);
+		if (inventoryUI)
+		{
+			inventoryUI->Init();
+			AddGameObject(inventoryUI);
+		}
 	}
-
-	AddGameObject(player);
-	AddGameObject(tileMapHidden);
 
 	InitZones();
 
-	endPos = tileMapHidden->getPosition(1, 5680);
-	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
-
-
-	if (FindGameObject("InventoryUI") == nullptr)
+	if (tileMapHidden)
 	{
-		inventoryUI = new InventoryUI("InventoryUI");
-		inventoryUI->Init();
-		AddGameObject(inventoryUI);
+		endPos = tileMapHidden->getPosition(1, 5680);
+		endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
 	}
 }
 
 void SceneHidden::Enter()
 {
-	player->Reset();
+	DeleteEnemies();
+	DeleteZoneSpecificObjects();
+	DeleteHitboxes();
+
+	if (player)
+	{
+		player->Reset();
+	}
+
 	auto size = FRAMEWORK.GetWindowSizeF();
 	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
 	uiView.setSize(size);
@@ -423,22 +534,22 @@ void SceneHidden::Enter()
 
 	Scene::Enter();
 	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/Cave.flac"));
-	sf::Vector2f startPos = tileMapHidden->getPosition(1, 6206);
-	player->SetPosition(startPos);
-	GAME_MGR.playerHp = player->GetMaxHp();
-	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = startPos;
+
+	if (tileMapHidden && player)
+	{
+		sf::Vector2f startPos = tileMapHidden->getPosition(1, 6206);
+		player->SetPosition(startPos);
+		GAME_MGR.playerHp = player->GetMaxHp();
+		GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
+		GAME_MGR.playerSpawnPosition = startPos;
+		worldView.setCenter(player->GetGlobalBounds().getPosition());
+	}
 
 	GAME_MGR.Save();
-	worldView.setCenter(player->GetGlobalBounds().getPosition());
 
-	// Scene 진입 시 한 번만 히트박스 생성 (전체 맵에 대해)
 	SpawnSquareHitBox();
-
-	// 적 스폰
 	SpawnEnemyAtTile(1, 6149, Enemy::Types::Basic);
 
-	// 초기 Zone ID 설정 및 모든 Zone을 비활성화 상태로 초기화
 	zoneID = 0;
 	for (auto& zone : hiddenZones)
 	{
@@ -458,18 +569,21 @@ void SceneHidden::Update(float dt)
 			RecycleEnemy(*it);
 			it = enemyList.erase(it);
 		}
-		else ++it;
+		else
+		{
+			++it;
+		}
 	}
 
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone();
 
-	if (endHole.contains(player->GetGlobalBounds().getPosition()))
+	if (player && endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
-		std::cout << "Castle" << std::endl;
 		SCENE_MGR.ChangeScene(SceneIds::Castle);
 	}
+
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
@@ -488,8 +602,10 @@ void SceneHidden::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F5))
 	{
-		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
-
+		if (player)
+		{
+			std::cout << "PlayerPosition(" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
+		}
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
 	{
@@ -503,11 +619,19 @@ void SceneHidden::Update(float dt)
 
 void SceneHidden::Exit()
 {
-	// Scene 종료 시에만 모든 히트박스, 인터랙터블, 적 정리
 	DeleteInteractables();
+	DeleteEnemies();
 	DeleteHitboxes();
 
-	// Zone 상태 초기화
+	for (auto& obj : zoneObjects)
+	{
+		if (obj)
+		{
+			RemoveGameObject(obj);
+		}
+	}
+	zoneObjects.clear();
+
 	for (auto& zone : hiddenZones)
 	{
 		zone.entered = false;
@@ -522,11 +646,14 @@ void SceneHidden::Draw(sf::RenderWindow& window)
 	window.setView(worldView);
 	Scene::Draw(window);
 
-	if (hud) hud->Draw(window);
-	if (inventoryUI && inventoryUI->GetActive()) 
+	// UI는 uiView로 그리기
+	window.setView(uiView);
+	if (hud)
+	{
+		hud->Draw(window);
+	}
+	if (inventoryUI && inventoryUI->GetActive())
 	{
 		inventoryUI->Draw(window);
-
 	}
-
 }

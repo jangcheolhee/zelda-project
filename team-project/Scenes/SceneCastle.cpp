@@ -7,6 +7,8 @@
 #include "BasicEnemy.h"
 #include "Enemy.h"
 #include "HUD.h"
+#include "InventoryUI.h"
+
 SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 {
 	texIds.push_back("graphics/HUD.png");
@@ -14,6 +16,11 @@ SceneCastle::SceneCastle() :Scene(SceneIds::Castle)
 	fontIds.push_back("fonts/Neo.ttf");
 	player = nullptr;
 	tileMapCastle = nullptr;
+	hud = nullptr;
+	inventoryUI = nullptr;
+	floor2DoorPathCover = nullptr;
+	LeftBridge = nullptr;
+	RightBridge = nullptr;
 }
 
 void SceneCastle::InitZones()
@@ -24,18 +31,19 @@ void SceneCastle::InitZones()
 		sf::FloatRect(-400, -230, 515, 464),
 		1,
 		[this]()
-		  {
-			  std::cout << "Zone 1 Enter" << std::endl;
-			  DeleteZoneSpecificObjects();
-			  SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
-		  },
+		{
+			std::cout << "Zone 1 Enter" << std::endl;
+			DeleteZoneSpecificObjects();
+			SpawnEnemyAtTile(4, 8136, Enemy::Types::Basic);
+		},
 		[this]()
-		  {
-			  std::cout << "Zone 1 Exit" << std::endl;
-			  DeleteZoneSpecificObjects();
-		  },
+		{
+			std::cout << "Zone 1 Exit" << std::endl;
+			DeleteZoneSpecificObjects();
+		},
 		false
 		});
+
 	castleZones.push_back({
 		sf::FloatRect(188, -230, 242, 464),
 		2,
@@ -52,6 +60,7 @@ void SceneCastle::InitZones()
 		},
 		false
 		});
+
 	castleZones.push_back({
 		sf::FloatRect(-584, -230, 363, 464),
 		3,
@@ -82,13 +91,10 @@ void SceneCastle::UpdateZones()
 		{
 			zone.entered = true;
 			zoneID = zone.zoneId;
-
+			changeZone = true;
 			if (zone.onEnter)
 			{
-				changeZone = true;
 				zone.onEnter();
-				SpawnSquareHitBox();
-				SpawnFloorCovers();
 			}
 		}
 		else if (!nowInZone && zone.entered)
@@ -97,20 +103,21 @@ void SceneCastle::UpdateZones()
 			if (zone.onExit)
 			{
 				zone.onExit();
-				DeleteHitboxes();
-				DeleteInteractables();
 			}
 		}
 	}
 }
 
-
 void SceneCastle::UpdateBehaviorZone(float dt)
 {
 	if (zoneID < 1 || zoneID > castleZones.size()) return;
 
-	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x, castleZones[zoneID - 1].bounds.left + worldView.getSize().x / 2, castleZones[zoneID - 1].bounds.left + castleZones[zoneID - 1].bounds.width - worldView.getSize().x / 2);
-	float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y, castleZones[zoneID - 1].bounds.top + worldView.getSize().y / 2, castleZones[zoneID - 1].bounds.top + castleZones[zoneID - 1].bounds.height - worldView.getSize().y / 2);
+	float x = Utils::Clamp(player->GetGlobalBounds().getPosition().x,
+		castleZones[zoneID - 1].bounds.left + worldView.getSize().x / 2,
+		castleZones[zoneID - 1].bounds.left + castleZones[zoneID - 1].bounds.width - worldView.getSize().x / 2);
+	float y = Utils::Clamp(player->GetGlobalBounds().getPosition().y,
+		castleZones[zoneID - 1].bounds.top + worldView.getSize().y / 2,
+		castleZones[zoneID - 1].bounds.top + castleZones[zoneID - 1].bounds.height - worldView.getSize().y / 2);
 
 	if (changeZone)
 	{
@@ -197,8 +204,8 @@ void SceneCastle::SpawnSquareHitBox()
 
 void SceneCastle::SpawnFloorCovers()
 {
-	//floor 1 Door Path
-	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(2,8125);
+	// 1층 문 경로 커버
+	std::vector<sf::Vector2f> positions = tileMapCastle->getPositions(2, 8125);
 	for (const auto& pos : positions)
 	{
 		auto floor1DoorPathCover = new SpriteGo();
@@ -208,32 +215,34 @@ void SceneCastle::SpawnFloorCovers()
 		floor1DoorPathCover->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
 		floor1DoorPathCover->GetSprite().setTextureRect({ 192, 216, 96, 32 });
 
-		floor1DoorPathCover->SetActive(1);
+		floor1DoorPathCover->SetActive(true);
 		floor1DoorPathCover->SetOrigin(Origins::TL);
 		floor1DoorPathCover->SetPosition(pos);
 		AddGameObject(floor1DoorPathCover);
 		floor1DoorPathCovers.push_back(floor1DoorPathCover);
 	}
 
-	//floor 2 Door Path
+	// 2층 문 경로
 	sf::Vector2f floor2DoorPathPos = tileMapCastle->getPosition(2, 8205);
 
-	auto floor2DoorPathCover = new SpriteGo();
-	floor2DoorPathCover->SetName("floor1DoorPathCovers");
-	floor2DoorPathCover->Init();
+	if (!floor2DoorPathCover)
+	{
+		floor2DoorPathCover = new SpriteGo();
+		floor2DoorPathCover->SetName("floor2DoorPathCover");
+		floor2DoorPathCover->Init();
 
-	floor2DoorPathCover->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
-	floor2DoorPathCover->GetSprite().setTextureRect({ 216, 88, 48, 32 });
+		floor2DoorPathCover->GetSprite().setTexture(TEXTURE_MGR.Get("data/59984.png"));
+		floor2DoorPathCover->GetSprite().setTextureRect({ 216, 88, 48, 32 });
 
-	floor2DoorPathCover->SetActive(1);
-	floor2DoorPathCover->SetOrigin(Origins::TL);
-	floor2DoorPathCover->SetPosition(floor2DoorPathPos);
-	AddGameObject(floor2DoorPathCover);
+		floor2DoorPathCover->SetActive(true);
+		floor2DoorPathCover->SetOrigin(Origins::TL);
+		floor2DoorPathCover->SetPosition(floor2DoorPathPos);
+		AddGameObject(floor2DoorPathCover);
+	}
 
-	//second floor
+	// 2층 다리들
 	if (!LeftBridge)
 	{
-		//left Bridge
 		sf::Vector2f LeftBridgePos = tileMapCastle->getPosition(3, 8354);
 
 		LeftBridge = new SpriteGo();
@@ -248,7 +257,7 @@ void SceneCastle::SpawnFloorCovers()
 		LeftBridge->SetPosition(LeftBridgePos);
 		AddGameObject(LeftBridge);
 	}
-	//right Bridge
+
 	if (!RightBridge)
 	{
 		sf::Vector2f RightBridgePos = tileMapCastle->getPosition(3, 8329);
@@ -300,6 +309,7 @@ void SceneCastle::DeleteZoneSpecificObjects()
 	}
 	enemyList.clear();
 }
+
 void SceneCastle::RecycleEnemy(Enemy* enemy)
 {
 	if (enemy)
@@ -331,13 +341,19 @@ void SceneCastle::SpawnEnemy(sf::Vector2f pos, Enemy::Types type)
 		default:
 			break;
 		}
-		enemy->Init();
+		if (enemy)
+		{
+			enemy->Init();
+		}
 	}
-	enemy->Reset();
-	enemy->SetPosition(pos);
-	enemy->SetActive(true);
 
-	enemyList.push_back(enemy);
+	if (enemy)
+	{
+		enemy->Reset();
+		enemy->SetPosition(pos);
+		enemy->SetActive(true);
+		enemyList.push_back(enemy);
+	}
 }
 
 void SceneCastle::SpawnEnemyAtTile(int layerIndex, int targetGid, Enemy::Types type)
@@ -358,9 +374,20 @@ void SceneCastle::DeleteEnemy()
 	enemyList.clear();
 }
 
+void SceneCastle::DeleteEnemies()
+{
+	DeleteEnemy(); // 중복 제거, DeleteEnemy()를 호출
+}
+
+void SceneCastle::DeleteZoneEnemies()
+{
+	DeleteZoneSpecificObjects(); // 중복 제거, 기존 함수 사용
+}
+
 void SceneCastle::Init()
 {
 	texIds.push_back("graphics/Enemy_sheet.png");
+	texIds.push_back("data/59984.png");
 
 	soundIds.push_back("effects/link hurt.wav");
 	soundIds.push_back("effects/throw.wav");
@@ -369,82 +396,70 @@ void SceneCastle::Init()
 	soundIds.push_back("effects/enemy hit.wav");
 	soundIds.push_back("effects/link dies.wav");
 	soundIds.push_back("effects/sword.wav");
-	texIds.push_back("data/59984.png");
+
+	Scene::Init(); // 부모 클래스 Init 먼저 호출
 
 	player = new Player("Player");
 	tileMapCastle = new TileMap("TileMapCastle", "data/castleInner.tmj");
-	tileMapCastle->Init();
+	if (tileMapCastle)
+	{
+		tileMapCastle->Init();
+		AddGameObject(tileMapCastle);
+	}
+
+	if (player)
+	{
+		AddGameObject(player);
+	}
 
 	hud = new HUD("HUD");
-	hud->Init();
-	AddGameObject(hud);
+	if (hud)
+	{
+		hud->Init();
+		AddGameObject(hud);
+	}
 
 	if (FindGameObject("InventoryUI") == nullptr)
 	{
 		inventoryUI = new InventoryUI("InventoryUI");
-		inventoryUI->Init();
-		AddGameObject(inventoryUI);
+		if (inventoryUI)
+		{
+			inventoryUI->Init();
+			AddGameObject(inventoryUI);
+		}
 	}
-	AddGameObject(player);
-	AddGameObject(tileMapCastle);
 
 	InitZones();
 
-	std::vector<sf::Vector2f> fisrtPositions = tileMapCastle->getPositions(3, 8147);
+	// 체크포인트 설정
+	std::vector<sf::Vector2f> firstPositions = tileMapCastle->getPositions(3, 8147);
 	std::vector<sf::Vector2f> secondPositions = tileMapCastle->getPositions(3, 8182);
-	for (const auto& fpos : fisrtPositions)
+
+	firstBounds.clear();
+	for (const auto& fpos : firstPositions)
 	{
 		firstBound = sf::FloatRect(fpos.x - 16, fpos.y - 16, 32, 32);
 		firstBounds.push_back(firstBound);
 	}
 
+	secondBounds.clear();
 	for (const auto& spos : secondPositions)
 	{
 		secondBound = sf::FloatRect(spos.x - 16, spos.y - 16, 32, 32);
 		secondBounds.push_back(secondBound);
 	}
-	isSecondFloor = 1;
+
+	isSecondFloor = true;
 
 	endPos = sf::Vector2f(-70.7919f, -232.579f);
 	endHole = sf::FloatRect(endPos.x - 16, endPos.y - 16, 32, 32);
-
-	
-
-	Scene::Init();
 }
 
 void SceneCastle::Enter()
 {
-	player->Reset();
-	auto size = FRAMEWORK.GetWindowSizeF();
-	sf::Vector2f center{ size.x * 0.5f, size.y * 0.5f };
-	uiView.setSize(size);
-	uiView.setCenter(center);
-	worldView.setSize({ size.x * .5f, size.y * .5f });
-	if (inventoryUI)
-	{
-		inventoryUI->SetActive(false);
-		inventoryUI->Reset();
-	}
-
-	Scene::Enter();
-
-	sf::Vector2f startPos = tileMapCastle->getPosition(1, 7342);
-	player->SetPosition({ startPos.x,startPos.y - 30.f });
-	GAME_MGR.playerHp = player->GetMaxHp();
-	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
-	GAME_MGR.playerSpawnPosition = startPos;
-
-	GAME_MGR.Save();
-	worldView.setCenter(player->GetGlobalBounds().getPosition());
-
 	SpawnSquareHitBox();
-
-	zoneID = 0;
-	for (auto& zone : castleZones)
-	{
-		zone.entered = false;
-	}
+	SpawnFloorCovers();
+	Scene::Enter();
 }
 
 void SceneCastle::Update(float dt)
@@ -459,36 +474,21 @@ void SceneCastle::Update(float dt)
 			RecycleEnemy(*it);
 			it = enemyList.erase(it);
 		}
-		else ++it;
+		else
+		{
+			++it;
+		}
 	}
 
 	CheckCollison();
 	UpdateZones();
 	UpdateBehaviorZone(dt);
 
-	for (const auto& fB : firstBounds)
+	if (player && endHole.contains(player->GetGlobalBounds().getPosition()))
 	{
-		if (fB.contains(player->GetGlobalBounds().getPosition()))
-		{
-			isSecondFloor = 0;
-			LeftBridge->SetActive(1);
-			RightBridge->SetActive(1);
-		}
+		SCENE_MGR.ChangeScene(SceneIds::Castle);
 	}
-	for (const auto& sB : secondBounds)
-	{
-		if (sB.contains(player->GetGlobalBounds().getPosition()))
-		{
-			isSecondFloor = 1;
-			if (LeftBridge) LeftBridge->SetActive(0);
-			if (RightBridge) RightBridge->SetActive(0);
-		}
-	}
-	if (endHole.contains(player->GetGlobalBounds().getPosition()))
-	{
-		std::cout << "Boss" << std::endl;
-		SCENE_MGR.ChangeScene(SceneIds::Boss);
-	}
+
 	if (InputMgr::GetKeyDown(sf::Keyboard::F1))
 	{
 		SCENE_MGR.ChangeScene(SceneIds::Game);
@@ -507,7 +507,10 @@ void SceneCastle::Update(float dt)
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::F5))
 	{
-		std::cout << "PlayerPosition" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
+		if (player)
+		{
+			std::cout << "PlayerPosition(" << player->GetPosition().x << ", " << player->GetPosition().y << ")" << std::endl;
+		}
 	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::Tab))
 	{
@@ -523,19 +526,14 @@ void SceneCastle::Exit()
 {
 	DeleteInteractables();
 	DeleteHitboxes();
-
-	for (Enemy* enemy : enemyList)
-	{
-		enemy->SetActive(false);
-		enemyPools[enemy->GetType()].push_back(enemy);
-	}
-	enemyList.clear();
+	DeleteEnemy();
 
 	for (auto& zone : castleZones)
 	{
 		zone.entered = false;
 	}
 	zoneID = 0;
+	changeZone = false;
 
 	Scene::Exit();
 }
@@ -544,5 +542,4 @@ void SceneCastle::Draw(sf::RenderWindow& window)
 {
 	window.setView(worldView);
 	Scene::Draw(window);
-	
 }

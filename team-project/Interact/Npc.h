@@ -5,53 +5,60 @@ class TextGo;
 class Npc : public Interactable
 {
 public:
-	enum class Type
-	{
-		None = -1,
-		Basic,
-		Dad,
-	};
+    enum class Type
+    {
+        None = -1,
+        Basic,
+        Dad,
+    };
 protected:
-	Direction currentDirection;
-	HitBox hitbox;
+    Direction currentDirection;
+    HitBox hitbox;
 
-	bool npcSay=0;
-	int sayCount = 0;
-	
-	SpriteGo* conversation;
-	TextGo* dialogText;
-	sf::View talkUi;
+    bool npcSay=0;
+    int sayCount = 0;
 
-	Type npcType = Type::Basic;
+    SpriteGo* conversation;
+    TextGo* dialogText;
+    sf::View talkUi;
 
-	int dialogueIndex = 0; 
-	std::vector<std::wstring> dialogues;
-	int npcId = 0;  
-	static int nextNpcId;  
-	static std::unordered_map<int, int> npcDialogueIndices;
+    Type npcType = Type::Basic;
 
+    int dialogueIndex = 0; 
+    std::vector<std::wstring> dialogues;
+    int npcId = 0;
+    static int nextNpcId;
+    static std::unordered_map<int, int> npcDialogueIndices;
+
+    //검 애니메이션
+    SpriteGo* swordGetImg = nullptr;
+    bool showSwordGet = false;
+    float swordGetTimer = 0.f;
+    //대사 관련
+    bool swordGetAfterPrincess = false; 
+    float swordAfterTimer = 0.0f;
 public:
 
-	Npc(const std::string& name = "");
-	~Npc();
+    Npc(const std::string& name = "");
+    ~Npc();
 
-	void SetPlayer(Player* p);
-	void SetNpcType(Type type) { npcType = type; }
-	Type GetNpcType() const { return npcType; }
+    void SetPlayer(Player* p);
+    void SetNpcType(Type type) { npcType = type; }
+    Type GetNpcType() const { return npcType; }
 
-	void DirectionSprite(Direction dir);
-	Direction GetDirectionToPlayer();
-	void DaddySprite();
+    void DirectionSprite(Direction dir);
+    Direction GetDirectionToPlayer();
+    void DaddySprite();
 
-	void HandleBasicNpcInteraction();
-	void HandleDadInteraction();
+    void HandleBasicNpcInteraction();
+    void HandleDadInteraction();
 
-	void InitDialogues();
+    void InitDialogues();
 
-	// Interactable
-	void OnInteract() override;
-	void Init();
-	void Reset();
-	void Update(float dt);
-	void Draw(sf::RenderWindow& window) override;
+    // Interactable
+    void OnInteract() override;
+    void Init();
+    void Reset();
+    void Update(float dt);
+    void Draw(sf::RenderWindow& window) override;
 };

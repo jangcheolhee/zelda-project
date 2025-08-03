@@ -47,6 +47,11 @@ protected:
 
 	sf::Vector2f endPos;
 	sf::FloatRect endHole;
+	bool endPosActivated = false;
+	Interactable* holeBush = nullptr;
+	bool holeBushInteracted = false; 
+	float holeBushTimer = 0.0f;   
+	const float holeBushDelay = 2.0f;
 
 	std::vector<SpriteGo*> flowers;
 	float flowerTimer;

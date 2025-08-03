@@ -8,8 +8,6 @@ void BasicEnemy::Init()
 	type = Types::Basic;
 	speed = 40.f;
 	hp = 10;
-
-
 }
 
 void BasicEnemy::Reset()
