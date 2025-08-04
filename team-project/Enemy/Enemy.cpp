@@ -49,16 +49,16 @@ void Enemy::OnCollide(Direction direction)
 	switch (direction)
 	{
 	case Direction::Left:
-		position.x += 0.2;
+		position.x += 1;
 		break;
 	case Direction::Right:
-		position.x -= 0.2;
+		position.x -= 1;
 		break;
 	case Direction::Up:
-		position.y += 0.2;
+		position.y += 1;
 		break;
 	case Direction::Down:
-		position.y -= 0.2;
+		position.y -= 1;
 		break;
 	}
 }

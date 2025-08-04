@@ -58,6 +58,7 @@ void BasicEnemy::Update(float dt)
 	else if (state == EnemyState::Chase)
 	{
 		dir = Utils::GetNormal(player->GetPosition() - GetPosition());
+		body.setColor(sf::Color(0x00ff00ff));
 		moveTimer = 0;
 	}
 
