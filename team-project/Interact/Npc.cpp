@@ -195,10 +195,10 @@ void Npc::HandleDadInteraction()
         player->isNpcTalk = 1;
         sf::Texture testTex;
         if (!testTex.loadFromFile("graphics/sword_get.png")) {
-            std::cout << "sf::Texture 직접로드 실패!" << std::endl;
+         
         }
         else {
-            std::cout << "sf::Texture 직접로드 성공!" << std::endl;
+          
         }
         // 1. 최초 대사
         if (sayCount == 0)
@@ -256,7 +256,7 @@ void Npc::HandleDadInteraction()
 
                 if (!swordGetImg->GetTexture() || swordGetImg->GetTexture()->getSize().x == 0)
                 {
-                    std::cout << "sword_get.png 로드 실패!" << std::endl;
+                  
                 }
 
                 player->SetActive(false);

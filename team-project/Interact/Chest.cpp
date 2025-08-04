@@ -9,7 +9,7 @@ void Chest::OnInteract()
 	{
 		// 행위 추가
 		available = false;
-		//std::cout << 456;
+	
 	}
 	
 

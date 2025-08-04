@@ -33,7 +33,7 @@ void Bush::Init()
 	animator.AddEvent("Crush", 7,
 		[this]()
 		{
-			std::cout << "!!" << std::endl;
+			
 			state = BushState::OnGround;
 			animator.Stop();
 			SetActive(false);

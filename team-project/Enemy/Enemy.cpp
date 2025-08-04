@@ -247,7 +247,7 @@ void Enemy::OnCollideBySword()//책임 분산을 위해 함수 사용
 	if (LastHit < hitCooldown)
 		return;//공격 쿨타임이 남아 있으면 리턴
 
-	std::cout << "[Enemy] sword -1 damage" << std::endl;
+	
 	OnDamage(1);//데미지 처리
 	LastHit = 0.f;
 

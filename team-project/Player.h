@@ -54,7 +54,7 @@ protected:
 	int maxHp = 6;
 	HUD* hud = nullptr;
 	bool isInvincible = false;
-	float invincibleTime = 1.0f;        // 무적 지속 시간 (초)
+	float invincibleTime = 2.0f;        // 무적 지속 시간 (초)
 	float invincibleElapsed = 0.0f;     // 무적 상태 경과 시간
 
 	HitBox swordHitBox;

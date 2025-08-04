@@ -7,19 +7,15 @@ void HitboxGenerator::SpawnSquareHitBox(
     sf::RectangleShape& collisionBox,
     std::string name)
 {
-    std::cout << "HitboxGenerator::SpawnSquareHitBox called" << std::endl;
+ 
 
     HitboxCorners corners;
     if (!tileMapName->LoadHitboxLayer(corners, name))
     {
-        std::cout << "LoadHitboxLayer failed!" << std::endl;
+       
         return;
     }
 
-    std::cout << "Loaded corners - TopLefts: " << corners.topLefts.size()
-        << ", TopRights: " << corners.topRights.size()
-        << ", BottomLefts: " << corners.bottomLefts.size()
-        << ", BottomRights: " << corners.bottomRights.size() << std::endl;
 
     // 검색 범위와 허용 오차 확대
     const float searchWidth = 500.f;  // 더 큰 히트박스 허용

@@ -128,9 +128,7 @@ void Player::Init()
 
 	for (auto& [dir, vec] : attackAnimations)
 	{
-		std::cout << "[Init] Loaded attack animation for Direction "
-			<< static_cast<int>(dir)
-			<< " → " << vec.size() << " frames\n";
+		
 	}
 
 	// Up
@@ -152,7 +150,7 @@ void Player::Init()
 
 	for (auto& [dir, frames] : pushingAnimations)
 	{
-		std::cout << "[DEBUG] pushingAnimations[" << static_cast<int>(dir) << "] = " << frames.size() << " 프레임\n";
+		
 	}
 
 	currentDirection = Direction::Down;
@@ -172,7 +170,7 @@ void Player::Init()
 	}
 	for (auto& [dir, frames] : pushingAnimations)
 	{
-		std::cout << "[DEBUG] pushingAnimations[" << static_cast<int>(dir) << "] = " << frames.size() << " 프레임\n";
+		
 	}
 	body.setScale(1.0f, 1.0f);
 
@@ -238,7 +236,7 @@ void Player::Update(float dt)
 		playerState = PlayerState::Push;
 		currentFrame = 0;
 		elapsedTime = 0.f;
-		std::cout << "➡ 밀기 상태 진입! currentFrame 초기화\n";
+		
 	}
 	else if (!isPushing && wasPushing)
 	{
@@ -246,7 +244,7 @@ void Player::Update(float dt)
 		playerState = (moveDir != sf::Vector2f(0.f, 0.f)) ? PlayerState::Walk : PlayerState::Idle;
 		currentFrame = 0;
 		elapsedTime = 0.f;
-		std::cout << "⬅ 밀기 상태 종료\n";
+	
 	}
 	wasPushing = isPushing;
 	// 이전 상태 갱신

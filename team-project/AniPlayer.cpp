@@ -43,19 +43,7 @@ void AniPlayer::Init()
 {
 	animator.SetTarget(&body);
 
-	animator.AddEvent("Idle", 0,
-		[]()
-		{
-			std::cout << "!!" << std::endl;
-		}
-	);
 
-	animator.AddEvent("Idle", 0,
-		[]()
-		{
-			std::cout << "??" << std::endl;
-		}
-	);
 }
 
 void AniPlayer::Release()

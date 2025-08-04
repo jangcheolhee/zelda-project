@@ -157,10 +157,10 @@ void SceneBoss::Enter()
 	GAME_MGR.currentMapID = (int)SCENE_MGR.GetCurrentSceneId();
 	//GAME_MGR.playerSpawnPosition = { -12, 100 };
 	GAME_MGR.Save();
-	//player->SetPosition({ -12, 100 });
 	worldView.setCenter({ 0, 0 });
 	
 	Scene::Enter();
+	player->SetPosition({ -12,85 });
 	SOUND_MGR.PlayBgm(SOUNDBUFFER_MGR.Get("bgm/boss.flac"));
 	player->SetHp(10);
 	SpawnSquareHitBox();
